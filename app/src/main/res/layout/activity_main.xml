@@ -1,90 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="4"
     android:background="@color/linkAd"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:orientation="vertical">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="50dp"
-                android:src="@drawable/linkad_splach_screen" />
-
-            <TextView
-                android:id="@+id/txt_create_account"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:text="@string/create_account"
-                android:textColor="@android:color/white"
-                android:textStyle="bold" />
-        </FrameLayout>
-    </LinearLayout>
-
-    <LinearLayout
+    <ImageView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:background="@drawable/shape_10dp_corners_white"
-        android:orientation="vertical"
-        android:paddingVertical="12dp"
-        android:paddingHorizontal="24dp">
+        android:layout_marginTop="30dp"
+        android:src="@drawable/linkad_splach_screen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/edt_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/email"
-            android:inputType="textEmailAddress"
-            app:met_baseColor="@color/myTextColor"
-            android:drawableRight="@drawable/ic_email"
-            android:drawablePadding="0dp"
-            app:met_primaryColor="@color/myTextColor"
-            app:met_textColorHint="@color/myTextColor"
-            />
-
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/edt_password"
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            app:met_baseColor="@color/myTextColor"
-            android:drawableRight="@drawable/ic_password"
-            android:drawablePadding="0dp"
-            app:met_primaryColor="@color/myTextColor"
-            app:met_textColorHint="@color/myTextColor"
-            />
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btn_login"
-        style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:background="@drawable/shape_10dp_corners_black"
+        android:fontFamily="sans-serif-black"
+        android:text="Fit Your"
+        android:textAlignment="center"
+        android:textColor="#F6F0F0"
+        android:textSize="80sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-        android:text="LOGIN"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        />
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-black"
+        android:text="Purpose"
+        android:textAlignment="center"
+        android:textColor="#F6F0F0"
+        android:textSize="60sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

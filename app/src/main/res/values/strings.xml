@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">LinkAd</string>
     <string name="create_account">+ CREATE ACCOUNT</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
