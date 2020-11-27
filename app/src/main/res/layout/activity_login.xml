@@ -51,19 +51,6 @@
             />
 
         <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/edt_name"
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/name"
-            android:inputType="textPassword"
-            app:met_baseColor="@color/myTextColor"
-            android:drawableRight="@drawable/ic_user"
-            android:drawablePadding="0dp"
-            app:met_primaryColor="@color/myTextColor"
-            app:met_textColorHint="@color/myTextColor"
-            />
-        <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/edt_password"
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
@@ -76,40 +63,27 @@
             app:met_primaryColor="@color/myTextColor"
             app:met_textColorHint="@color/myTextColor"
             />
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/edt_confirmPassword"
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/confirmPassword"
-            android:inputType="textPassword"
-            app:met_baseColor="@color/myTextColor"
-            android:drawableRight="@drawable/ic_password"
-            android:drawablePadding="0dp"
-            app:met_primaryColor="@color/myTextColor"
-            app:met_textColorHint="@color/myTextColor"
-            />
     </LinearLayout>
 
     <Button
-        android:id="@+id/btn_signUp"
+        android:id="@+id/btn_login"
         style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:background="@drawable/shape_10dp_corners_black"
 
-        android:text="SIGN UP"
+        android:text="LOGIN"
         android:textColor="@android:color/white"
         android:textSize="20sp"
         />
     <TextView
-        android:id="@+id/txt_have_account"
+        android:id="@+id/txt_create_account"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:textAlignment="center"
-        android:text="@string/have_account"
+        android:text="@string/create_account"
         android:textColor="@android:color/white"
         android:textStyle="bold" />
 </LinearLayout>

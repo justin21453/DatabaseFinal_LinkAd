@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -48,7 +49,7 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
+        setContentView(R.layout.activity_login);
 
         Retrofit retrofitClient = RetrofitClient.getInstance();
         iMyService = retrofitClient.create(IMyService.class);
@@ -68,72 +69,10 @@ public class Login extends AppCompatActivity {
         txt_create_account.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final View register_layout = LayoutInflater.from(Login.this)
-                        .inflate(R.layout.register_layout,null);
-
-                new MaterialStyledDialog.Builder(Login.this)
-                        .setIcon(R.drawable.ic_user)
-                        .setTitle("REGISTRATION")
-                        .setDescription("Please fill all fields")
-                        .setCustomView(register_layout)
-                        .setNegativeText("CANCEL")
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .setPositiveText("REGISTER")
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                MaterialEditText edt_register_email = (MaterialEditText) register_layout.findViewById(R.id.edt_email);
-                                MaterialEditText edt_register_name = (MaterialEditText) register_layout.findViewById(R.id.edt_name);
-                                MaterialEditText edt_register_password = (MaterialEditText) register_layout.findViewById(R.id.edt_password);
-                                //MaterialEditText edt_register_password_confirm = (MaterialEditText) register_layout.findViewById(R.id.edt_password_confirm);
-                                //TextView txt_password_confirm_wrong = (TextView) register_layout.findViewById(R.id.password_confirm_wrong);
-
-                                if (TextUtils.isEmpty(edt_register_email.getText().toString())) {
-                                    Toast.makeText(Login.this, "Email cannot be null or empty", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-
-                                if (TextUtils.isEmpty(edt_register_name.getText().toString())) {
-                                    Toast.makeText(Login.this, "Name cannot be null or empty", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-
-                                if (TextUtils.isEmpty(edt_register_password.getText().toString())) {
-                                    Toast.makeText(Login.this, "Password cannot be null or empty", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                        /*if (edt_register_password_confirm.getText().toString()!=edt_register_password.getText().toString()) {
-                            Toast.makeText(Login.this, "Confirm Password is wrong", Toast.LENGTH_SHORT).show();
-                            return;
-                        }*/
-                                else {
-                                    registerUser(edt_register_email.getText().toString(),
-                                            edt_register_name.getText().toString(),
-                                            edt_register_password.getText().toString());
-                                }
-                            }
-                        })
-                        .show();
-
+                Intent intent = new Intent(Login.this, SignUp.class);
+                startActivity(intent);
             }
         });
-    }
-
-    private void registerUser(String email, String name, String password) {
-        compositeDisposable.add(iMyService.registerUser(email,name,password)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String response) throws Exception {
-                        Toast.makeText(Login.this, ""+response, Toast.LENGTH_SHORT).show();
-                    }
-                }));
     }
 
     private void loginUser(String email,String password){
