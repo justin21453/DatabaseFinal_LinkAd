@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static int SPLASH_SCREEN = 1500;    // 2.5 secs
+    private static int SPLASH_SCREEN = 1500;    // 1.5 secs
 
     //Variables
     Animation topAnim, bottomAnim;
@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         logo.setAnimation(bottomAnim);
         slogan.setAnimation(bottomAnim);
 
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -53,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
 
                 finish();   //remove the slash from the activity (or user return to this page instead of closing the app)
-
             }
         },SPLASH_SCREEN);
 

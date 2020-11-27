@@ -4,31 +4,23 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.myapplication.Retrofit.IMyService;
 import com.example.myapplication.Retrofit.RetrofitClient;
-import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
-import com.rengwuxian.materialedittext.MaterialAutoCompleteTextView;
+
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import io.reactivex.Observer;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+
 import retrofit2.Retrofit;
 
 public class SignUp extends AppCompatActivity {
@@ -58,10 +50,12 @@ public class SignUp extends AppCompatActivity {
         edt_register_name = (MaterialEditText)findViewById(R.id.edt_name);
         edt_register_password = (MaterialEditText)findViewById(R.id.edt_password);
         edt_register_password_confirm = (MaterialEditText)findViewById(R.id.edt_confirmPassword);
+
         btn_SignUp = (Button) findViewById(R.id.btn_signUp);
         btn_SignUp.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
+                // Check empty and confirmed password
                 if (TextUtils.isEmpty(edt_register_email.getText().toString())) {
                     Toast.makeText(SignUp.this, "Email cannot be null or empty", Toast.LENGTH_SHORT).show();
                     return;
@@ -79,6 +73,7 @@ public class SignUp extends AppCompatActivity {
                     return;
                 }
 
+                // call register function
                 registerUser(edt_register_email.getText().toString(),
                         edt_register_name.getText().toString(),
                         edt_register_password.getText().toString()
