@@ -3,7 +3,12 @@ package com.example.myapplication;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -32,6 +37,38 @@ public class Login extends AppCompatActivity {
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     IMyService iMyService;
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        // 註冊mConnReceiver，並用IntentFilter設置接收的事件類型為網路開關
+        this.registerReceiver(mConnReceiver,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        // 解除註冊
+        this.unregisterReceiver(mConnReceiver);
+    }
+
+    // 建立一個BroadcastReceiver，名為mConnReceiver
+    private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // 當使用者開啟或關閉網路時會進入這邊
+            // 判斷目前有無網路
+            if(isNetworkAvailable()) {
+                // 以連線至網路，做更新資料等事情
+            }
+            else {
+                // 沒有網路
+                Toast.makeText(Login.this, "Seems not connect to internet", Toast.LENGTH_LONG).show();
+            }
+        }
+    };
     @Override
     protected void onStop(){
         compositeDisposable.clear();
@@ -79,7 +116,11 @@ public class Login extends AppCompatActivity {
             Toast.makeText(this,"Password cannot be null or empty", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        if(!isNetworkAvailable())
+        {
+            Toast.makeText(this,"Didn't connect to Internet", Toast.LENGTH_LONG).show();
+            return;
+        }
         compositeDisposable.add(iMyService.loginUser(email,password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -89,5 +130,16 @@ public class Login extends AppCompatActivity {
                         Toast.makeText(Login.this, ""+response, Toast.LENGTH_SHORT).show();
                     }
                 }));
+
+    }
+    // 回傳目前是否已連線至網路
+    public boolean isNetworkAvailable()
+    {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+
+        return networkInfo != null &&
+                networkInfo.isConnected();
     }
 }
