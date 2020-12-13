@@ -10,27 +10,28 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainScreen extends AppCompatActivity {
-
+public class UserAccount extends AppCompatActivity {
 
     BottomNavigationView bottomNavBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_screen);
+        setContentView(R.layout.activity_user_account);
 
         bottomNavBar = findViewById(R.id.bottomNavBar);
 
-        bottomNavBar.setSelectedItemId(R.id.nav_home);
+        bottomNavBar.setSelectedItemId(R.id.nav_account);
 
         bottomNavBar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                Toast.makeText(MainScreen.this, item.getTitle(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(UserAccount.this, item.getTitle(), Toast.LENGTH_SHORT).show();
                 switch (item.getItemId()) {
                     case R.id.nav_home:
+                        startActivity(new Intent(getApplicationContext(), MainScreen.class));
+                        overridePendingTransition(0, 0);
                         return true;
                     case R.id.nav_search:
                         startActivity(new Intent(getApplicationContext(), Search.class));
@@ -41,8 +42,6 @@ public class MainScreen extends AppCompatActivity {
                         overridePendingTransition(0, 0);
                         return true;
                     case R.id.nav_account:
-                        startActivity(new Intent(getApplicationContext(), UserAccount.class));
-                        overridePendingTransition(0, 0);
                         return true;
                 }
                 return false;
