@@ -89,8 +89,13 @@ public class Login extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                loginUser(edt_login_email.getText().toString(),
-                        edt_login_password.getText().toString());
+                if(loginUser(edt_login_email.getText().toString(), edt_login_password.getText().toString()))
+                {
+                    Intent intent = new Intent(Login.this, MainScreen.class);
+                    startActivity(intent);
+
+                    finish();
+                }
             }
         });
 
@@ -104,22 +109,22 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    private void loginUser(String email,String password){
+    private boolean loginUser(String email,String password){
         if(TextUtils.isEmpty(email))
         {
             Toast.makeText(this,"Email cannot be null or empty", Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
 
         if(TextUtils.isEmpty(password))
         {
             Toast.makeText(this,"Password cannot be null or empty", Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
         if(!isNetworkAvailable())
         {
             Toast.makeText(this,"Didn't connect to Internet", Toast.LENGTH_LONG).show();
-            return;
+            return false;
         }
         compositeDisposable.add(iMyService.loginUser(email,password)
                 .subscribeOn(Schedulers.io())
@@ -130,6 +135,7 @@ public class Login extends AppCompatActivity {
                         Toast.makeText(Login.this, ""+response, Toast.LENGTH_SHORT).show();
                     }
                 }));
+        return true;
 
     }
     // 回傳目前是否已連線至網路
