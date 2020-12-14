@@ -34,154 +34,107 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 
 public class SignUp extends AppCompatActivity {
 
-    TextView txt_have_account;
-    MaterialEditText edt_register_email, edt_register_password, edt_register_name, edt_register_password_confirm;
-    Button btn_SignUp;
+    // 初始化用于和UI界面绑定的 View和button等 object
+    TextView            txt_have_account;
+    MaterialEditText    edt_register_email, edt_register_password, edt_register_name, edt_register_password_confirm;
+    Button              btn_SignUp;
 
-    CompositeDisposable compositeDisposable = new CompositeDisposable();
-    IMyService iMyService;
-
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        // 註冊mConnReceiver，並用IntentFilter設置接收的事件類型為網路開關
-        this.registerReceiver(mConnReceiver,
-                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-    }
-
-    @Override
-    public void onPause()
-    {
-        super.onPause();
-        // 解除註冊
-        this.unregisterReceiver(mConnReceiver);
-    }
-
-    // 建立一個BroadcastReceiver，名為mConnReceiver
-    private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // 當使用者開啟或關閉網路時會進入這邊
-            // 判斷目前有無網路
-            if(isNetworkAvailable()) {
-                // 以連線至網路，做更新資料等事情
-            }
-            else {
-                // 沒有網路
-                Toast.makeText(SignUp.this, "Seems not connect to internet", Toast.LENGTH_LONG).show();
-            }
-        }
-    };
-
-    @Override
-    protected void onStop(){
-        compositeDisposable.clear();
-        super.onStop();
-    }
+    // 初始化网络连接服务(呼叫后端用的 service)
+    IMyService          iMyService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        // 宣告 Retrofit 进行网络链接
         Retrofit retrofitClient = RetrofitClient.getInstance();
+        // 取得服务
         iMyService = retrofitClient.create(IMyService.class);
 
-        edt_register_email = (MaterialEditText)findViewById(R.id.edt_email);
-        edt_register_name = (MaterialEditText)findViewById(R.id.edt_name);
-        edt_register_password = (MaterialEditText)findViewById(R.id.edt_password);
-        edt_register_password_confirm = (MaterialEditText)findViewById(R.id.edt_confirmPassword);
+        // 绑定页面中的UI
+        edt_register_email = findViewById(R.id.edt_email);
+        edt_register_name = findViewById(R.id.edt_name);
+        edt_register_password = findViewById(R.id.edt_password);
+        edt_register_password_confirm = findViewById(R.id.edt_confirmPassword);
 
-        btn_SignUp = (Button) findViewById(R.id.btn_signUp);
+        btn_SignUp = findViewById(R.id.btn_signUp);
+        // 注册按钮
         btn_SignUp.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                // call register function
+                // call 注册的function
                 registerUser(edt_register_email.getText().toString(),
                         edt_register_name.getText().toString(),
-                        edt_register_password.getText().toString()
+                        edt_register_password.getText().toString(),
+                        edt_register_password_confirm.getText().toString()
                 );
-
             }
         });
 
-        txt_have_account = (TextView) findViewById(R.id.txt_have_account);
+        txt_have_account = findViewById(R.id.txt_have_account);
+        //返回登录界面的按钮
         txt_have_account.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SignUp.this, Login.class);
+                //返回登录界面,并清空登录界面以上的activity,登录界面A,注册B，stack目前是AB,现在回到A，则清空B的记录
                 intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                //直接 finish() activity
+//                finish();
             }
         });
 
     }
 
-    private void registerUser(String email, String name, String password) {
-        // Check empty and confirmed password
-        if (TextUtils.isEmpty(edt_register_email.getText().toString())) {
-            Toast.makeText(SignUp.this, "Email cannot be null or empty", Toast.LENGTH_SHORT).show();
+    private void registerUser(String email, String name, String password, String confirm) {
+        // 判断是否有漏填的信息
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(name)) {
+            Toast.makeText(SignUp.this, "Space cannot be null or empty", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (TextUtils.isEmpty(edt_register_name.getText().toString())) {
-            Toast.makeText(SignUp.this, "Name cannot be null or empty", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (TextUtils.isEmpty(edt_register_password.getText().toString())) {
-            Toast.makeText(SignUp.this, "Password cannot be null or empty", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (!edt_register_password_confirm.getText().toString().equals(edt_register_password.getText().toString())) {
+        // 判断第二次(确认)密码有没有和第一次一直
+        if ( confirm.equals(password) == false ) {
             Toast.makeText(SignUp.this, "Confirm Password is wrong", Toast.LENGTH_SHORT).show();
             return;
         }
 
-
+        // 进行注册判断(和后端连接)
+        //subscribeOn和observeOn的解析 https://www.jianshu.com/p/1866eb720efa
         iMyService.registerUser(email,name,password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<String>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                    }
+                        @Override
+                        public void onSubscribe(@NonNull Disposable d) {
+                        }
 
-                    @Override
-                    public void onNext(@NonNull String s) {
-                        // 网络状态正常，已和server完成通信，获得return value
-                        if (s.equals("\"Registration success\""))
-                        {
-                            //成功注册
-                            Toast.makeText(SignUp.this,s, Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(SignUp.this, Login.class);
-                            intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
+                        @Override
+                        public void onNext(@NonNull String s) {
+                            // 网络状态正常，已和server完成通信，获得return value
+                            if (s.contains("success"))
+                            {
+                                //如果回传 string 包含 success ,则注册成功
+                                Toast.makeText(SignUp.this,s, Toast.LENGTH_LONG).show();
+                                //返回登录界面
+                                finish();
+                            }
+                            else
+                            {
+                                //邮箱已存在
+                                Toast.makeText(SignUp.this,s, Toast.LENGTH_SHORT).show();
+                            }
                         }
-                        else
-                        {
-                            //邮箱已存在
-                            Toast.makeText(SignUp.this,s, Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void onError(@NonNull Throwable e) {
+                            //没有连接网络
+                            Toast.makeText(SignUp.this,"请检查网络", Toast.LENGTH_SHORT).show();
                         }
-                    }
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        //Didn't connect to Internet
-                        Toast.makeText(SignUp.this,"请检查网络", Toast.LENGTH_SHORT).show();
-                    }
-                    @Override
-                    public void onComplete() {
-                    }
+                        @Override
+                        public void onComplete() {
+                        }
                 });
     }
 
-    // 回傳目前是否已連線至網路
-    public boolean isNetworkAvailable()
-    {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-
-        return networkInfo != null &&
-                networkInfo.isConnected();
-    }
 }

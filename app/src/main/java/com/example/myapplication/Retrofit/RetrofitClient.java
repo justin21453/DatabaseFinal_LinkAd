@@ -8,7 +8,7 @@ public class RetrofitClient {
     private static Retrofit instance;
 
     public static Retrofit getInstance(){
-        //Here we use converter to convert request to JSON
+        //我们使用 converter 转换为JSON
         if(instance == null)
             instance = new Retrofit.Builder()
                     .baseUrl("http://140.136.151.145:3000/")
