@@ -15,6 +15,18 @@ public class UserAccount extends AppCompatActivity {
     BottomNavigationView bottomNavBar;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNavBar.setSelectedItemId(R.id.nav_account);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account);

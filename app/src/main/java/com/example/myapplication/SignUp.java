@@ -1,6 +1,5 @@
 package com.example.myapplication;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.BroadcastReceiver;
@@ -21,12 +20,17 @@ import com.example.myapplication.Retrofit.RetrofitClient;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 import retrofit2.Retrofit;
+
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 
 public class SignUp extends AppCompatActivity {
 
@@ -107,6 +111,7 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SignUp.this, Login.class);
+                intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         });
@@ -131,21 +136,42 @@ public class SignUp extends AppCompatActivity {
             Toast.makeText(SignUp.this, "Confirm Password is wrong", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(!isNetworkAvailable())
-        {
-            Toast.makeText(SignUp.this,"Didn't connect to Internet", Toast.LENGTH_LONG).show();
-            return;
-        }
 
-        compositeDisposable.add(iMyService.registerUser(email,name,password)
+
+        iMyService.registerUser(email,name,password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<String>() {
+                .subscribe(new Observer<String>() {
                     @Override
-                    public void accept(String response) throws Exception {
-                        Toast.makeText(SignUp.this, ""+response, Toast.LENGTH_SHORT).show();
+                    public void onSubscribe(@NonNull Disposable d) {
                     }
-                }));
+
+                    @Override
+                    public void onNext(@NonNull String s) {
+                        // 网络状态正常，已和server完成通信，获得return value
+                        if (s.equals("\"Registration success\""))
+                        {
+                            //成功注册
+                            Toast.makeText(SignUp.this,s, Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(SignUp.this, Login.class);
+                            intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                        }
+                        else
+                        {
+                            //邮箱已存在
+                            Toast.makeText(SignUp.this,s, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        //Didn't connect to Internet
+                        Toast.makeText(SignUp.this,"请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    @Override
+                    public void onComplete() {
+                    }
+                });
     }
 
     // 回傳目前是否已連線至網路

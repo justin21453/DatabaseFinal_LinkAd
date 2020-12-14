@@ -1,6 +1,5 @@
 package com.example.myapplication;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.BroadcastReceiver;
@@ -21,12 +20,17 @@ import com.example.myapplication.Retrofit.RetrofitClient;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 import retrofit2.Retrofit;
+
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 
 public class Login extends AppCompatActivity {
 
@@ -34,44 +38,10 @@ public class Login extends AppCompatActivity {
     MaterialEditText edt_login_email,edt_login_password;
     Button btn_login;
     
-    CompositeDisposable compositeDisposable = new CompositeDisposable();
     IMyService iMyService;
 
     @Override
-    public void onResume()
-    {
-        super.onResume();
-        // 註冊mConnReceiver，並用IntentFilter設置接收的事件類型為網路開關
-        this.registerReceiver(mConnReceiver,
-                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-    }
-
-    @Override
-    public void onPause()
-    {
-        super.onPause();
-        // 解除註冊
-        this.unregisterReceiver(mConnReceiver);
-    }
-
-    // 建立一個BroadcastReceiver，名為mConnReceiver
-    private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // 當使用者開啟或關閉網路時會進入這邊
-            // 判斷目前有無網路
-            if(isNetworkAvailable()) {
-                // 以連線至網路，做更新資料等事情
-            }
-            else {
-                // 沒有網路
-                Toast.makeText(Login.this, "Seems not connect to internet", Toast.LENGTH_LONG).show();
-            }
-        }
-    };
-    @Override
     protected void onStop(){
-        compositeDisposable.clear();
         super.onStop();
     }
 
@@ -89,13 +59,8 @@ public class Login extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                if(loginUser(edt_login_email.getText().toString(), edt_login_password.getText().toString()))
-                {
-                    Intent intent = new Intent(Login.this, MainScreen.class);
-                    startActivity(intent);
+                loginUser(edt_login_email.getText().toString(), edt_login_password.getText().toString());
 
-                    finish();
-                }
             }
         });
 
@@ -109,43 +74,49 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    private boolean loginUser(String email,String password){
-        if(TextUtils.isEmpty(email))
-        {
-            Toast.makeText(this,"Email cannot be null or empty", Toast.LENGTH_SHORT).show();
-            return false;
-        }
+    private void loginUser(String email,String password){
 
-        if(TextUtils.isEmpty(password))
+        if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password))
         {
-            Toast.makeText(this,"Password cannot be null or empty", Toast.LENGTH_SHORT).show();
-            return false;
+            Toast.makeText(this,"Space cannot be null or empty", Toast.LENGTH_SHORT).show();
+            return;
         }
-        if(!isNetworkAvailable())
-        {
-            Toast.makeText(this,"Didn't connect to Internet", Toast.LENGTH_LONG).show();
-            return false;
-        }
-        compositeDisposable.add(iMyService.loginUser(email,password)
+        //进行连接
+        iMyService.loginUser(email,password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<String>() {
+                .subscribe(new Observer<String>() {
                     @Override
-                    public void accept(String response) throws Exception {
-                        Toast.makeText(Login.this, ""+response, Toast.LENGTH_SHORT).show();
+                    public void onSubscribe(@NonNull Disposable d) {
                     }
-                }));
-        return true;
+
+                    @Override
+                    public void onNext(@NonNull String s) {
+                        // 网络状态正常，已和server完成通信，获得return value
+                        if (s.equals("\"Login success\""))
+                        {
+                            //成功登陆
+                            Intent intent = new Intent(Login.this, MainScreen.class);
+                            startActivity(intent);
+
+                            finish();
+                        }
+                        else
+                        {
+                            //密码错误
+                            Toast.makeText(Login.this,s, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        //Didn't connect to Internet
+                        Toast.makeText(Login.this,"请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    @Override
+                    public void onComplete() {
+                    }
+                });
 
     }
-    // 回傳目前是否已連線至網路
-    public boolean isNetworkAvailable()
-    {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
 
-        return networkInfo != null &&
-                networkInfo.isConnected();
-    }
 }
