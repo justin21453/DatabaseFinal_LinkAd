@@ -45,13 +45,10 @@ public class Home extends AppCompatActivity implements HideScrollListener {
         // 设置 NavBar 上的选中元素为 home (房子)
         bottomNavBar.setSelectedItemId(R.id.nav_home);
 
-
-
         bottomNavBar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                Toast.makeText(Home.this, item.getTitle(), Toast.LENGTH_SHORT).show();
                 // 跳转到新页面，并 reorder 到前面,重新排序 activity (参考下面 Link)
                 // https://www.jianshu.com/p/537aa221eec4/
                 switch (item.getItemId()) {

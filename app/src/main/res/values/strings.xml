@@ -18,6 +18,16 @@
         <item>Card 8</item>
         <item>Card 9</item>
         <item>Card 10</item>
+        <item>Card </item>
+        <item>Card </item>
+        <item>Card </item>
+        <item>Card </item>
+        <item>Card </item>
+        <item>Card </item>
+        <item>Card </item>
+        <item>Card </item>
+        <item>Card </item>
+        <item>Card </item>
     </string-array>
 
     <string-array name="recycle_row_main_screen_description">
@@ -31,6 +41,16 @@
         <item>Description 8</item>
         <item>Description 9</item>
         <item>Description 10</item>
+        <item>Description </item>
+        <item>Description </item>
+        <item>Description </item>
+        <item>Description </item>
+        <item>Description </item>
+        <item>Description </item>
+        <item>Description </item>
+        <item>Description </item>
+        <item>Description </item>
+        <item>Description </item>
 
     </string-array>
 

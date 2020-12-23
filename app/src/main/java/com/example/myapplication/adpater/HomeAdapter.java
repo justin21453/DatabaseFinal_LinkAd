@@ -4,9 +4,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
@@ -29,10 +31,11 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
 
     // 绑定View和Adapter的function
     public class HomeViewHolder extends RecyclerView.ViewHolder {
-
+        CardView cardView;
         TextView cardText1, cardText2;
         public HomeViewHolder(@NonNull View itemView) {
             super(itemView);
+            cardView = itemView.findViewById(R.id.card);
             cardText1 = itemView.findViewById(R.id.cardText1);
             cardText2 = itemView.findViewById(R.id.cardText2);
         }
@@ -50,6 +53,9 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
     //数据绑定-绑定每一Row的数据
     @Override
     public void onBindViewHolder(@NonNull HomeViewHolder holder, int position) {
+        //卡片出现动画
+        //holder.cardView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in));
+        //数据绑定
         holder.cardText1.setText(data1[position]);
         holder.cardText2.setText(data2[position]);
     }
