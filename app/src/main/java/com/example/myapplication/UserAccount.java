@@ -76,7 +76,7 @@ public class UserAccount extends AppCompatActivity {
                     // 跳转到新页面，并 reorder 到前面,重新排序 activity (参考下面 Link)
                     // https://www.jianshu.com/p/537aa221eec4/
                     case R.id.nav_home:
-                        startActivity(new Intent(getApplicationContext(), MainScreen.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
+                        startActivity(new Intent(getApplicationContext(), Home.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
                         overridePendingTransition(0, 0);
                         return true;
                     case R.id.nav_search:

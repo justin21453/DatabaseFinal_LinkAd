@@ -78,7 +78,7 @@ public class Search extends AppCompatActivity {
                     case R.id.nav_search:
                         return true;
                     case R.id.nav_home:
-                        startActivity(new Intent(getApplicationContext(), MainScreen.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
+                        startActivity(new Intent(getApplicationContext(), Home.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
                         overridePendingTransition(0, 0);
                         return true;
                     case R.id.nav_favorite:

@@ -2,12 +2,7 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -23,14 +18,10 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 import retrofit2.Retrofit;
-
-import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 
 public class Login extends AppCompatActivity {
 
@@ -95,10 +86,11 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onNext(@NonNull String s) {
                         // 网络状态正常，已和server完成通信，获得return value
+
                         if (s.contains("Login success"))
                         {
                             // 成功登陆，前往 MainScreen 主界面
-                            Intent intent = new Intent(Login.this, MainScreen.class);
+                            Intent intent = new Intent(Login.this, Home.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                             startActivity(intent);
 
@@ -113,7 +105,7 @@ public class Login extends AppCompatActivity {
                     }
                     @Override
                     public void onError(@NonNull Throwable e) {
-                        //没有连接网络
+
                         Toast.makeText(Login.this,"请检查网络", Toast.LENGTH_SHORT).show();
                     }
                     @Override

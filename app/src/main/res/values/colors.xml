@@ -5,4 +5,7 @@
     <color name="colorAccent">#03DAC5</color>
     <color name="linkAd">#C73232</color>
     <color name="myTextColor">#AFAFAF</color>
+    <color name="white">#FFF</color>
+    <color name="grey">#333</color>
+
 </resources>

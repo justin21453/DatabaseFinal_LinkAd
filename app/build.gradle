@@ -26,19 +26,23 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
-    implementation 'com.google.android.material:material:1.2.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    //material for UI Design
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
+    implementation 'com.github.javiersantos:MaterialStyledDialogs:2.1'
+    //retrofit for HTTP connection
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
-
+    //rxjava
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
-
-    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
-
-    implementation 'com.github.javiersantos:MaterialStyledDialogs:2.1'
+    //smart refresh 智能刷新
+    implementation  'com.scwang.smart:refresh-layout-kernel:2.0.1'      //核心必须依赖
+    implementation  'com.scwang.smart:refresh-header-classics:2.0.1'    //经典刷新头
+    implementation  'com.scwang.smart:refresh-footer-classics:2.0.1'    //经典加载
 
 }

@@ -6,23 +6,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
-    tools:context=".MainScreen">
+    tools:context=".Home">
 
-    <RelativeLayout
+<!--    Smart refresh Layout    -->
+<!--    https://github.com/scwang90/SmartRefreshLayout#1    -->
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:srlEnableAutoLoadMore="true"
+        >
+        <com.scwang.smart.refresh.header.ClassicsHeader
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Home"
-            android:textSize="50sp"
-            android:textStyle="bold"
-            android:layout_centerInParent="true"/>
-
-    </RelativeLayout>
+            />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mainScreenRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+        <com.scwang.smart.refresh.footer.ClassicsFooter
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
     <RelativeLayout
+        android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_gravity="bottom"
@@ -42,8 +52,6 @@
             app:itemRippleColor="@android:color/transparent"
             app:itemIconTint="@drawable/nav_item_selector"/>
     </RelativeLayout>
-
-
 
 
 </RelativeLayout>
