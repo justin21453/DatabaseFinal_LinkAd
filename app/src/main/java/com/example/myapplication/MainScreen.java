@@ -5,15 +5,31 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myapplication.Retrofit.IMyService;
+import com.example.myapplication.Retrofit.RetrofitClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Retrofit;
 
 import static com.example.myapplication.WaitTime.TIME_EXIT;
 
 public class MainScreen extends AppCompatActivity {
 
+    IMyService iMyService;
     private long mBackPressed;
     // 若再次返回会退出应用，则User需要快速返回两次
     @Override
@@ -62,6 +78,10 @@ public class MainScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
+        Retrofit retrofitClient = RetrofitClient.getInstance();
+        iMyService = retrofitClient.create(IMyService.class);
+
+        getData();
 
         bottomNavBar = findViewById(R.id.bottomNavBar);
 
@@ -95,6 +115,46 @@ public class MainScreen extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    private void getData() {
+
+        // 进行注册判断(和后端连接)
+        //subscribeOn和observeOn的解析 https://www.jianshu.com/p/1866eb720efa
+        iMyService.getData()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull String s) {
+                        TextView textView=(TextView)findViewById(R.id.home);
+                        try {
+                            JSONArray array = new JSONArray(s);
+                            String x="There are titles here:\n";
+                            for(int i=0;i<array.length();i++) {
+                                JSONObject jsonObject = array.getJSONObject(i);
+                                String c = jsonObject.getString("title");
+                                x+=c+"\n";
+                            }
+                            textView.setTextSize(12);
+                            textView.setText(x);
+                        }catch (JSONException err){
+                            err.getStackTrace();
+                        }
+                    }
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        //没有连接网络
+                        Toast.makeText(MainScreen.this,"请检查网络", Toast.LENGTH_SHORT).show();
+                    }
+                    @Override
+                    public void onComplete() {
+                    }
+                });
     }
 
 }
