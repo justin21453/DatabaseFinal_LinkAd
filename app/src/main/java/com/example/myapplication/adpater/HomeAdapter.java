@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,8 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 
-// MainScreen数据呈现的Adapter (结合RecyclerView使用)
-public class MainScreenAdapter extends RecyclerView.Adapter<MainScreenAdapter.MainScreenViewHolder> {
+// Home数据呈现的Adapter (结合RecyclerView使用)
+public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder> {
 
     //初始化context用于接收对应activity
     Context     context;
@@ -22,17 +21,17 @@ public class MainScreenAdapter extends RecyclerView.Adapter<MainScreenAdapter.Ma
 
 
     // constructor: 初始化Adapter, Context接activity, 其余则是自定义的para
-    public MainScreenAdapter(Context ct, String s1[], String s2[]) {
+    public HomeAdapter(Context ct, String s1[], String s2[]) {
         context = ct;
         data1 = s1;
         data2 = s2;
     }
 
     // 绑定View和Adapter的function
-    public class MainScreenViewHolder extends RecyclerView.ViewHolder {
+    public class HomeViewHolder extends RecyclerView.ViewHolder {
 
         TextView cardText1, cardText2;
-        public MainScreenViewHolder(@NonNull View itemView) {
+        public HomeViewHolder(@NonNull View itemView) {
             super(itemView);
             cardText1 = itemView.findViewById(R.id.cardText1);
             cardText2 = itemView.findViewById(R.id.cardText2);
@@ -42,15 +41,15 @@ public class MainScreenAdapter extends RecyclerView.Adapter<MainScreenAdapter.Ma
     //初始化ViewHolder-用于渲染RecyclerView里面的具体Row
     @NonNull
     @Override
-    public MainScreenViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public HomeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.recycle_row_main_screen, parent, false);
-        return new MainScreenViewHolder(view);
+        View view = inflater.inflate(R.layout.recycle_row_home, parent, false);
+        return new HomeViewHolder(view);
     }
 
     //数据绑定-绑定每一Row的数据
     @Override
-    public void onBindViewHolder(@NonNull MainScreenViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull HomeViewHolder holder, int position) {
         holder.cardText1.setText(data1[position]);
         holder.cardText2.setText(data2[position]);
     }

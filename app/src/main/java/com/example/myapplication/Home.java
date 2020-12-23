@@ -14,13 +14,12 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.myapplication.adpater.HideScrollListener;
-import com.example.myapplication.adpater.MainScreenAdapter;
+import com.example.myapplication.adpater.HomeAdapter;
 import com.example.myapplication.adpater.NavScrollListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.header.ClassicsHeader;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
-import com.scwang.smart.refresh.layout.constant.SpinnerStyle;
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
@@ -53,9 +52,9 @@ public class Home extends AppCompatActivity implements HideScrollListener {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
                 Toast.makeText(Home.this, item.getTitle(), Toast.LENGTH_SHORT).show();
+                // 跳转到新页面，并 reorder 到前面,重新排序 activity (参考下面 Link)
+                // https://www.jianshu.com/p/537aa221eec4/
                 switch (item.getItemId()) {
-                    // 跳转到新页面，并 reorder 到前面,重新排序 activity (参考下面 Link)
-                    // https://www.jianshu.com/p/537aa221eec4/
                     case R.id.nav_home:
                         return true;
                     case R.id.nav_search:
@@ -105,9 +104,9 @@ public class Home extends AppCompatActivity implements HideScrollListener {
         s2 = getResources().getStringArray(R.array.recycle_row_main_screen_description);
 
         //初始化Adapter并赋予data
-        MainScreenAdapter mainScreenAdapter = new MainScreenAdapter(this, s1, s2);
+        HomeAdapter homeAdapter = new HomeAdapter(this, s1, s2);
         //绑定Adapter和RecyclerView
-        recyclerView.setAdapter(mainScreenAdapter);
+        recyclerView.setAdapter(homeAdapter);
         //设置RecyclerView的每一row的样式
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         //设置RecyclerView的滑动监听, 用于实现滑动隐藏NavBar
