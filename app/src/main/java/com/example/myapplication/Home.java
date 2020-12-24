@@ -10,11 +10,13 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.myapplication.adpater.HideScrollListener;
 import com.example.myapplication.adpater.HomeAdapter;
+import com.example.myapplication.adpater.HomeCategoryAdapter;
 import com.example.myapplication.adpater.NavScrollListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
@@ -24,33 +26,36 @@ import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import static com.example.myapplication.WaitTime.TIME_EXIT;
-// HideScrollListenr 检测用户滑动的监听器, 用于自动隐藏NavBar
+// HideScrollListener 检测用户滑动的监听器, 用于自动隐藏NavBar
 public class Home extends AppCompatActivity implements HideScrollListener {
 
     private long mBackPressed;
     //初始化layout中的View等
     BottomNavigationView bottomNavBar;
     RelativeLayout bottomNav;
-    RecyclerView recyclerView;
+    //recyclerView 用于主页Card(Channel)的显示, recyclerViewHorizontal用于主页顶部的Category Button的显示
+    RecyclerView recyclerView, recyclerViewHorizontal;
+
     //用于接收数据，与RecycleView, Adapter合作
-    String s1[], s2[];
+    String cardTitle[], cardDescription[], category[];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        recyclerView = findViewById(R.id.mainScreenRecyclerView);
-        bottomNavBar = findViewById(R.id.bottomNavBar);
+        recyclerView = findViewById(R.id.homeRecyclerView);
+        recyclerViewHorizontal = findViewById(R.id.homeRecyclerViewHorizontal);
+        // bottomNav 是 NavBar外层的 RelativeLayout, 用于实现自动隐藏 NavBar效果
         bottomNav = findViewById(R.id.bottomNav);
+        bottomNavBar = findViewById(R.id.bottomNavBar);
         // 设置 NavBar 上的选中元素为 home (房子)
         bottomNavBar.setSelectedItemId(R.id.nav_home);
 
+        // 跳转到新页面，并 reorder 到前面,重新排序 activity (参考下面 Link)
+        // https://www.jianshu.com/p/537aa221eec4/
         bottomNavBar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-                // 跳转到新页面，并 reorder 到前面,重新排序 activity (参考下面 Link)
-                // https://www.jianshu.com/p/537aa221eec4/
                 switch (item.getItemId()) {
                     case R.id.nav_home:
                         return true;
@@ -79,6 +84,19 @@ public class Home extends AppCompatActivity implements HideScrollListener {
         refreshLayout.setRefreshHeader(new ClassicsHeader(this));
         refreshLayout.setRefreshFooter(new ClassicsFooter(this));
 
+        //TODO: 绑定Channel数据到Card上, 完善Card设计
+        //首页卡片的RecyclerView的Title和Description的文本内容
+        cardTitle = getResources().getStringArray(R.array.recycle_row_main_screen_title);
+        cardDescription = getResources().getStringArray(R.array.recycle_row_main_screen_description);
+        //初始化 HomeAdapter 并赋予data
+        HomeAdapter homeAdapter = new HomeAdapter(this, cardTitle, cardDescription);
+        //绑定Adapter 和 RecyclerView
+        recyclerView.setAdapter(homeAdapter);
+        //设置RecyclerView的每一row的样式
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //设置RecyclerView的滑动监听, 用于实现滑动隐藏NavBar
+        recyclerView.addOnScrollListener(new NavScrollListener(this));
+
         //TODO: 实现下拉刷新 Data
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
@@ -96,19 +114,16 @@ public class Home extends AppCompatActivity implements HideScrollListener {
             }
         });
 
-        //测试用RecyclerView的Title和Description的Data
-        s1 = getResources().getStringArray(R.array.recycle_row_main_screen_title);
-        s2 = getResources().getStringArray(R.array.recycle_row_main_screen_description);
-
-        //初始化Adapter并赋予data
-        HomeAdapter homeAdapter = new HomeAdapter(this, s1, s2);
-        //绑定Adapter和RecyclerView
-        recyclerView.setAdapter(homeAdapter);
-        //设置RecyclerView的每一row的样式
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        //设置RecyclerView的滑动监听, 用于实现滑动隐藏NavBar
-        recyclerView.addOnScrollListener(new NavScrollListener(this));
-
+        //TODO: 绑定顶部的 Category 数据, 完善 RecyclerViewHorizontal
+        //横向Category的文本内容
+        category = getResources().getStringArray(R.array.recycle_row_home_category);
+        ////初始化 HomeCategoryAdapter 并赋予data
+        HomeCategoryAdapter homeCategoryAdapter = new HomeCategoryAdapter(this, category);
+        //绑定Adapter 和 RecyclerView
+        recyclerViewHorizontal.setAdapter(homeCategoryAdapter);
+        //用LinearLayoutManager将RecyclerView显示方式转为Horizontal
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerViewHorizontal.setLayoutManager(linearLayoutManager);
     }
 
     // 若再次返回会退出应用, 则User需要快速返回两次, 才能退出(目的是为了防误触)

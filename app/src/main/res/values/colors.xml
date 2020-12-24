@@ -7,5 +7,7 @@
     <color name="myTextColor">#AFAFAF</color>
     <color name="white">#FFF</color>
     <color name="grey">#333</color>
+    <color name="lightGrey">#eee</color>
+
 
 </resources>

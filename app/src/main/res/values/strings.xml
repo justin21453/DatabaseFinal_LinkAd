@@ -54,4 +54,17 @@
 
     </string-array>
 
+    <string-array name="recycle_row_home_category">
+        <item>Category 1</item>
+        <item>Category 2</item>
+        <item>Category 3</item>
+        <item>Category 4</item>
+        <item>Category 5</item>
+        <item>Category 6</item>
+        <item>Category 7</item>
+        <item>Category 8</item>
+        <item>Category 9</item>
+        <item>Category 10</item>
+    </string-array>
+
 </resources>

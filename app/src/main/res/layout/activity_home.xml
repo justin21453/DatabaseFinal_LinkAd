@@ -6,30 +6,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
+    android:orientation="vertical"
     tools:context=".Home">
 
-<!--    Smart refresh Layout    -->
-<!--    https://github.com/scwang90/SmartRefreshLayout#1    -->
-    <com.scwang.smart.refresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<!-- 顶部横向的RecyclerView, 用于呈现Category-->
+     <androidx.recyclerview.widget.RecyclerView
+         android:id="@+id/homeRecyclerViewHorizontal"
+         android:layout_width="match_parent"
+         android:layout_height="50dp"
+         android:orientation="horizontal"
+         >
+     </androidx.recyclerview.widget.RecyclerView>
+
+    <!--    Smart refresh Layout    -->
+    <!--    https://github.com/scwang90/SmartRefreshLayout#1    -->
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/homeRecyclerViewHorizontal"
         >
         <com.scwang.smart.refresh.header.ClassicsHeader
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
+<!--    纵向RecyclerView, 用于放Channel的Card-->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/mainScreenRecyclerView"
+            android:id="@+id/homeRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="match_parent" />
         <com.scwang.smart.refresh.footer.ClassicsFooter
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
     </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
+
+<!--底部的NavBar-->
     <RelativeLayout
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
@@ -37,8 +49,6 @@
         android:layout_gravity="bottom"
         android:layout_alignParentBottom="true"
         android:gravity="center">
-
-
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavBar"
             android:layout_width="300dp"

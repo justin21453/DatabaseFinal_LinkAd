@@ -41,6 +41,8 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
     //smart refresh 智能刷新
+    implementation 'com.scwang.smartrefresh:SmartRefreshHorizontal:1.1.2-x' //横向RecyclerView
+    implementation 'com.scwang.smart:refresh-layout-horizontal:2.0.0'   //横向RecyclerView
     implementation  'com.scwang.smart:refresh-layout-kernel:2.0.1'      //核心必须依赖
     implementation  'com.scwang.smart:refresh-header-classics:2.0.1'    //经典刷新头
     implementation  'com.scwang.smart:refresh-footer-classics:2.0.1'    //经典加载
