@@ -35,6 +35,7 @@ public class Home extends AppCompatActivity implements HideScrollListener {
     //recyclerView 用于主页Card(Channel)的显示, recyclerViewHorizontal用于主页顶部的Category Button的显示
     RecyclerView recyclerView, recyclerViewHorizontal;
 
+    //TODO:改用 List<ChannelCard>来接收server的response
     //用于接收数据，与RecycleView, Adapter合作
     String channel_name[], category[], subscribe[], view[];
 

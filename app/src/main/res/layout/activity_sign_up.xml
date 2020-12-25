@@ -98,7 +98,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:background="@drawable/shape_10dp_corners_dark_grey"
-
+        android:clickable="true"
         android:text="SIGN UP"
         android:textColor="@android:color/white"
         android:textSize="20sp"

@@ -26,8 +26,6 @@ public class UserAccount extends AppCompatActivity {
         bottomNavBar.setSelectedItemId(R.id.nav_account);
 
         navBarInit(bottomNavBar);
-
-
     }
 
 
