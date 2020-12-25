@@ -14,7 +14,7 @@
      <androidx.recyclerview.widget.RecyclerView
          android:id="@+id/homeRecyclerViewHorizontal"
          android:layout_width="match_parent"
-         android:layout_height="50dp"
+         android:layout_height="wrap_content"
          android:orientation="horizontal"
          >
      </androidx.recyclerview.widget.RecyclerView>
@@ -54,7 +54,7 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:elevation="2dp"
-            android:background="@drawable/main_screen_nav_bg"
+            android:background="@drawable/home_nav_bg"
             app:menu="@menu/main_screen_menu_items"
             app:labelVisibilityMode="unlabeled"
             app:itemIconSize="30dp"

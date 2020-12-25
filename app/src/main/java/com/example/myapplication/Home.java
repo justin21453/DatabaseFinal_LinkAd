@@ -10,12 +10,11 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.myapplication.adpater.HideScrollListener;
-import com.example.myapplication.adpater.HomeAdapter;
+import com.example.myapplication.adpater.HomeCardAdapter;
 import com.example.myapplication.adpater.HomeCategoryAdapter;
 import com.example.myapplication.adpater.NavScrollListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -37,7 +36,8 @@ public class Home extends AppCompatActivity implements HideScrollListener {
     RecyclerView recyclerView, recyclerViewHorizontal;
 
     //用于接收数据，与RecycleView, Adapter合作
-    String cardTitle[], cardDescription[], category[];
+    String channel_name[], category[], subscribe[], view[];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +51,16 @@ public class Home extends AppCompatActivity implements HideScrollListener {
         // 设置 NavBar 上的选中元素为 home (房子)
         bottomNavBar.setSelectedItemId(R.id.nav_home);
 
+        navBarInit(bottomNavBar);
+
+        //TODO: 主页面 RecyclerView 的数据呈现
+        smartRefreshInit();
+        //TODO: 绑定顶部的 Category 数据, 完善 RecyclerViewHorizontal
+        horizontalRecyclerViewInit();
+
+    }
+
+    private void navBarInit(BottomNavigationView bottomNavBar) {
         // 跳转到新页面，并 reorder 到前面,重新排序 activity (参考下面 Link)
         // https://www.jianshu.com/p/537aa221eec4/
         bottomNavBar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -75,46 +85,9 @@ public class Home extends AppCompatActivity implements HideScrollListener {
                 return false;
             }
         });
-        //TODO: 主页面 RecyclerView 的数据呈现
-        //Smart Refresh 智能刷新, 下拉刷新, 上滑加载
-        //https://github.com/scwang90/SmartRefreshLayout/blob/master/art/md_property.md
+    }
 
-        //绑定RefreshLayout 和 它的 Header,Footer
-        RefreshLayout refreshLayout = (RefreshLayout)findViewById(R.id.refreshLayout);
-        refreshLayout.setRefreshHeader(new ClassicsHeader(this));
-        refreshLayout.setRefreshFooter(new ClassicsFooter(this));
-
-        //TODO: 绑定Channel数据到Card上, 完善Card设计
-        //首页卡片的RecyclerView的Title和Description的文本内容
-        cardTitle = getResources().getStringArray(R.array.recycle_row_main_screen_title);
-        cardDescription = getResources().getStringArray(R.array.recycle_row_main_screen_description);
-        //初始化 HomeAdapter 并赋予data
-        HomeAdapter homeAdapter = new HomeAdapter(this, cardTitle, cardDescription);
-        //绑定Adapter 和 RecyclerView
-        recyclerView.setAdapter(homeAdapter);
-        //设置RecyclerView的每一row的样式
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        //设置RecyclerView的滑动监听, 用于实现滑动隐藏NavBar
-        recyclerView.addOnScrollListener(new NavScrollListener(this));
-
-        //TODO: 实现下拉刷新 Data
-        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshlayout) {
-                //下拉刷新
-                refreshlayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
-            }
-        });
-        //TODO: 实现上滑加载更多的 Data
-        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(RefreshLayout refreshlayout) {
-                //上滑加载更多
-                refreshlayout.finishLoadMore(2000/*,false*/);//传入false表示加载失败
-            }
-        });
-
-        //TODO: 绑定顶部的 Category 数据, 完善 RecyclerViewHorizontal
+    private void horizontalRecyclerViewInit() {
         //横向Category的文本内容
         category = getResources().getStringArray(R.array.recycle_row_home_category);
         ////初始化 HomeCategoryAdapter 并赋予data
@@ -126,20 +99,56 @@ public class Home extends AppCompatActivity implements HideScrollListener {
         recyclerViewHorizontal.setLayoutManager(linearLayoutManager);
     }
 
+    private void smartRefreshInit() {
+        //Smart Refresh 智能刷新, 下拉刷新, 上滑加载
+        //https://github.com/scwang90/SmartRefreshLayout/blob/master/art/md_property.md
+        //绑定RefreshLayout 和 它的 Header,Footer
+        RefreshLayout refreshLayout = (RefreshLayout)findViewById(R.id.refreshLayout);
+        refreshLayout.setRefreshHeader(new ClassicsHeader(this));
+        refreshLayout.setRefreshFooter(new ClassicsFooter(this));
+
+        //TODO: 绑定Channel数据到Card上, 完善Card设计
+        //首页卡片的RecyclerView的Title和Description的文本内容
+        channel_name = getResources().getStringArray(R.array.recycle_row_main_screen_title);
+        //初始化 HomeAdapter 并赋予data
+        HomeCardAdapter homeCardAdapter = new HomeCardAdapter(this, channel_name, category, subscribe, view);
+        //绑定Adapter 和 RecyclerView
+        recyclerView.setAdapter(homeCardAdapter);
+        //设置RecyclerView的每一row的样式
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //设置RecyclerView的滑动监听, 用于实现滑动隐藏NavBar
+        recyclerView.addOnScrollListener(new NavScrollListener(this));
+
+        //TODO: 实现下拉刷新 Data
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshlayout) {
+                //下拉刷新
+                refreshlayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
+            }
+        });
+        //TODO: 实现上滑加载更多的 Data
+        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshlayout) {
+                //上滑加载更多
+                refreshlayout.finishLoadMore(2000/*,false*/);//传入false表示加载失败
+            }
+        });
+    }
+
     // 若再次返回会退出应用, 则User需要快速返回两次, 才能退出(目的是为了防误触)
     @Override
     public void onBackPressed(){
         if (isTaskRoot()) {
             if(mBackPressed+TIME_EXIT>System.currentTimeMillis()) {
                 super.onBackPressed();
-                return;
             } else {
                 Toast.makeText(this,"再次返回以退出",Toast.LENGTH_SHORT).show();
                 mBackPressed=System.currentTimeMillis();
             }
         } else {
             super.onBackPressed();
-            return;
         }
     }
 

@@ -67,7 +67,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:background="@drawable/shape_10dp_corners_black"
+        android:background="@drawable/shape_10dp_corners_dark_grey"
 
         android:text="LOGIN"
         android:textColor="@android:color/white"

@@ -22,17 +22,22 @@ public class UserAccount extends AppCompatActivity {
         setContentView(R.layout.activity_user_account);
 
         bottomNavBar = findViewById(R.id.bottomNavBar);
-
         // 设置 NavBar 上的选中元素为 account (头像)
         bottomNavBar.setSelectedItemId(R.id.nav_account);
 
+        navBarInit(bottomNavBar);
+
+
+    }
+
+
+    private void navBarInit(BottomNavigationView bottomNavBar) {
+        // 跳转到新页面，并 reorder 到前面,重新排序 activity (参考下面 Link)
+        // https://www.jianshu.com/p/537aa221eec4/
         bottomNavBar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
                 switch (item.getItemId()) {
-                    // 跳转到新页面，并 reorder 到前面,重新排序 activity (参考下面 Link)
-                    // https://www.jianshu.com/p/537aa221eec4/
                     case R.id.nav_home:
                         startActivity(new Intent(getApplicationContext(), Home.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
                         overridePendingTransition(0, 0);
@@ -60,14 +65,12 @@ public class UserAccount extends AppCompatActivity {
         if (isTaskRoot()) {
             if(mBackPressed+TIME_EXIT>System.currentTimeMillis()) {
                 super.onBackPressed();
-                return;
             } else {
                 Toast.makeText(this,"再次返回以退出",Toast.LENGTH_SHORT).show();
                 mBackPressed=System.currentTimeMillis();
             }
         } else {
             super.onBackPressed();
-            return;
         }
     }
 

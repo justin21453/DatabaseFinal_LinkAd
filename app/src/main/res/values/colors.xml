@@ -6,8 +6,9 @@
     <color name="linkAd">#C73232</color>
     <color name="myTextColor">#AFAFAF</color>
     <color name="white">#FFF</color>
-    <color name="grey">#333</color>
+    <color name="darkGrey">#333</color>
     <color name="lightGrey">#eee</color>
+    <color name="lightBlue">#5498CD</color>
 
 
 </resources>

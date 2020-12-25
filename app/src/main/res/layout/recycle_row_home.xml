@@ -7,13 +7,15 @@
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/card"
+        android:id="@+id/cardChannel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="380dp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="3dp"
+        android:background="@drawable/home_card_bg"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="13dp"
         app:cardCornerRadius="8dp"
-        android:background="@drawable/main_screen_card_bg"
-        android:layout_marginVertical="10dp"
-        android:layout_marginHorizontal="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,35 +26,224 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/cardImage"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/imgChannelAvatar"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginBottom="10dp"
+                android:adjustViewBounds="true"
+                android:elevation="1dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imgChannel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/avatar_image"
+                />
+
+            <TextView
+                android:id="@+id/channelName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/shape_4dp_corners_dark_grey"
+                android:elevation="1dp"
+                android:paddingHorizontal="2dp"
+                android:text="@string/channel_name"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/imgChannelAvatar"
+                app:layout_constraintTop_toTopOf="@+id/imgChannelAvatar" />
+
+            <TextView
+                android:id="@+id/category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_4dp_corners_dark_grey"
+                android:elevation="1dp"
+                android:paddingHorizontal="2dp"
+                android:text="@string/category"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/imgChannelAvatar"
+                app:layout_constraintStart_toStartOf="@+id/channelName" />
+
+            <ImageView
+                android:id="@+id/imgChannel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_baseline_favorite_24" />
+                app:srcCompat="@drawable/video_image"
+                />
 
             <TextView
-                android:id="@+id/cardText1"
+                android:id="@+id/sub"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="8dp"
-                android:text="Title"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/shape_4dp_corners_dark_grey"
+                android:paddingHorizontal="2dp"
+                android:text="@string/sub"
+                android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/cardImage"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toStartOf="@+id/imgChannel"
+                app:layout_constraintTop_toBottomOf="@+id/imgChannel" />
 
             <TextView
-                android:id="@+id/cardText2"
+                android:id="@+id/subscribeValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Description"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="@+id/cardText1"
-                app:layout_constraintTop_toBottomOf="@+id/cardText1" />
+                android:layout_marginStart="2dp"
+                android:text="100K"
+                android:textColor="@color/darkGrey"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/sub"
+                app:layout_constraintStart_toEndOf="@+id/sub"
+                app:layout_constraintTop_toTopOf="@+id/sub"
+                app:layout_constraintVertical_bias="0.5" />
+
+            <TextView
+                android:id="@+id/rank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="168dp"
+                android:background="@drawable/shape_4dp_corners_dark_grey"
+                android:paddingHorizontal="2dp"
+                android:text="@string/rank"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/sub"
+                app:layout_constraintStart_toStartOf="@+id/sub"
+                app:layout_constraintTop_toTopOf="@+id/sub"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <TextView
+                android:id="@+id/rankValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:text="90%"
+                android:textColor="@color/darkGrey"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/rank"
+                app:layout_constraintStart_toEndOf="@+id/rank"
+                app:layout_constraintTop_toTopOf="@+id/rank"
+                app:layout_constraintVertical_bias="0.5" />
+
+            <TextView
+                android:id="@+id/view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/shape_4dp_corners_dark_grey"
+                android:paddingHorizontal="2dp"
+                android:text="@string/view"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/imgChannel"
+                app:layout_constraintTop_toBottomOf="@+id/sub" />
+
+            <TextView
+                android:id="@+id/viewValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:text="100M"
+                android:textColor="@color/darkGrey"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/view"
+                app:layout_constraintStart_toEndOf="@+id/view"
+                app:layout_constraintTop_toTopOf="@+id/view"
+                app:layout_constraintVertical_bias="0.5" />
+
+            <TextView
+                android:id="@+id/region"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="168dp"
+                android:background="@drawable/shape_4dp_corners_dark_grey"
+                android:paddingHorizontal="2dp"
+                android:text="@string/region"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/view"
+                app:layout_constraintStart_toStartOf="@+id/view"
+                app:layout_constraintTop_toTopOf="@+id/view"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <TextView
+                android:id="@+id/regionValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:text="TW"
+                android:textColor="@color/darkGrey"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/region"
+                app:layout_constraintStart_toEndOf="@+id/region"
+                app:layout_constraintTop_toTopOf="@+id/region"
+                app:layout_constraintVertical_bias="0.5" />
+
+            <TextView
+                android:id="@+id/tag_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/tag_bg"
+                android:paddingHorizontal="15dp"
+                android:paddingBottom="2dp"
+                android:text="tag"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tag_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/tag_bg"
+                android:paddingHorizontal="15dp"
+                android:paddingBottom="2dp"
+                android:text="tag"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/tag_1"
+                app:layout_constraintStart_toEndOf="@+id/tag_1"
+                app:layout_constraintTop_toTopOf="@+id/tag_1"
+                app:layout_constraintVertical_bias="0.0" />
+            <TextView
+                android:id="@+id/tag_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/tag_bg"
+                android:paddingHorizontal="15dp"
+                android:paddingBottom="2dp"
+                android:text="tag"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/tag_2"
+                app:layout_constraintStart_toEndOf="@+id/tag_2"
+                app:layout_constraintTop_toTopOf="@+id/tag_2"
+                app:layout_constraintVertical_bias="0.0" />
+
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
