@@ -7,22 +7,40 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.myapplication.Retrofit.IMyService;
+import com.example.myapplication.Retrofit.RetrofitClient;
 import com.example.myapplication.adpater.HideScrollListener;
 import com.example.myapplication.adpater.HomeCardAdapter;
 import com.example.myapplication.adpater.HomeCategoryAdapter;
 import com.example.myapplication.adpater.NavScrollListener;
+import com.example.myapplication.model.ChannelCard;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.header.ClassicsHeader;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.List;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.example.myapplication.WaitTime.TIME_EXIT;
 // HideScrollListener 检测用户滑动的监听器, 用于自动隐藏NavBar
@@ -34,10 +52,13 @@ public class Home extends AppCompatActivity implements HideScrollListener {
     RelativeLayout bottomNav;
     //recyclerView 用于主页Card(Channel)的显示, recyclerViewHorizontal用于主页顶部的Category Button的显示
     RecyclerView recyclerView, recyclerViewHorizontal;
+    // 初始化网络连接服务(呼叫后端用的 service)
+    IMyService          iMyService;
+    String category[];
+    List<ChannelCard> channelCards;
 
     //TODO:改用 List<ChannelCard>来接收server的response
     //用于接收数据，与RecycleView, Adapter合作
-    String channel_name[], category[], subscribe[], view[];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +73,74 @@ public class Home extends AppCompatActivity implements HideScrollListener {
         // 设置 NavBar 上的选中元素为 home (房子)
         bottomNavBar.setSelectedItemId(R.id.nav_home);
 
+
+        // 宣告 Retrofit 进行网络链接,并取得服务
+        iMyService = RetrofitClient.getInstance().create(IMyService.class);
+
+        cardInit(iMyService);
+
         navBarInit(bottomNavBar);
 
         //TODO: 主页面 RecyclerView 的数据呈现
         smartRefreshInit();
         //TODO: 绑定顶部的 Category 数据, 完善 RecyclerViewHorizontal
         horizontalRecyclerViewInit();
+
+    }
+
+    private void cardInit(IMyService iMyService) {
+
+        iMyService.getChannelCard()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull String s) {
+                        Log.d("成功", s);
+                        Toast.makeText(Home.this,s, Toast.LENGTH_SHORT).show();
+                        String s1 = "测试";
+//                        Toast.makeText(Home.this,s1, Toast.LENGTH_SHORT).show();
+
+                        try {
+                            JSONArray array = new JSONArray(s);
+                            for (int i = 0; i<array.length(); i++ ) {
+                                ChannelCard channelCard = new ChannelCard();
+                                JSONObject jsonObject = array.getJSONObject(i);
+                                Toast.makeText(Home.this,jsonObject.toString(), Toast.LENGTH_SHORT).show();
+
+//                                channelCard.setChannelTitle(jsonObject.getString("channelTitle"));
+//                                channelCard.setChannelCategory(jsonObject.getString("channelCategory"));
+//                                channelCard.setSubscriber(jsonObject.getString("subscriber"));
+//                                channelCard.setAllViewCount(jsonObject.getString("allViewCount"));
+//                                channelCards.add(channelCard);
+//                                s1+=jsonObject.getString("channelTitle");
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Toast.makeText(Home.this,s1, Toast.LENGTH_SHORT).show();
+
+
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        Toast.makeText(Home.this,"请检查网络", Toast.LENGTH_SHORT).show();
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
 
     }
 
@@ -110,9 +193,9 @@ public class Home extends AppCompatActivity implements HideScrollListener {
 
         //TODO: 绑定Channel数据到Card上, 完善Card设计
         //首页卡片的RecyclerView的Title和Description的文本内容
-        channel_name = getResources().getStringArray(R.array.recycle_row_main_screen_title);
+        String[] channel_name = getResources().getStringArray(R.array.recycle_row_main_screen_title);
         //初始化 HomeAdapter 并赋予data
-        HomeCardAdapter homeCardAdapter = new HomeCardAdapter(this, channel_name, category, subscribe, view);
+        HomeCardAdapter homeCardAdapter = new HomeCardAdapter(this, channel_name);
         //绑定Adapter 和 RecyclerView
         recyclerView.setAdapter(homeCardAdapter);
         //设置RecyclerView的每一row的样式

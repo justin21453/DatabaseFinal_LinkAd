@@ -16,9 +16,9 @@
         android:clickable="true"
         app:cardUseCompatPadding="true"
         app:cardElevation="4dp"
-        app:contentPadding="2dp"
-        app:cardCornerRadius="8dp"
-        app:cardBackgroundColor="@color/darkGrey"
+        app:contentPaddingBottom="4dp"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="@color/grey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/home_card_bg"
-            android:padding="11dp"
+            android:padding="12dp"
             >
 
             <ImageView
@@ -39,9 +39,9 @@
                 android:layout_marginBottom="10dp"
                 android:adjustViewBounds="true"
                 android:elevation="1dp"
+                tools:src="@drawable/avatar_image"
                 app:layout_constraintBottom_toBottomOf="@+id/imgChannel"
                 app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@drawable/avatar_image"
                 />
 
             <TextView
@@ -78,11 +78,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/video_image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/video_image"
                 />
 
             <TextView

@@ -1,6 +1,11 @@
 package com.example.myapplication.Retrofit;
 
+import com.example.myapplication.model.ChannelCard;
+
+import java.util.List;
+
 import io.reactivex.Observable;
+import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -18,5 +23,5 @@ public interface IMyService {
                                  @Field("password") String password);
 
     @GET("home")
-    Observable<String> getData();
+    Observable<String> getChannelCard();
 }

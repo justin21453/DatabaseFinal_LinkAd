@@ -8,6 +8,7 @@
     <color name="white">#FFF</color>
     <color name="lightWhite">#F9F9F9</color>
 
+    <color name="grey">#777</color>
     <color name="darkGrey">#333</color>
     <color name="lightGrey">#eee</color>
     <color name="lightBlue">#5498CD</color>

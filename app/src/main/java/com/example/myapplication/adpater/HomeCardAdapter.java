@@ -15,6 +15,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.myapplication.R;
+import com.example.myapplication.model.ChannelCard;
+
+import java.util.List;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
@@ -25,14 +28,15 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
     Context     context;
     //初始化自定义的参数
     String channel_name[], category[], subscribe[], view[];
+    List<ChannelCard> channelCards;
 
     // constructor: 初始化参数, Context接activity, 其余则是自定义的参数parameters
-    public HomeCardAdapter(Context context, String channel_name[], String category[], String subscribe[], String view[]) {
+    public HomeCardAdapter(Context context, String channel_name[]) {
         this.context = context;
         this.channel_name = channel_name;
-        this.category = category;
-        this.subscribe = subscribe;
-        this.view = view;
+//        this.category = category;
+//        this.subscribe = subscribe;
+//        this.view = view;
     }
 
     // 绑定View和Adapter的function
@@ -78,10 +82,13 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
         requestOptions.circleCropTransform();
         requestOptions.transform( new RoundedCorners(30));
         //load()可以放图片URL ("https://")
-        Glide.with(context).load(R.drawable.video_image)
+        Glide.with(context).load("")
                 .apply(requestOptions)
                 .into(holder.img_card);
-        Glide.with(context).load(R.drawable.avatar_image)
+        requestOptions.placeholder(R.drawable.avatar_image);
+        requestOptions.circleCropTransform();
+        requestOptions.transform( new RoundedCorners(30));
+        Glide.with(context).load("")
                 .apply(requestOptions)
                 .into(holder.img_avatar);
     }
