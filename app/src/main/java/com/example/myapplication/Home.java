@@ -157,7 +157,7 @@ public class Home extends AppCompatActivity implements HideScrollListener {
         refreshLayout.setRefreshHeader(new ClassicsHeader(this));
         refreshLayout.setRefreshFooter(new ClassicsFooter(this));
 //        Toast.makeText(Home.this,channelCards.size(), Toast.LENGTH_SHORT).show();
-        Log.d("成功", String.valueOf(channelCardsData.size()));
+        Log.d("成功, 獲得的卡片數量是", String.valueOf(channelCardsData.size()));
 
         //TODO: 绑定Channel数据到Card上, 完善Card设计
         //首页卡片的RecyclerView的Title和Description的文本内容

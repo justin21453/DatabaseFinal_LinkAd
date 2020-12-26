@@ -1,10 +1,12 @@
 package com.example.myapplication.adpater;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,8 +15,10 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.myapplication.R;
 import com.example.myapplication.model.ChannelCard;
 
@@ -22,13 +26,12 @@ import java.util.List;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
-// Home数据呈现的Adapter (结合RecyclerView使用)
+// Home页面ChannelCard呈现的Adapter (结合RecyclerView使用)
 public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCardViewHolder> {
 
     //初始化context用于接收对应activity
     Context     context;
     //初始化自定义的参数
-//    String channel_name[], category[], subscribe[], view[];
     List<ChannelCard> channelCards;
 
     // constructor: 初始化参数, Context接activity, 其余则是自定义的参数parameters
@@ -57,7 +60,6 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
             tags_1 = itemView.findViewById(R.id.tag_1);
             tags_2 = itemView.findViewById(R.id.tag_2);
             tags_3 = itemView.findViewById(R.id.tag_3);
-
         }
     }
 
@@ -74,40 +76,57 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
     @Override
     public void onBindViewHolder(@NonNull HomeCardViewHolder holder, int position) {
         //卡片出现动画
-        //holder.cardView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in));
+        holder.cv_channel.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in));
         //数据绑定
-        Log.d("成功", String.valueOf(channelCards.size()));
+        Log.d("綁定成功, 卡片的數量是: ", String.valueOf(channelCards.size()));
 
         holder.tv_channelName.setText(channelCards.get(position).getChannelTitle());
-        holder.tv_category.setText(channelCards.get(position).getChannelCategory());
+        holder.tv_channelName.setSingleLine(true);
+        String category = channelCards.get(position).getChannelCategory();
+        if(category.equals("NULL"))category = "None";   //如果Category是NULL的話
+        holder.tv_category.setText(category);
         holder.tv_subscribeValue.setText(convertBigInteger(channelCards.get(position).getSubscriber()));
         holder.tv_viewValue.setText(convertBigInteger(channelCards.get(position).getAllViewCount()));
 
         List<String> tags = channelCards.get(position).getTag();
+        //tags 可能为空
         if(tags != null)
-            tagBinding(holder, tags);
+            tagBinding(holder, position, tags);
 
         String medium_photo = channelCards.get(position).getThumbnailsUrlHigh().replaceFirst("hq","mq");
 
+        //图片加载设置
+        DrawableCrossFadeFactory factory =
+                new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
         RequestOptions requestOptions = new RequestOptions();
         //当图片没加载出来时候,显示占位符
-        requestOptions.placeholder(R.drawable.video_image);
         requestOptions.circleCropTransform();
-        requestOptions.transform( new RoundedCorners(30));
+        requestOptions.transform( new RoundedCorners(30));  //设置圆角Corner大小
         //load()可以放图片URL ("https://")
         Glide.with(context).load(medium_photo)
                 .apply(requestOptions)
+                .transition(withCrossFade(factory))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.video_image)
                 .into(holder.img_card);
-        requestOptions.placeholder(R.drawable.avatar_image);
-        requestOptions.circleCropTransform();
-        requestOptions.transform( new RoundedCorners(30));
         Glide.with(context).load(channelCards.get(position).getAvatarUrlHigh())
                 .apply(requestOptions)
+                .transition(withCrossFade(factory))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.avatar_image)
                 .into(holder.img_avatar);
     }
 
-    private void tagBinding(@NonNull HomeCardViewHolder holder, List<String> tag) {
+    @Override
+    public int getItemCount() {
+        //设置Item的数量, 这里指总共有几张卡片
+        return channelCards.size();
+    }
 
+    //绑定tag到3个tag_n上, 当tag不到3个或者tag的文字太长时, 进行一些处理
+    public void tagBinding(@NonNull HomeCardViewHolder holder, int position, List<String> tag) {
+        holder.tags_1.setMaxEms(7);
+        holder.tags_2.setMaxEms(7);
         if(tag.size()>=1){
             holder.tags_1.setText(tag.get(0));
             holder.tags_1.setSingleLine(true);
@@ -115,33 +134,29 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
         if(tag.size()>=2){
             holder.tags_2.setText(tag.get(1));
             holder.tags_2.setSingleLine(true);
-
         }
         if(tag.size()>=3){
-            holder.tags_3.setText(tag.get(2));
-            holder.tags_3.setSingleLine(true);
-
+            String str = "" + tag.get(0) + tag.get(1) + tag.get(2);
+            int str_length = str.length();
+            Log.d("成功,频道:"+ channelCards.get(position).getChannelTitle() + ",3个tags的长度是", String.valueOf(str_length));
+            if (str_length > 12) holder.tags_3.setVisibility(View.INVISIBLE);
+            else {
+                holder.tags_3.setText(tag.get(2));
+                holder.tags_3.setSingleLine(true);
+            }
         }
     }
 
-    @Override
-    public int getItemCount() {
-        //设置Item的数量
-        return channelCards.size();
-    }
-
-    public String convertBigInteger(String s) {
-        String str;
-        int s_num = Integer.parseInt(s);
-        if(s_num > 10e6){
-            str = (int)(s_num / 10e6) + "M";
-        } else if (s_num > 10e3){
-            str = (int)(s_num / 10e3) + "K";
-        }
-        else {
-            str = s;
+    //將訂閱和觀看轉化為縮寫(一千=1K, 一百萬=1M, 十億=1B)
+    public String convertBigInteger(String str) {
+        int s_num = Integer.parseInt(str);
+        if(s_num > 1e9){
+            str = (int)(s_num / 1e9) + "B";
+        } else if(s_num > 1e6){
+            str = (int)(s_num / 1e6) + "M";
+        } else if (s_num > 1e3){
+            str = (int)(s_num / 1e3) + "K";
         }
         return str;
     }
-
 }

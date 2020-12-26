@@ -6,10 +6,10 @@
     <string name="password">Password</string>
     <string name="name">Name</string>
     <string name="confirmPassword">Confirm Password</string>
-    <string name="region">Region</string>
-    <string name="view">View</string>
-    <string name="sub">Sub</string>
-    <string name="rank">Rank</string>
+    <string name="region">地區</string>
+    <string name="view">觀看</string>
+    <string name="sub">訂閱</string>
+    <string name="rank">排名</string>
     <string name="category">Category</string>
     <string name="channel_name">Channel Name</string>
 

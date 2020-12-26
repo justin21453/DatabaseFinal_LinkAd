@@ -15,18 +15,12 @@ public class ChannelCard {
     @SerializedName("avatar_url_high")
     @Expose
     private String avatarUrlHigh;
-    @SerializedName("avatar_url_small")
-    @Expose
-    private String avatarUrlSmall;
     @SerializedName("subscriber")
     @Expose
     private String subscriber;
     @SerializedName("allViewCount")
     @Expose
     private String allViewCount;
-    @SerializedName("video_url")
-    @Expose
-    private String videoUrl;
     @SerializedName("tag")
     @Expose
     private List<String> tag = null;
@@ -36,9 +30,6 @@ public class ChannelCard {
     @SerializedName("thumbnails_url_high")
     @Expose
     private String thumbnailsUrlHigh;
-    @SerializedName("thumbnails_url_small")
-    @Expose
-    private String thumbnailsUrlSmall;
 
     public String getChannelId() {
         return channelId;
@@ -64,14 +55,6 @@ public class ChannelCard {
         this.avatarUrlHigh = avatarUrlHigh;
     }
 
-    public String getAvatarUrlSmall() {
-        return avatarUrlSmall;
-    }
-
-    public void setAvatarUrlSmall(String avatarUrlSmall) {
-        this.avatarUrlSmall = avatarUrlSmall;
-    }
-
     public String getSubscriber() {
         return subscriber;
     }
@@ -86,14 +69,6 @@ public class ChannelCard {
 
     public void setAllViewCount(String allViewCount) {
         this.allViewCount = allViewCount;
-    }
-
-    public String getVideoUrl() {
-        return videoUrl;
-    }
-
-    public void setVideoUrl(String videoUrl) {
-        this.videoUrl = videoUrl;
     }
 
     public List<String> getTag() {
@@ -120,12 +95,5 @@ public class ChannelCard {
         this.thumbnailsUrlHigh = thumbnailsUrlHigh;
     }
 
-    public String getThumbnailsUrlSmall() {
-        return thumbnailsUrlSmall;
-    }
-
-    public void setThumbnailsUrlSmall(String thumbnailsUrlSmall) {
-        this.thumbnailsUrlSmall = thumbnailsUrlSmall;
-    }
 
 }
