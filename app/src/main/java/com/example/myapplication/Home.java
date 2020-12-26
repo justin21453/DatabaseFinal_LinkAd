@@ -55,7 +55,6 @@ public class Home extends AppCompatActivity implements HideScrollListener {
     // 初始化网络连接服务(呼叫后端用的 service)
     IMyService          iMyService;
     String category[];
-    List<ChannelCard> channelCards;
 
     //TODO:改用 List<ChannelCard>来接收server的response
     //用于接收数据，与RecycleView, Adapter合作
@@ -73,74 +72,41 @@ public class Home extends AppCompatActivity implements HideScrollListener {
         // 设置 NavBar 上的选中元素为 home (房子)
         bottomNavBar.setSelectedItemId(R.id.nav_home);
 
-
         // 宣告 Retrofit 进行网络链接,并取得服务
-        iMyService = RetrofitClient.getInstance().create(IMyService.class);
+        iMyService = RetrofitClient.getInstance_2().create(IMyService.class);
 
         cardInit(iMyService);
+
+
 
         navBarInit(bottomNavBar);
 
         //TODO: 主页面 RecyclerView 的数据呈现
-        smartRefreshInit();
+//        smartRefreshInit();
         //TODO: 绑定顶部的 Category 数据, 完善 RecyclerViewHorizontal
         horizontalRecyclerViewInit();
 
     }
 
     private void cardInit(IMyService iMyService) {
+        Call<List<ChannelCard>> call = iMyService.getAllChannelCards();
+        call.enqueue(new Callback<List<ChannelCard>>() {
+            @Override
+            public void onResponse(Call<List<ChannelCard>> call, Response<List<ChannelCard>> response) {
+                List<ChannelCard> channelCards = response.body();
 
-        iMyService.getChannelCard()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+                Log.d("成功",response.body().get(0).getAllViewCount());
+                Toast.makeText(Home.this,"response", Toast.LENGTH_SHORT).show();
 
-                    }
+                smartRefreshInit(channelCards);
+            }
 
-                    @Override
-                    public void onNext(@io.reactivex.annotations.NonNull String s) {
-                        Log.d("成功", s);
-                        Toast.makeText(Home.this,s, Toast.LENGTH_SHORT).show();
-                        String s1 = "测试";
-//                        Toast.makeText(Home.this,s1, Toast.LENGTH_SHORT).show();
+            @Override
+            public void onFailure(Call<List<ChannelCard>> call, Throwable t) {
+                Toast.makeText(Home.this,"请检查网络", Toast.LENGTH_SHORT).show();
 
-                        try {
-                            JSONArray array = new JSONArray(s);
-                            for (int i = 0; i<array.length(); i++ ) {
-                                ChannelCard channelCard = new ChannelCard();
-                                JSONObject jsonObject = array.getJSONObject(i);
-                                Toast.makeText(Home.this,jsonObject.toString(), Toast.LENGTH_SHORT).show();
-
-//                                channelCard.setChannelTitle(jsonObject.getString("channelTitle"));
-//                                channelCard.setChannelCategory(jsonObject.getString("channelCategory"));
-//                                channelCard.setSubscriber(jsonObject.getString("subscriber"));
-//                                channelCard.setAllViewCount(jsonObject.getString("allViewCount"));
-//                                channelCards.add(channelCard);
-//                                s1+=jsonObject.getString("channelTitle");
-
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Toast.makeText(Home.this,s1, Toast.LENGTH_SHORT).show();
-
-
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        Toast.makeText(Home.this,"请检查网络", Toast.LENGTH_SHORT).show();
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+            }
+        });
 
     }
 
@@ -183,19 +149,21 @@ public class Home extends AppCompatActivity implements HideScrollListener {
         recyclerViewHorizontal.setLayoutManager(linearLayoutManager);
     }
 
-    private void smartRefreshInit() {
+    private void smartRefreshInit(List<ChannelCard> channelCardsData) {
         //Smart Refresh 智能刷新, 下拉刷新, 上滑加载
         //https://github.com/scwang90/SmartRefreshLayout/blob/master/art/md_property.md
         //绑定RefreshLayout 和 它的 Header,Footer
-        RefreshLayout refreshLayout = (RefreshLayout)findViewById(R.id.refreshLayout);
+        RefreshLayout refreshLayout = findViewById(R.id.refreshLayout);
         refreshLayout.setRefreshHeader(new ClassicsHeader(this));
         refreshLayout.setRefreshFooter(new ClassicsFooter(this));
+//        Toast.makeText(Home.this,channelCards.size(), Toast.LENGTH_SHORT).show();
+        Log.d("成功", String.valueOf(channelCardsData.size()));
 
         //TODO: 绑定Channel数据到Card上, 完善Card设计
         //首页卡片的RecyclerView的Title和Description的文本内容
         String[] channel_name = getResources().getStringArray(R.array.recycle_row_main_screen_title);
         //初始化 HomeAdapter 并赋予data
-        HomeCardAdapter homeCardAdapter = new HomeCardAdapter(this, channel_name);
+        HomeCardAdapter homeCardAdapter = new HomeCardAdapter(this, channelCardsData);
         //绑定Adapter 和 RecyclerView
         recyclerView.setAdapter(homeCardAdapter);
         //设置RecyclerView的每一row的样式

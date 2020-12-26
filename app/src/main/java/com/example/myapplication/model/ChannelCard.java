@@ -128,5 +128,4 @@ public class ChannelCard {
         this.thumbnailsUrlSmall = thumbnailsUrlSmall;
     }
 
-
 }

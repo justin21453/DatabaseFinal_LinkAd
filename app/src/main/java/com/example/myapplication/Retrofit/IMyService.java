@@ -23,5 +23,5 @@ public interface IMyService {
                                  @Field("password") String password);
 
     @GET("home")
-    Observable<String> getChannelCard();
+    Call<List<ChannelCard>> getAllChannelCards();
 }
