@@ -22,12 +22,10 @@ public class Search extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         bottomNavBar = findViewById(R.id.bottomNavBar);
-
         // 设置 NavBar 上的选中元素为 search (放大镜)
         bottomNavBar.setSelectedItemId(R.id.nav_search);
 
         navBarInit(bottomNavBar);
-
     }
 
     private void navBarInit(BottomNavigationView bottomNavBar) {
@@ -90,4 +88,5 @@ public class Search extends AppCompatActivity {
         super.onPause();
         overridePendingTransition(0, 0);
     }
+
 }

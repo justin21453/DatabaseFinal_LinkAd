@@ -21,7 +21,10 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.myapplication.R;
 import com.example.myapplication.model.ChannelCard;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
@@ -32,10 +35,10 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
     //初始化context用于接收对应activity
     Context     context;
     //初始化自定义的参数
-    List<ChannelCard> channelCards;
+    ArrayList<ChannelCard> channelCards;
 
     // constructor: 初始化参数, Context接activity, 其余则是自定义的参数parameters
-    public HomeCardAdapter(Context context, List<ChannelCard> channelCards) {
+    public HomeCardAdapter(Context context, ArrayList<ChannelCard> channelCards) {
         this.context = context;
         this.channelCards = channelCards;
     }
@@ -91,7 +94,11 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
         List<String> tags = channelCards.get(position).getTag();
         //tags 可能为空
         if(tags != null)
-            tagBinding(holder, position, tags);
+            tagBinding(holder, tags);
+        else {
+            holder.tags_2.setVisibility(View.INVISIBLE);
+            holder.tags_3.setVisibility(View.INVISIBLE);
+        }
 
         String medium_photo = channelCards.get(position).getThumbnailsUrlHigh().replaceFirst("hq","mq");
 
@@ -124,38 +131,62 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
     }
 
     //绑定tag到3个tag_n上, 当tag不到3个或者tag的文字太长时, 进行一些处理
-    public void tagBinding(@NonNull HomeCardViewHolder holder, int position, List<String> tag) {
-        holder.tags_1.setMaxEms(7);
-        holder.tags_2.setMaxEms(7);
-        if(tag.size()>=1){
-            holder.tags_1.setText(tag.get(0));
-            holder.tags_1.setSingleLine(true);
-        }
-        if(tag.size()>=2){
-            holder.tags_2.setText(tag.get(1));
-            holder.tags_2.setSingleLine(true);
-        }
+    public void tagBinding(@NonNull HomeCardViewHolder holder, List<String> tag) {
+        holder.tags_1.setText(tag.get(0));
+        holder.tags_1.setSingleLine(true);
+        holder.tags_2.setSingleLine(true);
+        holder.tags_3.setSingleLine(true);
+
+        holder.tags_1.setMaxEms(10);
         if(tag.size()>=3){
-            String str = "" + tag.get(0) + tag.get(1) + tag.get(2);
-            int str_length = str.length();
-            Log.d("成功,频道:"+ channelCards.get(position).getChannelTitle() + ",3个tags的长度是", String.valueOf(str_length));
-            if (str_length > 12) holder.tags_3.setVisibility(View.INVISIBLE);
-            else {
+            holder.tags_2.setVisibility(View.VISIBLE);
+            holder.tags_2.setText(tag.get(1));
+            holder.tags_1.setMaxEms(6);
+            holder.tags_2.setMaxEms(6);
+            String str = "" + tag.get(0) + tag.get(1);
+            int str_tag_2 = str.length();
+            str += tag.get(2);
+            int str_tag_3 = str.length();
+            if (str_tag_3 > 12) {
+                holder.tags_3.setVisibility(View.INVISIBLE);
+            } else {
+                holder.tags_3.setVisibility(View.VISIBLE);
+                if (str_tag_2 > 12) {
+                    holder.tags_1.setMaxEms(4);
+                    holder.tags_2.setMaxEms(4);
+                }
                 holder.tags_3.setText(tag.get(2));
-                holder.tags_3.setSingleLine(true);
+                holder.tags_3.setMaxEms(4);
             }
+        } else if(tag.size()>=2){
+            String str = "" + tag.get(0) + tag.get(1);
+            holder.tags_1.setMaxEms(6);
+            holder.tags_2.setMaxEms(6);
+            if (str.length() > 12) {
+                holder.tags_1.setMaxEms(5);
+                holder.tags_2.setMaxEms(5);
+            }
+            holder.tags_2.setText(tag.get(1));
+            holder.tags_2.setVisibility(View.VISIBLE);
+            holder.tags_3.setVisibility(View.INVISIBLE);
+        } else if(tag.size()==1){
+            holder.tags_2.setVisibility(View.INVISIBLE);
+            holder.tags_3.setVisibility(View.INVISIBLE);
+
         }
     }
 
     //將訂閱和觀看轉化為縮寫(一千=1K, 一百萬=1M, 十億=1B)
     public String convertBigInteger(String str) {
-        int s_num = Integer.parseInt(str);
-        if(s_num > 1e9){
-            str = (int)(s_num / 1e9) + "B";
-        } else if(s_num > 1e6){
-            str = (int)(s_num / 1e6) + "M";
-        } else if (s_num > 1e3){
-            str = (int)(s_num / 1e3) + "K";
+        if(str.length() > 9){
+            str = str.substring(0, str.length()-9);
+            str += "B";
+        } else if(str.length() > 6){
+            str = str.substring(0, str.length()-6);
+            str += "M";
+        } else if (str.length() > 3){
+            str = str.substring(0, str.length()-3);
+            str += "K";
         }
         return str;
     }

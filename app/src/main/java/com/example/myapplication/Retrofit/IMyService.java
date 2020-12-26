@@ -2,6 +2,8 @@ package com.example.myapplication.Retrofit;
 
 import com.example.myapplication.model.ChannelCard;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -23,5 +25,5 @@ public interface IMyService {
                                  @Field("password") String password);
 
     @GET("home")
-    Call<List<ChannelCard>> getAllChannelCards();
+    Call<ArrayList<ChannelCard>> getAllChannelCards();
 }
