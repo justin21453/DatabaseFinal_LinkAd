@@ -11,9 +11,8 @@
         android:id="@+id/cardChannel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="14dp"
-        android:clickable="true"
+        app:cardMaxElevation="13dp"
+
         android:foreground="?attr/selectableItemBackground"
         app:cardBackgroundColor="@color/grey"
         app:cardCornerRadius="16dp"

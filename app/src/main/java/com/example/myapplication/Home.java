@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.RelativeLayout;
@@ -125,6 +127,22 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
             }
 
         });
+    }
+
+    @Override
+    public boolean onCardTouch(View v, MotionEvent event) {
+        int action = event.getAction();
+        if (action == MotionEvent.ACTION_DOWN) {
+            v.animate().scaleX(0.96f).setDuration(130).start();
+            v.animate().scaleY(0.96f).setDuration(130).start();
+
+        } else {
+            v.animate().cancel();
+            v.animate().scaleX(1f).setDuration(150).start();
+            v.animate().scaleY(1f).setDuration(150).start();
+        }
+
+        return true;  //this should be true to get further event's
     }
 
     @Override

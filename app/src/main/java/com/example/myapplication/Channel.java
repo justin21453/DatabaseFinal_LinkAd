@@ -5,8 +5,11 @@ import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -17,6 +20,8 @@ import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class Channel extends AppCompatActivity {
+
+    private static final String TAG = "成功";
 
     CardView cv_channel;
     ImageView img_card, img_avatar;
@@ -46,7 +51,7 @@ public class Channel extends AppCompatActivity {
         String viewValue = intent.getStringExtra("viewValue");
         String medium_photo_url = intent.getStringExtra("thumbnail").replaceFirst("hq","mq");
         String avatar_url = intent.getStringExtra("avatar");
-
+        if (subscribeValue.equals("-1")) subscribeValue = "未公開";
         tv_channelName.setText(channelName);
         tv_category.setText(category);
         tv_subscribeValue.setText(subscribeValue);
@@ -73,7 +78,23 @@ public class Channel extends AppCompatActivity {
                 .placeholder(R.drawable.avatar_image)
                 .into(img_avatar);
 
+        cv_channel.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                if (action == MotionEvent.ACTION_DOWN) {
+                    v.animate().scaleX(0.94f).setDuration(130).start();
+                    v.animate().scaleY(0.94f).setDuration(130).start();
 
+                } else {
+                    v.animate().cancel();
+                    v.animate().scaleX(1f).setDuration(130).start();
+                    v.animate().scaleY(1f).setDuration(130).start();
+                }
+
+                return true;
+            }
+        });
 
     }
 

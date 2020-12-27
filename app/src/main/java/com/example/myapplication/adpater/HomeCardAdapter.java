@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -49,7 +51,7 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
     }
 
     // 绑定View和Adapter的function
-    public class HomeCardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class HomeCardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener{
         CardView cv_channel;
         ImageView img_card, img_avatar;
         TextView tv_channelName, tv_category, tv_subscribeValue, tv_viewValue;
@@ -61,6 +63,7 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
             super(itemView);
             this.onCardListener = onCardListener;
             itemView.setOnClickListener(this);
+            itemView.setOnTouchListener(this);
             //绑定Card里面的View
             cv_channel = itemView.findViewById(R.id.cardChannel);
             img_card = itemView.findViewById(R.id.imgChannel);
@@ -72,13 +75,17 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
             tags_1 = itemView.findViewById(R.id.tag_1);
             tags_2 = itemView.findViewById(R.id.tag_2);
             tags_3 = itemView.findViewById(R.id.tag_3);
-
-
         }
 
         @Override
         public void onClick(View v) {
             onCardListener.onCardClick(getAdapterPosition());
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            onCardListener.onCardTouch(v, event);
+            return false;
         }
     }
 
@@ -103,7 +110,7 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
         if(category.equals("NULL"))category = "None";   //如果Category是NULL的話
         holder.tv_category.setText(category);
         String subscribe = convertBigInteger(channelCards.get(position).getSubscriber());
-        if (subscribe.equals("-1")) subscribe = "---";
+        if (subscribe.equals("-1")) subscribe = "未公開";
         holder.tv_subscribeValue.setText(subscribe);
         holder.tv_viewValue.setText(convertBigInteger(channelCards.get(position).getAllViewCount()));
 
@@ -148,6 +155,7 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
 
     public interface OnCardListener {
         void onCardClick(int position);
+        boolean onCardTouch(View v, MotionEvent event);
     }
 
     //绑定tag到3个tag_n上, 当tag不到3个或者tag的文字太长时, 进行一些处理

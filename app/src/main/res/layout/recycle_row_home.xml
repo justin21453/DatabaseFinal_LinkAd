@@ -13,7 +13,7 @@
         android:layout_marginHorizontal="6dp"
         android:foreground="?android:attr/selectableItemBackgroundBorderless"
         app:cardUseCompatPadding="true"
-        app:contentPaddingBottom="2dp"
+        app:contentPaddingBottom="4dp"
         app:cardCornerRadius="10dp"
         app:cardBackgroundColor="@color/grey"
         app:layout_constraintBottom_toBottomOf="parent"
