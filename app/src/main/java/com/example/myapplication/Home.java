@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.myapplication.Retrofit.IMyService;
 import com.example.myapplication.Retrofit.RetrofitClient;
+import com.example.myapplication.Retrofit.RetrofitClientGson;
 import com.example.myapplication.adpater.HideScrollListener;
 import com.example.myapplication.adpater.HomeCardAdapter;
 import com.example.myapplication.adpater.HomeCategoryAdapter;
@@ -29,7 +30,6 @@ import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,21 +39,22 @@ import static com.example.myapplication.WaitTime.TIME_EXIT;
 import static java.lang.Thread.sleep;
 
 // HideScrollListener 检测用户滑动的监听器, 用于自动隐藏NavBar
-public class Home extends AppCompatActivity implements HideScrollListener {
+public class Home extends AppCompatActivity implements HideScrollListener, HomeCardAdapter.OnCardListener {
 
-    private long mBackPressed;
+    private static final String TAG = "成功";
+
+    private long                mBackPressed;
     //初始化layout中的View等
-    BottomNavigationView bottomNavBar;
-    RelativeLayout bottomNav;
+    BottomNavigationView        bottomNavBar;
+    RelativeLayout              bottomNav;
     //recyclerView 用于主页Card(Channel)的显示, recyclerViewHorizontal用于主页顶部的Category Button的显示
-    RecyclerView recyclerView, recyclerViewHorizontal;
+    RecyclerView                recyclerView, recyclerViewHorizontal;
+    HomeCardAdapter             homeCardAdapter;
     // 初始化网络连接服务(呼叫后端用的 service)
-    IMyService          iMyService;
-    String category[];
-    boolean check, checkUpdate;
-
-    ArrayList<ChannelCard> channelCards = new ArrayList<>();
-    //用于接收数据，与RecycleView, Adapter合作
+    IMyService                  iMyService;
+    String                      category[];
+    //接收server回传的json,通过converter(Gson)直接转换为Object List, 绑定到RecyclerView的卡片上
+    ArrayList<ChannelCard>      channelCards = new ArrayList<>();
 
 
     @Override
@@ -62,65 +63,128 @@ public class Home extends AppCompatActivity implements HideScrollListener {
         setContentView(R.layout.activity_home);
 
         recyclerView = findViewById(R.id.homeRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addOnScrollListener(new NavScrollListener(this));  //绑定滑动监听器
         recyclerViewHorizontal = findViewById(R.id.homeRecyclerViewHorizontal);
-        // bottomNav 是 NavBar外层的 RelativeLayout, 用于实现自动隐藏 NavBar效果
         bottomNav = findViewById(R.id.bottomNav);
         bottomNavBar = findViewById(R.id.bottomNavBar);
-        // 设置 NavBar 上的选中元素为 home (房子)
-        bottomNavBar.setSelectedItemId(R.id.nav_home);
-
-        // 宣告 Retrofit 进行网络链接,并取得服务
-        iMyService = RetrofitClient.getInstance_2().create(IMyService.class);
-
-        //第一次初始化 SmartRefreshView, 此层套在RecyclerView的外层
-        //避免cardInit时候的网络问题,而出现没有初始化SmartRefreshView,导致此时刷新，没法重新加载的情况
-        smartRefreshInit(channelCards);
-
-        //初始化ChannelCard(刷新同样使用该 function)
-        cardInit();
+        bottomNavBar.setSelectedItemId(R.id.nav_home);        // 设置 NavBar 上的选中元素为 home (房子)
 
         //底部导航栏Navigation bar 的初始化
         navBarInit(bottomNavBar);
         //TODO: 绑定顶部的 Category 数据, 完善 RecyclerViewHorizontal
         horizontalRecyclerViewInit();
 
+        //第一次初始化 SmartRefreshView, 此层套在RecyclerView的外层
+        smartRefreshInit();
+        //初始化CardAdapter, 避免cardInit()时,因网络问题导致adapter未绑定而无法刷新，重新联网也无法重新加载的情况
+        cardAdapterInit();
+
+        iMyService = RetrofitClientGson.getInstance().create(IMyService.class);        // 宣告 Retrofit 进行网络链接,并取得服务
+        //启动App, 或者刷新时, 都会调用 cardInit(), 目的是去server抓ChannelCard的信息
+        cardInit();
+
+
+
     }
 
+    //初始化目前存儲的channelCards, 重新抓取, 並重設adapter
     private void cardInit() {
         Call<ArrayList<ChannelCard>> call = iMyService.getAllChannelCards();
         call.enqueue(new Callback<ArrayList<ChannelCard>>() {
+            //onResponse 只有成功接收到response才会执行, 同时,由于是多线程进行, call之后的语句不会等到Call执行完才执行
             @Override
             public void onResponse(Call<ArrayList<ChannelCard>> call, Response<ArrayList<ChannelCard>> response) {
                 if (response.isSuccessful() && response.body() != null){
-                    //因为刷新会清空原有的Card,所以需要重新初始化
-                    //重新初始化 SmartRefreshView, 用新的数据重新绑定 Adapter
-                    smartRefreshInit(response.body());
+                    //用返还的ArrayList覆盖现有的 channelCards 中的data(相当于初始化)
+                    channelCards = response.body();
+                    cardAdapterInit();
                 }
             }
             @Override
             public void onFailure(Call<ArrayList<ChannelCard>> call, Throwable t) {
-                Toast.makeText(Home.this,"请检查网络", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Home.this,"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void cardLoadMore(ArrayList<ChannelCard> listChannelCard) {
+    private void cardLoadMore() {
         Call<ArrayList<ChannelCard>> call = iMyService.getAllChannelCards();
         call.enqueue(new Callback<ArrayList<ChannelCard>>() {
             @Override
             public void onResponse(Call<ArrayList<ChannelCard>> call, Response<ArrayList<ChannelCard>> response) {
                 if (response.isSuccessful() && response.body() != null){
                     //添加更多Card
-                    listChannelCard.addAll(response.body());
-                    Log.d("成功添加更多卡片Card", String.valueOf(response.body().size()));
+                    channelCards.addAll(response.body());
+                    Log.d(TAG, "onResponse: 成功加载更多卡片,现有共" + channelCards.size() + "张");
                 }
             }
             @Override
             public void onFailure(Call<ArrayList<ChannelCard>> call, Throwable t) {
-                Toast.makeText(Home.this,"请检查网络", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Home.this,"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
             }
 
         });
+    }
+
+    @Override
+    public void onCardClick(int position) {
+        //卡片点击事件: 获取对应卡片Data, 传到新开启的Channel Activity
+        Log.d(TAG, "onCardClick: 成功点击卡片:" + position);
+        ChannelCard channelCard = channelCards.get(position);
+
+        Intent intent = new Intent(Home.this, Channel.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.putExtra("channelId", channelCard.getChannelId());
+        intent.putExtra("channelName", channelCard.getChannelTitle());
+        intent.putExtra("category", channelCard.getChannelCategory());
+        intent.putExtra("subscribeValue", channelCard.getSubscriber());
+        intent.putExtra("viewValue", channelCard.getAllViewCount());
+        intent.putExtra("thumbnail", channelCard.getThumbnailsUrlHigh());
+        intent.putExtra("avatar", channelCard.getAvatarUrlHigh());
+
+        //开启新的Activity
+        startActivity(intent);
+
+    }
+
+    //Smart Refresh 智能刷新, 下拉刷新, 上滑加载
+    //https://github.com/scwang90/SmartRefreshLayout/blob/master/art/md_property.md
+    private void smartRefreshInit() {
+        Log.d(TAG, "smartRefreshInit: 成功初始化 SmartRefresh");
+        RefreshLayout refreshLayout = findViewById(R.id.refreshLayout);
+
+        refreshLayout.setEnableAutoLoadMore(false); //取消自动加载更多, 需要手动拉
+        refreshLayout.setRefreshHeader(new ClassicsHeader(this));
+
+        ClassicsFooter classicsFooter =new ClassicsFooter(this);
+        refreshLayout.setRefreshFooter(classicsFooter);
+        refreshLayout.setFooterHeight(115);
+        refreshLayout.setFooterMaxDragRate(5);
+        refreshLayout.setDragRate(0.65f);
+
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshlayout) {
+                //下拉刷新
+                cardInit();
+                refreshlayout.finishRefresh(650);//传入false表示加载失败
+            }
+        });
+        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshlayout) {
+                //上滑加载更多, 需要添加Card到指定的ArrayList才能实现
+                cardLoadMore();
+                refreshlayout.finishLoadMore(2000);//传入false表示加载失败
+            }
+        });
+    }
+
+    public void cardAdapterInit() {
+        Log.d(TAG, "initCardAdapter: 成功初始化Adapter, 当前拥有卡片:" + channelCards.size() + "张");
+        //重设 Adapter
+        homeCardAdapter = new HomeCardAdapter(this, channelCards, this);
+        recyclerView.setAdapter(homeCardAdapter);
     }
 
     private void navBarInit(BottomNavigationView bottomNavBar) {
@@ -134,15 +198,12 @@ public class Home extends AppCompatActivity implements HideScrollListener {
                         return true;
                     case R.id.nav_search:
                         startActivity(new Intent(getApplicationContext(), Search.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-                        overridePendingTransition(0, 0);
                         return true;
                     case R.id.nav_favorite:
                         startActivity(new Intent(getApplicationContext(), Favorite.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-                        overridePendingTransition(0, 0);
                         return true;
                     case R.id.nav_account:
                         startActivity(new Intent(getApplicationContext(), UserAccount.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-                        overridePendingTransition(0, 0);
                         return true;
                 }
                 return false;
@@ -161,54 +222,6 @@ public class Home extends AppCompatActivity implements HideScrollListener {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerViewHorizontal.setLayoutManager(linearLayoutManager);
     }
-
-    private void smartRefreshInit(ArrayList<ChannelCard> channelCardsData) {
-        //Smart Refresh 智能刷新, 下拉刷新, 上滑加载
-        //https://github.com/scwang90/SmartRefreshLayout/blob/master/art/md_property.md
-        //绑定RefreshLayout 和 它的 Header,Footer
-        RefreshLayout refreshLayout = findViewById(R.id.refreshLayout);
-
-        refreshLayout.setEnableAutoLoadMore(false); //取消自动加载更多, 需要手动拉
-        refreshLayout.setRefreshHeader(new ClassicsHeader(this));
-
-        ClassicsFooter classicsFooter =new ClassicsFooter(this);
-        refreshLayout.setRefreshFooter(classicsFooter);
-        refreshLayout.setFooterHeight(115);
-        refreshLayout.setFooterMaxDragRate(5);
-        refreshLayout.setDragRate(0.65f);
-        Log.d("成功, 獲得的卡片數量是", String.valueOf(channelCardsData.size()));
-        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(@NonNull RefreshLayout refreshlayout) {
-                //下拉刷新
-                cardInit();
-                refreshlayout.finishRefresh(650);//传入false表示加载失败
-            }
-        });
-        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshlayout) {
-                //上滑加载更多, 需要添加Card到指定的ArrayList才能实现
-                cardLoadMore(channelCardsData);
-                refreshlayout.finishLoadMore(2000);//传入false表示加载失败
-            }
-        });
-
-        //初始化CardAdapter
-        initCardAdapter(channelCardsData);
-
-    }
-    public void initCardAdapter(ArrayList<ChannelCard> channelCardsData) {
-        //初始化 HomeAdapter 并赋予data
-        HomeCardAdapter homeCardAdapter = new HomeCardAdapter(this, channelCardsData);
-        //绑定Adapter 和 RecyclerView
-        recyclerView.setAdapter(homeCardAdapter);
-        //设置RecyclerView的每一row的样式
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        //设置RecyclerView的滑动监听, 用于实现滑动隐藏NavBar
-        recyclerView.addOnScrollListener(new NavScrollListener(this));
-    }
-
     // 若再次返回会退出应用, 则User需要快速返回两次, 才能退出(目的是为了防误触)
     @Override
     public void onBackPressed(){
@@ -225,22 +238,14 @@ public class Home extends AppCompatActivity implements HideScrollListener {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        overridePendingTransition(0, 0);    //取消界面切换动画
-    }
-    @Override
     protected void onResume() {
         super.onResume();
-        overridePendingTransition(0, 0);    //取消界面切换动画
+
+//        overridePendingTransition(0, 0);    //取消界面切换动画
         // 当从其他 activity 返回到该 activity 时, 恢复(解除暂停), 重设 NavBar的选中元素
         bottomNavBar.setSelectedItemId(R.id.nav_home);
     }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        overridePendingTransition(0, 0);    //取消界面切换动画
-    }
+
     //滑动自动隐藏NavBar
     @Override
     public void onHide() {
@@ -253,5 +258,4 @@ public class Home extends AppCompatActivity implements HideScrollListener {
         //显示动画
         bottomNav.animate().translationY(0).setInterpolator(new DecelerateInterpolator(3));
     }
-
 }

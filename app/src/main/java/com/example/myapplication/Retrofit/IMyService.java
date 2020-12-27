@@ -23,6 +23,12 @@ public interface IMyService {
     @FormUrlEncoded
     Observable<String> loginUser(@Field("email") String email,
                                  @Field("password") String password);
+    @POST("searchC")
+    @FormUrlEncoded
+        Observable<String> searchChannel(@Field("text") String text);
+    @POST("searchV")
+    @FormUrlEncoded
+        Observable<String> searchVideo(@Field("text") String text);
 
     @GET("home")
     Call<ArrayList<ChannelCard>> getAllChannelCards();

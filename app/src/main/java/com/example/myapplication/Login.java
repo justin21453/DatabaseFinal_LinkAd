@@ -38,9 +38,7 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);    //绑定具体的UI视图(.xml文件)
 
         // 宣告 Retrofit 进行网络链接
-        Retrofit retrofitClient = RetrofitClient.getInstance();
-        // 取得服务
-        iMyService = retrofitClient.create(IMyService.class);
+        iMyService = RetrofitClient.getInstance().create(IMyService.class);
 
         // 绑定页面中的UI
         edt_login_email = findViewById(R.id.edt_email);
@@ -89,9 +87,9 @@ public class Login extends AppCompatActivity {
 
                         if (s.contains("Login success"))
                         {
-                            // 成功登陆，前往 MainScreen 主界面
+                            // 成功登陆，前往 Home 主界面
                             Intent intent = new Intent(Login.this, Home.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//                            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                             startActivity(intent);
 
                             // 结束当前 activity, 即返回的时候, 不会再返回登录界面, 而会直接退出

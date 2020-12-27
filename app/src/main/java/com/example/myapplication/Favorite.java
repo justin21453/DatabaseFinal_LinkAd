@@ -39,17 +39,14 @@ public class Favorite extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.nav_home:
                         startActivity(new Intent(getApplicationContext(), Home.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-                        overridePendingTransition(0, 0);
                         return true;
                     case R.id.nav_search:
                         startActivity(new Intent(getApplicationContext(), Search.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-                        overridePendingTransition(0, 0);
                         return true;
                     case R.id.nav_favorite:
                         return true;
                     case R.id.nav_account:
                         startActivity(new Intent(getApplicationContext(), UserAccount.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-                        overridePendingTransition(0, 0);
                         return true;
                 }
                 return false;
@@ -74,20 +71,10 @@ public class Favorite extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        overridePendingTransition(0, 0);
-    }
-    @Override
     protected void onResume() {
         super.onResume();
-        overridePendingTransition(0, 0);
         // 当从其他 activity 返回到该 activity 时, 恢复(解除暂停), 重设 NavBar的选中元素
         bottomNavBar.setSelectedItemId(R.id.nav_favorite);
     }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        overridePendingTransition(0, 0);
-    }
+
 }
