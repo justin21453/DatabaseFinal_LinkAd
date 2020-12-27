@@ -122,7 +122,7 @@ public class SignUp extends AppCompatActivity {
                             }
                             else
                             {
-                                //邮箱已存在
+                                //邮箱已存在, 或输入的格式不是邮箱格式
                                 Toast.makeText(SignUp.this,s, Toast.LENGTH_SHORT).show();
                             }
                         }

@@ -16,7 +16,7 @@
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
         app:cardBackgroundColor="@color/grey"
-        app:cardCornerRadius="10dp"
+        app:cardCornerRadius="16dp"
         app:cardUseCompatPadding="true"
         app:contentPaddingBottom="4dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,7 +26,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/home_card_bg"
+            android:background="@drawable/channel_card_bg"
             android:padding="4dp">
 
             <ImageView
