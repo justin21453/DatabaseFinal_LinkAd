@@ -73,6 +73,7 @@ public class Home extends AppCompatActivity implements HideScrollListener {
         iMyService = RetrofitClient.getInstance_2().create(IMyService.class);
 
         //第一次初始化 SmartRefreshView, 此层套在RecyclerView的外层
+        //避免cardInit时候的网络问题,而出现没有初始化SmartRefreshView,导致此时刷新，没法重新加载的情况
         smartRefreshInit(channelCards);
 
         //初始化ChannelCard(刷新同样使用该 function)
@@ -100,7 +101,6 @@ public class Home extends AppCompatActivity implements HideScrollListener {
             public void onFailure(Call<ArrayList<ChannelCard>> call, Throwable t) {
                 Toast.makeText(Home.this,"请检查网络", Toast.LENGTH_SHORT).show();
             }
-
         });
     }
 

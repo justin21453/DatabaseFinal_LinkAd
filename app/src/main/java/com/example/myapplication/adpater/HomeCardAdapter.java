@@ -88,7 +88,9 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeCa
         String category = channelCards.get(position).getChannelCategory();
         if(category.equals("NULL"))category = "None";   //如果Category是NULL的話
         holder.tv_category.setText(category);
-        holder.tv_subscribeValue.setText(convertBigInteger(channelCards.get(position).getSubscriber()));
+        String subscribe = convertBigInteger(channelCards.get(position).getSubscriber());
+        if (subscribe.equals("-1")) subscribe = "---";
+        holder.tv_subscribeValue.setText(subscribe);
         holder.tv_viewValue.setText(convertBigInteger(channelCards.get(position).getAllViewCount()));
 
         List<String> tags = channelCards.get(position).getTag();
