@@ -61,7 +61,7 @@
                 app:layout_constraintTop_toTopOf="@+id/imgChannelAvatar" />
 
             <TextView
-                android:id="@+id/category"
+                android:id="@+id/channelCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/shape_4dp_corners_dark_grey"
@@ -90,7 +90,7 @@
                 />
 
             <TextView
-                android:id="@+id/sub"
+                android:id="@+id/categoriesView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
@@ -104,7 +104,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/imgChannel" />
 
             <TextView
-                android:id="@+id/subscribeValue"
+                android:id="@+id/categoriesViewValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
@@ -112,9 +112,9 @@
                 android:textColor="@color/darkGrey"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/sub"
-                app:layout_constraintStart_toEndOf="@+id/sub"
-                app:layout_constraintTop_toTopOf="@+id/sub"
+                app:layout_constraintBottom_toBottomOf="@+id/categoriesView"
+                app:layout_constraintStart_toEndOf="@+id/categoriesView"
+                app:layout_constraintTop_toTopOf="@+id/categoriesView"
                 app:layout_constraintVertical_bias="0.5" />
 
             <TextView
@@ -128,9 +128,9 @@
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/sub"
-                app:layout_constraintStart_toStartOf="@+id/sub"
-                app:layout_constraintTop_toTopOf="@+id/sub"
+                app:layout_constraintBottom_toBottomOf="@+id/categoriesView"
+                app:layout_constraintStart_toStartOf="@+id/categoriesView"
+                app:layout_constraintTop_toTopOf="@+id/categoriesView"
                 app:layout_constraintVertical_bias="1.0" />
 
             <TextView
@@ -148,7 +148,7 @@
                 app:layout_constraintVertical_bias="0.5" />
 
             <TextView
-                android:id="@+id/view"
+                android:id="@+id/channelView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
@@ -159,10 +159,10 @@
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/imgChannel"
-                app:layout_constraintTop_toBottomOf="@+id/sub" />
+                app:layout_constraintTop_toBottomOf="@+id/categoriesView" />
 
             <TextView
-                android:id="@+id/viewValue"
+                android:id="@+id/channelViewValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
@@ -170,9 +170,9 @@
                 android:textColor="@color/darkGrey"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/view"
-                app:layout_constraintStart_toEndOf="@+id/view"
-                app:layout_constraintTop_toTopOf="@+id/view"
+                app:layout_constraintBottom_toBottomOf="@+id/channelView"
+                app:layout_constraintStart_toEndOf="@+id/channelView"
+                app:layout_constraintTop_toTopOf="@+id/channelView"
                 app:layout_constraintVertical_bias="0.5" />
 
             <TextView
@@ -186,9 +186,9 @@
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/view"
-                app:layout_constraintStart_toStartOf="@+id/view"
-                app:layout_constraintTop_toTopOf="@+id/view"
+                app:layout_constraintBottom_toBottomOf="@+id/channelView"
+                app:layout_constraintStart_toStartOf="@+id/channelView"
+                app:layout_constraintTop_toTopOf="@+id/channelView"
                 app:layout_constraintVertical_bias="1.0" />
 
             <TextView

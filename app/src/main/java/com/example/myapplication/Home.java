@@ -17,10 +17,9 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.myapplication.Retrofit.IMyService;
-import com.example.myapplication.Retrofit.RetrofitClient;
 import com.example.myapplication.Retrofit.RetrofitClientGson;
 import com.example.myapplication.adpater.HideScrollListener;
-import com.example.myapplication.adpater.HomeCardAdapter;
+import com.example.myapplication.adpater.ChannelCardAdapter;
 import com.example.myapplication.adpater.HomeCategoryAdapter;
 import com.example.myapplication.adpater.NavScrollListener;
 import com.example.myapplication.model.ChannelCard;
@@ -41,7 +40,7 @@ import static com.example.myapplication.WaitTime.TIME_EXIT;
 import static java.lang.Thread.sleep;
 
 // HideScrollListener 检测用户滑动的监听器, 用于自动隐藏NavBar
-public class Home extends AppCompatActivity implements HideScrollListener, HomeCardAdapter.OnCardListener {
+public class Home extends AppCompatActivity implements HideScrollListener, ChannelCardAdapter.OnCardListener {
 
     private static final String TAG = "成功";
 
@@ -51,7 +50,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
     RelativeLayout              bottomNav;
     //recyclerView 用于主页Card(Channel)的显示, recyclerViewHorizontal用于主页顶部的Category Button的显示
     RecyclerView                recyclerView, recyclerViewHorizontal;
-    HomeCardAdapter             homeCardAdapter;
+    ChannelCardAdapter          channelCardAdapter;
     // 初始化网络连接服务(呼叫后端用的 service)
     IMyService                  iMyService;
     String                      category[];
@@ -85,9 +84,6 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
         iMyService = RetrofitClientGson.getInstance().create(IMyService.class);        // 宣告 Retrofit 进行网络链接,并取得服务
         //启动App, 或者刷新时, 都会调用 cardInit(), 目的是去server抓ChannelCard的信息
         cardInit();
-
-
-
     }
 
     //初始化目前存儲的channelCards, 重新抓取, 並重設adapter
@@ -100,7 +96,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
                 if (response.isSuccessful() && response.body() != null){
                     //用返还的ArrayList覆盖现有的 channelCards 中的data(相当于初始化)
                     channelCards = response.body();
-                    cardAdapterInit();
+                    cardAdapterInit();      //重置 Adapter, 刷新数据
                 }
             }
             @Override
@@ -185,7 +181,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
             public void onRefresh(@NonNull RefreshLayout refreshlayout) {
                 //下拉刷新
                 cardInit();
-                refreshlayout.finishRefresh(650);//传入false表示加载失败
+                refreshlayout.finishRefresh(2000);//传入false表示加载失败
             }
         });
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -201,8 +197,8 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
     public void cardAdapterInit() {
         Log.d(TAG, "initCardAdapter: 成功初始化Adapter, 当前拥有卡片:" + channelCards.size() + "张");
         //重设 Adapter
-        homeCardAdapter = new HomeCardAdapter(this, channelCards, this);
-        recyclerView.setAdapter(homeCardAdapter);
+        channelCardAdapter = new ChannelCardAdapter(this, channelCards, this);
+        recyclerView.setAdapter(channelCardAdapter);
     }
 
     private void navBarInit(BottomNavigationView bottomNavBar) {

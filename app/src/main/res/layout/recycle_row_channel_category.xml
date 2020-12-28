@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/categoriesCard"
+        android:layout_width="300dp"
+        android:layout_height="190dp"
+        android:foreground="?attr/selectableItemBackground"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintStart_toStartOf="@+id/channelView"
+        app:layout_constraintTop_toBottomOf="@+id/channelView">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/lightGrey"
+            >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/imageConstraintLayout"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@drawable/category_card_overlay"
+                android:elevation="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/categoriesName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:elevation="1dp"
+                    android:ellipsize="end"
+                    android:text="@string/category"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ImageView
+                android:id="@+id/categoriesImage"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/video_image"
+
+                />
+
+
+            <TextView
+                android:id="@+id/categoriesVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/shape_4dp_corners_dark_grey"
+                android:paddingHorizontal="2dp"
+                android:text="@string/video"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageConstraintLayout" />
+
+            <TextView
+                android:id="@+id/categoriesVideoValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:text="123"
+                android:textColor="@color/darkGrey"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/categoriesVideo"
+                app:layout_constraintStart_toEndOf="@+id/categoriesVideo"
+                app:layout_constraintTop_toTopOf="@+id/categoriesVideo"
+                app:layout_constraintVertical_bias="0.5" />
+
+            <TextView
+                android:id="@+id/categoriesView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/shape_4dp_corners_dark_grey"
+                android:paddingHorizontal="2dp"
+                android:text="@string/view"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/categoriesVideo"
+                app:layout_constraintStart_toEndOf="@+id/categoriesVideoValue"
+                app:layout_constraintTop_toTopOf="@+id/categoriesVideo" />
+
+            <TextView
+                android:id="@+id/categoriesViewValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:text="300K"
+                android:textColor="@color/darkGrey"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/categoriesView"
+                app:layout_constraintStart_toEndOf="@+id/categoriesView"
+                app:layout_constraintTop_toTopOf="@+id/categoriesView"
+                app:layout_constraintVertical_bias="0.5" />
+
+            <TextView
+                android:id="@+id/categoriesJudge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/shape_4dp_corners_dark_green"
+                android:paddingHorizontal="2dp"
+                android:text="@string/judge"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/categoriesVideo"
+                app:layout_constraintTop_toBottomOf="@+id/categoriesVideo" />
+
+            <TextView
+                android:id="@+id/categoriesJudgeValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:text="非常好评"
+                android:textColor="@color/darkGrey"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/categoriesJudge"
+                app:layout_constraintStart_toEndOf="@+id/categoriesJudge"
+                app:layout_constraintTop_toTopOf="@+id/categoriesJudge"
+                app:layout_constraintVertical_bias="0.5" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

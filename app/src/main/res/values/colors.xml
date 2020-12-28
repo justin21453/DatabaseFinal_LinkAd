@@ -10,8 +10,11 @@
 
     <color name="grey">#777</color>
     <color name="darkGrey">#333</color>
+    <color name="transparentDark">#E6000000</color>
+    <color name="transparentGrey">#66000000</color>
     <color name="lightGrey">#eee</color>
     <color name="lightBlue">#5498CD</color>
+    <color name="darkGreen">#58AA41</color>
 
 
 </resources>
