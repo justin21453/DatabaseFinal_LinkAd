@@ -7,16 +7,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.CategoryCard;
+import com.example.myapplication.model.CategoryId;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
@@ -27,21 +31,22 @@ public class CategoryCardAdapter extends RecyclerView.Adapter<CategoryCardAdapte
     Context     context;
     //初始化自定义的参数
     //存放频道下的所有分类(只要有影片是这个分类就算频道含有这个分类)
-    ArrayList<CategoryCard> categoryCards;
+    CategoryCard categoryCards;
+    List<CategoryId> categoryId;
     private OnCardListener onCardListener;
 
     // constructor: 初始化参数, Context接activity, 其余则是自定义的参数parameters
-    public CategoryCardAdapter(Context context, ArrayList<CategoryCard> categoryCards, OnCardListener onCardListener) {
+    public CategoryCardAdapter(Context context, CategoryCard categoryCards, OnCardListener onCardListener) {
         this.context = context;
         this.categoryCards = categoryCards;
         this.onCardListener = onCardListener;
+        categoryId = categoryCards.getCategoryIds();
     }
 
     // 绑定View和Adapter的function
     public class CategoryCardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener{
         CardView cv_category;
-        ImageView img_category;
-        TextView tv_category, tv_categoriesVideoValue, tv_categoriesViewValue, tv_categoriesJudgeValue;
+        TextView tv_category, tv_categoriesVideoValue, tv_categoriesViewValue, tv_categoriesJudge, tv_categoriesJudgeValue;
 
         OnCardListener onCardListener;
 
@@ -52,11 +57,10 @@ public class CategoryCardAdapter extends RecyclerView.Adapter<CategoryCardAdapte
             itemView.setOnTouchListener(this);
             //绑定Card里面的View
             cv_category                 = itemView.findViewById(R.id.categoriesCard);
-            img_category                = itemView.findViewById(R.id.categoriesImage);
             tv_category                 = itemView.findViewById(R.id.categoriesName);
             tv_categoriesVideoValue     = itemView.findViewById(R.id.categoriesVideoValue);
             tv_categoriesViewValue      = itemView.findViewById(R.id.categoriesViewValue);
-            tv_categoriesJudgeValue     = itemView.findViewById(R.id.categoriesJudgeValue);
+            tv_categoriesJudge          = itemView.findViewById(R.id.categoriesJudge);
         }
 
         @Override
@@ -87,13 +91,29 @@ public class CategoryCardAdapter extends RecyclerView.Adapter<CategoryCardAdapte
         //卡片出现动画
         holder.cv_category.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in));
         //数据绑定
+        CategoryId categoryId_tmp = this.categoryId.get(position);
+        holder.tv_category.setText(categoryId_tmp.getId());
+        holder.tv_categoriesVideoValue.setText(categoryId_tmp.getVideoCount().toString());
+        holder.tv_categoriesViewValue.setText(categoryId_tmp.getVideoViews().toString());
+        double judge = categoryId_tmp.getAvgRating();
+
+        holder.tv_categoriesJudge.setText((int)judge + "%好评");
+        if (judge > 97.0f) {
+            holder.tv_categoriesJudge.setBackgroundResource(R.drawable.shape_4dp_corners_dark_green);
+        } else if (judge > 90.0f) {
+            holder.tv_categoriesJudge.setBackgroundResource(R.drawable.shape_4dp_corners_dark_orange);
+        } else {
+            judge = 100.0f - judge;
+            holder.tv_categoriesJudge.setText((int)judge + "%差评");
+            holder.tv_categoriesJudge.setBackgroundResource(R.drawable.shape_4dp_corners_dark_red);
+        }
 
     }
 
     @Override
     public int getItemCount() {
         //设置Item的数量, 这里指总共有几张卡片
-        return categoryCards.size();
+        return categoryId.size();
     }
 
     public interface OnCardListener {
