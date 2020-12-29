@@ -83,6 +83,7 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
         tv_viewValue = findViewById(R.id.channelViewValue);
         tv_channelVideoCountValue = findViewById(R.id.channelVideoCountValue);
         tv_channelName.setText(channelName);
+        category = category.equals("NULL")? "未分類":category;
         tv_category.setText(category);
         tv_subscribeValue.setText(subscribeValue);
         tv_viewValue.setText(viewValue);

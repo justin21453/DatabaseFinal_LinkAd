@@ -46,7 +46,7 @@ public class CategoryCardAdapter extends RecyclerView.Adapter<CategoryCardAdapte
     // 绑定View和Adapter的function
     public class CategoryCardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener{
         CardView cv_category;
-        TextView tv_category, tv_categoriesVideoValue, tv_categoriesViewValue, tv_categoriesJudge, tv_categoriesJudgeValue;
+        TextView tv_category, tv_categoriesVideoValue, tv_categoriesViewValue, tv_categoriesJudge, tv_categoriesLikeRate;
 
         OnCardListener onCardListener;
 
@@ -61,6 +61,7 @@ public class CategoryCardAdapter extends RecyclerView.Adapter<CategoryCardAdapte
             tv_categoriesVideoValue     = itemView.findViewById(R.id.categoriesVideoValue);
             tv_categoriesViewValue      = itemView.findViewById(R.id.categoriesViewValue);
             tv_categoriesJudge          = itemView.findViewById(R.id.categoriesJudge);
+            tv_categoriesLikeRate       = itemView.findViewById(R.id.categoriesLikeRate);
         }
 
         @Override
@@ -92,9 +93,26 @@ public class CategoryCardAdapter extends RecyclerView.Adapter<CategoryCardAdapte
         holder.cv_category.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in));
         //数据绑定
         CategoryId categoryId_tmp = this.categoryId.get(position);
-        holder.tv_category.setText(categoryId_tmp.getId());
-        holder.tv_categoriesVideoValue.setText(categoryId_tmp.getVideoCount().toString());
-        holder.tv_categoriesViewValue.setText(categoryId_tmp.getVideoViews().toString());
+        double allVideoCount = Double.parseDouble(this.categoryCards.getAllvideoCount());
+        double allVideoView = Double.parseDouble(this.categoryCards.getAllviewCount());
+
+        java.text.DecimalFormat myformat = new java.text.DecimalFormat("0.00");
+        String videoRate = myformat.format(categoryId_tmp.getVideoCount() / allVideoCount * 100);
+        String viewRate = myformat.format(categoryId_tmp.getVideoViews() / allVideoView * 100);
+        double likeRate = ((double)categoryId_tmp.getTotalLike() / (double)categoryId_tmp.getVideoViews()) * 100.0;
+        holder.tv_categoriesLikeRate.setText(myformat.format(likeRate) + "%觀眾讚了");
+        if (likeRate > 1.5f) {
+            holder.tv_categoriesLikeRate.setBackgroundResource(R.drawable.shape_4dp_corners_dark_green);
+        } else if (likeRate > 0.7f) {
+            holder.tv_categoriesLikeRate.setBackgroundResource(R.drawable.shape_4dp_corners_dark_orange);
+        } else {
+            holder.tv_categoriesLikeRate.setBackgroundResource(R.drawable.shape_4dp_corners_dark_red);
+        }
+
+        String category = categoryId_tmp.getId().equals("NULL") ? "未分類": categoryId_tmp.getId();
+        holder.tv_category.setText(category);
+        holder.tv_categoriesVideoValue.setText(videoRate + "%");
+        holder.tv_categoriesViewValue.setText(viewRate + "%");
         double judge = categoryId_tmp.getAvgRating();
 
         holder.tv_categoriesJudge.setText((int)judge + "%好评");
@@ -103,8 +121,6 @@ public class CategoryCardAdapter extends RecyclerView.Adapter<CategoryCardAdapte
         } else if (judge > 90.0f) {
             holder.tv_categoriesJudge.setBackgroundResource(R.drawable.shape_4dp_corners_dark_orange);
         } else {
-            judge = 100.0f - judge;
-            holder.tv_categoriesJudge.setText((int)judge + "%差评");
             holder.tv_categoriesJudge.setBackgroundResource(R.drawable.shape_4dp_corners_dark_red);
         }
 

@@ -9,7 +9,7 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/categoriesCard"
-        android:layout_width="280dp"
+        android:layout_width="295dp"
         android:layout_height="120dp"
         android:foreground="?attr/selectableItemBackground"
         app:cardCornerRadius="10dp"
@@ -59,7 +59,7 @@
                 android:layout_marginTop="6dp"
                 android:background="@drawable/shape_4dp_corners_dark_grey"
                 android:paddingHorizontal="2dp"
-                android:text="@string/video"
+                android:text="@string/videoRate"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -88,7 +88,7 @@
                 android:layout_marginStart="10dp"
                 android:background="@drawable/shape_4dp_corners_dark_grey"
                 android:paddingHorizontal="2dp"
-                android:text="@string/view"
+                android:text="@string/viewRate"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -124,7 +124,20 @@
                 app:layout_constraintStart_toStartOf="@+id/categoriesVideo"
                 app:layout_constraintTop_toBottomOf="@+id/categoriesVideo" />
 
-
+            <TextView
+                android:id="@+id/categoriesLikeRate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/shape_4dp_corners_dark_green"
+                android:paddingHorizontal="2dp"
+                android:text="@string/rate"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/categoriesJudge"
+                app:layout_constraintStart_toEndOf="@+id/categoriesJudge"
+                app:layout_constraintTop_toTopOf="@+id/categoriesJudge" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

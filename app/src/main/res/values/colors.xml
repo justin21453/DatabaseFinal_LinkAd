@@ -6,17 +6,21 @@
     <color name="linkAd">#C73232</color>
     <color name="myTextColor">#AFAFAF</color>
     <color name="white">#FFF</color>
+    <color name="black">#000</color>
     <color name="lightWhite">#F9F9F9</color>
 
     <color name="grey">#777</color>
     <color name="darkGrey">#333</color>
-    <color name="transparentDark">#E6000000</color>
+    <color name="transparentBlack">#E6000000</color>
     <color name="transparentGrey">#66000000</color>
     <color name="lightGrey">#eee</color>
     <color name="lightBlue">#5498CD</color>
-    <color name="darkGreen">#58AA41</color>
-    <color name="darkOrange">#B56D3D</color>
-    <color name="darkRed">#B53D3D</color>
+    <color name="darkBlue">#004880</color>
+    <color name="mediumGreen">#58AA41</color>
+    <color name="mediumOrange">#B56D3D</color>
+    <color name="lightRed">#FF6161</color>
+    <color name="mediumRed">#B53D3D</color>
+    <color name="darkRed">#AA3333</color>
 
 
 </resources>

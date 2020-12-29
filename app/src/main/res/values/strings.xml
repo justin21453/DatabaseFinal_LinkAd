@@ -8,13 +8,15 @@
     <string name="confirmPassword">Confirm Password</string>
     <string name="region">地區</string>
     <string name="view">觀看</string>
-    <string name="video">影片数量</string>
+    <string name="viewRate">觀看占比</string>
+    <string name="videoRate">影片占比</string>
     <string name="videoAll">總影片</string>
     <string name="sub">訂閱</string>
     <string name="rank">排名</string>
     <string name="category">Category</string>
     <string name="channel_name">Channel Name</string>
     <string name="judge">評價</string>
+    <string name="rate">比率</string>
 
     <string-array name="recycle_row_main_screen_title">
         <item>Card 1</item>

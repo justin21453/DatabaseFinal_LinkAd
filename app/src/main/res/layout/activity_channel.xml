@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkGrey"
+    android:background="@color/darkRed"
     tools:context=".Channel">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -41,6 +41,7 @@
                     android:elevation="1dp"
                     android:ellipsize="end"
                     android:maxEms="8"
+                    android:singleLine="true"
                     android:paddingHorizontal="2dp"
                     android:text="@string/channel_name"
                     android:textColor="@color/white"
