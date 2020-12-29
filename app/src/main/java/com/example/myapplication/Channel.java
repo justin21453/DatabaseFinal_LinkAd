@@ -1,11 +1,15 @@
 package com.example.myapplication;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -28,10 +32,20 @@ import com.example.myapplication.adpater.ChannelCardAdapter;
 import com.example.myapplication.adpater.HideScrollListener;
 import com.example.myapplication.adpater.HomeCategoryAdapter;
 import com.example.myapplication.model.CategoryCard;
+import com.example.myapplication.model.ChannelVideo;
+import com.example.myapplication.model.VideoInMonthInfo;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import lecho.lib.hellocharts.gesture.ZoomType;
+import lecho.lib.hellocharts.listener.PieChartOnValueSelectListener;
+import lecho.lib.hellocharts.model.PieChartData;
+import lecho.lib.hellocharts.model.SliceValue;
+import lecho.lib.hellocharts.util.ChartUtils;
+import lecho.lib.hellocharts.view.Chart;
+import lecho.lib.hellocharts.view.PieChartView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -53,7 +67,26 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
 
     CategoryCard categoryCards;
     CategoryCardAdapter categoriesCardAdapter;
+    ChannelVideo channelVideo;
 
+    private PieChartView chart;
+    private PieChartData data;
+
+    private boolean hasLabels = true;
+    private boolean hasLabelsOutside = false;
+    private boolean hasCenterCircle = true;
+    private boolean hasCenterText1 = true;
+    private boolean hasCenterText2 = true;
+    private boolean isExploded = false;
+    private boolean hasLabelForSelected = false;
+    VideoInfoEnum videoInfoEnum = VideoInfoEnum.VIEW;
+
+    public enum VideoInfoEnum {
+        VIEW,
+        COMMENT,
+        LIKE,
+        DISLIKE;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +150,138 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
         // 宣告 Retrofit 进行网络链接,并取得服务
 
         iMyService = RetrofitClientGson.getInstance().create(IMyService.class);
-        if (channelId != null) categoriesCardRecyclerViewInit(channelId);
+        if (channelId != null) {
+            categoriesCardRecyclerViewInit(channelId);  //初始化 Categories 的卡片
+            channelVideoChart(channelId);    //初始化饼图
+        }
+
+        chart = (PieChartView) findViewById(R.id.pitChartView);
+        chart.setOnValueTouchListener(new ValueTouchListener());
+        chart.showContextMenu();
+
+    }
+
+    //频道视频饼图初始化
+    private void channelVideoChart(String channelId) {
+        Log.d(TAG, "channelVideoChart: 初始化饼图");
+        Call<ChannelVideo> call = iMyService.getChannelVideo(channelId);
+        call.enqueue(new Callback<ChannelVideo>() {
+            @Override
+            public void onResponse(Call<ChannelVideo> call, Response<ChannelVideo> response) {
+                if (response.body() != null) {
+                    channelVideo = response.body();
+                    generateData(channelVideo.getVideoInMonthInfo());
+                }
+            }
+            @Override
+            public void onFailure(Call<ChannelVideo> call, Throwable t) {
+                Toast.makeText(Channel.this,"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void generateData(List<VideoInMonthInfo> videoInMonthInfos) {
+
+        int numValues = videoInMonthInfos.size();
+        if (numValues == 0) {
+            Toast.makeText(Channel.this,"近一個月無任何投稿", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        List<SliceValue> values = new ArrayList<SliceValue>();
+        for (int i = 0; i < numValues; ++i) {
+            VideoInMonthInfo videoInMonthInfo = videoInMonthInfos.get(i);
+            int j = i % 5;
+            SliceValue sliceValue = new SliceValue((float) Math.random() * 100 + 15, ChartUtils.COLORS[j]);
+            switch (videoInfoEnum) {
+                case VIEW:
+                    sliceValue.setTarget(Float.valueOf(videoInMonthInfo.getViewCount()));
+                    break;
+                case COMMENT:
+                    sliceValue.setTarget(Float.valueOf(videoInMonthInfo.getCommentCount()));
+                    break;
+                case LIKE:
+                    sliceValue.setTarget(Float.valueOf(videoInMonthInfo.getLikeCount()));
+                    break;
+                case DISLIKE:
+                    sliceValue.setTarget(Float.valueOf(videoInMonthInfo.getDislikeCount()));
+                    break;
+            }
+            ((ArrayList) values).add(sliceValue);
+        }
+
+        data = new PieChartData(values);
+        //切换饼图显示的内容
+        switch (videoInfoEnum) {
+            case VIEW:
+                data.setCenterText1("觀看數");
+                videoInfoEnum = VideoInfoEnum.COMMENT;
+                break;
+            case COMMENT:
+                data.setCenterText1("評論數");
+                videoInfoEnum = VideoInfoEnum.LIKE;
+                break;
+            case LIKE:
+                data.setCenterText1("喜歡數");
+                videoInfoEnum = VideoInfoEnum.DISLIKE;
+                break;
+            case DISLIKE:
+                data.setCenterText1("不喜歡數");
+                videoInfoEnum = VideoInfoEnum.VIEW;
+                break;
+        }
+        data.setHasLabels(hasLabels);
+        data.setHasLabelsOnlyForSelected(hasLabelForSelected);
+        data.setHasLabelsOutside(hasLabelsOutside);
+        data.setHasCenterCircle(hasCenterCircle);
+        data.setCenterText1Typeface(Typeface.DEFAULT);
+        data.setCenterText2Typeface(Typeface.DEFAULT);
+        data.setCenterText1FontSize(32);
+        data.setCenterText2FontSize(16);
+        data.setCenterText2Color(R.color.grey);
+        data.setCenterText2("點擊查看更多");
+
+        //初始化可視化Charts
+        chart.setPieChartData(data);
+        chart.startDataAnimation();
+    }
+
+    private class ValueTouchListener implements PieChartOnValueSelectListener {
+
+        @Override
+        public void onValueSelected(int arcIndex, SliceValue value) {
+            //点击饼图的某一部分时
+            //当饼图确实存在至少1块,产生提示,show出完整视频信息
+            if (channelVideo.getVideoInMonthInfo().size() != 0) {
+                VideoInMonthInfo videoInMonthInfo = channelVideo.getVideoInMonthInfo().get(arcIndex);
+                DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        generateData(channelVideo.getVideoInMonthInfo());
+                    }
+                };
+                String str = "数据更新于" + videoInMonthInfo.getDatatime() +
+                        "\n发布日期:" + videoInMonthInfo.getPublishedAt() +
+                        "\n標題:" + videoInMonthInfo.getTitle() +
+                        "\n分類:" + videoInMonthInfo.getCategoryId() +
+                        "\n觀看:" + videoInMonthInfo.getViewCount() +
+                        "\n評論:" + videoInMonthInfo.getCommentCount() +
+                        "\n喜歡:" + videoInMonthInfo.getLikeCount() +
+                        "\n不喜歡:" + videoInMonthInfo.getDislikeCount();
+                new AlertDialog.Builder(Channel.this)
+                        .setTitle("視頻詳情")
+                        .setMessage(str)
+                        .setPositiveButton("切換餅圖", onClickListener)
+                        .setNegativeButton("關閉", null)
+                        .show();
+
+            } else Toast.makeText(Channel.this, "近一個月無任何投稿", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onValueDeselected() {
+            // TODO Auto-generated method stub
+
+        }
     }
 
     private void setChannelCardTouch() {
@@ -163,14 +327,14 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
 
             @Override
             public void onFailure(Call<CategoryCard> call, Throwable t) {
-                Log.d(TAG, "onResponse: 成功连接server, 但无回传值");
+                Log.d(TAG, "onResponse: 无法连接到server");
 
             }
         });
 
     }
     public void cardAdapterInit() {
-        Log.d(TAG, "initCardAdapter: 成功初始化Adapter, 当前拥有categories:" + categoryCards.getAllvideoCount() + "张");
+        Log.d(TAG, "initCardAdapter: 成功初始化Adapter, 当前拥有categories:" + categoryCards.getCategoryIds().size() + "张");
         //重设 Adapter
         categoriesCardAdapter = new CategoryCardAdapter(this, categoryCards, this);
         categoriesRecyclerView.setAdapter(categoriesCardAdapter);

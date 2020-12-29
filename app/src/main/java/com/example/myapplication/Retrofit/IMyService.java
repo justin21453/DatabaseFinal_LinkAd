@@ -2,6 +2,7 @@ package com.example.myapplication.Retrofit;
 
 import com.example.myapplication.model.CategoryCard;
 import com.example.myapplication.model.ChannelCard;
+import com.example.myapplication.model.ChannelVideo;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -39,5 +40,8 @@ public interface IMyService {
 
     @GET("channelInfo")
     Call<CategoryCard> getChannelInfo(@Header("channelId") String channelId );
+
+    @GET("channelVideo")
+    Call<ChannelVideo> getChannelVideo(@Header("channelId") String channelId );
 
 }
