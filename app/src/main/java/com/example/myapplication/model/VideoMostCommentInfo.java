@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class VideoInMonthInfo {
+public class VideoMostCommentInfo {
 
     @SerializedName("_id")
     @Expose
@@ -55,15 +55,6 @@ public class VideoInMonthInfo {
     @SerializedName("viewCount")
     @Expose
     private String viewCount;
-    @SerializedName("publishedAtDate")
-    @Expose
-    private String publishedAtDate;
-    @SerializedName("curDate")
-    @Expose
-    private String curDate;
-    @SerializedName("isBeforeAMonth")
-    @Expose
-    private Integer isBeforeAMonth;
 
     public String getId() {
         return id;
@@ -191,30 +182,6 @@ public class VideoInMonthInfo {
 
     public void setViewCount(String viewCount) {
         this.viewCount = viewCount;
-    }
-
-    public String getPublishedAtDate() {
-        return publishedAtDate;
-    }
-
-    public void setPublishedAtDate(String publishedAtDate) {
-        this.publishedAtDate = publishedAtDate;
-    }
-
-    public String getCurDate() {
-        return curDate;
-    }
-
-    public void setCurDate(String curDate) {
-        this.curDate = curDate;
-    }
-
-    public Integer getIsBeforeAMonth() {
-        return isBeforeAMonth;
-    }
-
-    public void setIsBeforeAMonth(Integer isBeforeAMonth) {
-        this.isBeforeAMonth = isBeforeAMonth;
     }
 
 }

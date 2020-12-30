@@ -11,6 +11,7 @@
 
     <color name="grey">#777</color>
     <color name="darkGrey">#333</color>
+    <color name="transparent">#00000000</color>
     <color name="transparentBlack">#E6000000</color>
     <color name="transparentGrey">#66000000</color>
     <color name="lightGrey">#eee</color>

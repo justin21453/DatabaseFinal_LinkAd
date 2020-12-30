@@ -115,7 +115,7 @@ public class CategoryCardAdapter extends RecyclerView.Adapter<CategoryCardAdapte
         holder.tv_categoriesViewValue.setText(viewRate + "%");
         double judge = categoryId_tmp.getAvgRating();
 
-        holder.tv_categoriesJudge.setText((int)judge + "%好评");
+        holder.tv_categoriesJudge.setText(myformat.format(judge) + "%好评");
         if (judge > 97.0f) {
             holder.tv_categoriesJudge.setBackgroundResource(R.drawable.shape_4dp_corners_dark_green);
         } else if (judge > 90.0f) {

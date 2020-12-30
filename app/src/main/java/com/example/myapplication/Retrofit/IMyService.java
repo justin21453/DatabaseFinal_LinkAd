@@ -1,12 +1,13 @@
 package com.example.myapplication.Retrofit;
 
+import com.example.myapplication.Channel;
 import com.example.myapplication.model.CategoryCard;
 import com.example.myapplication.model.ChannelCard;
-import com.example.myapplication.model.ChannelVideo;
+import com.example.myapplication.model.ChannelMostVideo;
+import com.example.myapplication.model.ChannelRecentVideo;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 import io.reactivex.Observable;
 import retrofit2.Call;
@@ -41,7 +42,10 @@ public interface IMyService {
     @GET("channelInfo")
     Call<CategoryCard> getChannelInfo(@Header("channelId") String channelId );
 
-    @GET("channelVideo")
-    Call<ChannelVideo> getChannelVideo(@Header("channelId") String channelId );
+    @GET("channelRecentVideo")
+    Call<ArrayList<ChannelRecentVideo>> getChannelRecentVideo(@Header("channelId") String channelId );
+
+    @GET("channelMostVideo")
+    Call<ChannelMostVideo> getChannelMostVideo(@Header("channelId") String channelId );
 
 }

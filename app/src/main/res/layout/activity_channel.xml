@@ -16,9 +16,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardMaxElevation="13dp"
-
+            app:cardElevation="5dp"
             android:foreground="?attr/selectableItemBackground"
-            app:cardBackgroundColor="@color/grey"
+            app:cardBackgroundColor="@color/mediumRed"
             app:cardCornerRadius="16dp"
             app:cardUseCompatPadding="true"
             app:contentPaddingBottom="4dp"
@@ -30,65 +30,72 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/channel_card_bg"
-                android:padding="4dp">
+                android:paddingHorizontal="4dp"
+                android:paddingVertical="10dp"
+                >
 
                 <TextView
                     android:id="@+id/channelName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:layout_marginTop="6dp"
+                    android:drawableEnd="@drawable/ic_baseline_link_24"
+                    android:drawablePadding="4dp"
                     android:background="@drawable/shape_4dp_corners_dark_grey"
                     android:elevation="1dp"
                     android:ellipsize="end"
                     android:maxEms="8"
-                    android:singleLine="true"
                     android:paddingHorizontal="2dp"
+                    android:singleLine="true"
                     android:text="@string/channel_name"
                     android:textColor="@color/white"
-                    android:textSize="22sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toEndOf="@+id/imgChannelAvatar"
                     app:layout_constraintTop_toTopOf="@+id/imgChannelAvatar" />
+
                 <TextView
                     android:id="@+id/channelCategory"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
                     android:background="@drawable/shape_4dp_corners_dark_grey"
                     android:elevation="1dp"
                     android:paddingHorizontal="2dp"
                     android:text="@string/category"
                     android:textColor="@color/white"
-                    android:textSize="22sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/imgChannelAvatar"
-                    app:layout_constraintStart_toStartOf="@+id/channelName" />
+                    app:layout_constraintStart_toStartOf="@+id/channelName"
+                    app:layout_constraintTop_toBottomOf="@+id/channelName" />
+                <TextView
+                    android:id="@+id/channelStartTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:elevation="1dp"
+                    android:paddingHorizontal="2dp"
+                    android:text="頻道始於"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="@+id/channelCategory"
+                    app:layout_constraintTop_toBottomOf="@+id/channelCategory" />
+
                 <ImageView
                     android:id="@+id/imgChannelAvatar"
-                    android:layout_width="64dp"
+                    android:layout_width="96dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginStart="10dp"
                     android:adjustViewBounds="true"
                     android:elevation="1dp"
                     android:src="@drawable/avatar_image"
 
-                    app:layout_constraintBottom_toBottomOf="@+id/imgChannel"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:srcCompat="@drawable/avatar_image" />
-                <ImageView
-                    android:id="@+id/imgChannel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/video_image"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/video_image"
+                    app:srcCompat="@drawable/avatar_image" />
 
-                    />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
@@ -96,28 +103,29 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="160dp"
-            android:background="@drawable/shape_20dp_corners_light_grey"
-            android:paddingTop="70dp"
+            android:layout_marginTop="90dp"
+            android:paddingTop="25dp"
+            android:background="@drawable/shape_25dp_top_corners"
+            android:foreground="@drawable/shape_25dp_top_corners_overlay"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/cardChannel">
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                >
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-
+                    android:layout_height="match_parent"
+                    >
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/constraintLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="50dp"
                         android:layout_marginHorizontal="15dp"
                         android:background="@drawable/shape_10dp_corners_white"
                         android:paddingVertical="10dp"
@@ -209,12 +217,13 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <TextView
-                        android:id="@+id/textView3"
+                        android:id="@+id/channelVideoType"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
                         android:layout_marginTop="15dp"
                         android:text="頻道影片類型"
+                        android:textColor="@color/darkGrey"
                         android:textSize="24sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
@@ -229,32 +238,465 @@
                         android:orientation="horizontal"
                         android:paddingVertical="5dp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/textView3">
+                        app:layout_constraintTop_toBottomOf="@+id/channelVideoType">
 
                     </androidx.recyclerview.widget.RecyclerView>
 
                     <TextView
-                        android:id="@+id/textView5"
+                        android:id="@+id/recentVideo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
                         android:layout_marginTop="10dp"
-                        android:text="近一個月視頻"
+                        android:text="近期視頻"
                         android:textSize="24sp"
                         android:textStyle="bold"
+                        android:textColor="@color/darkGrey"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/channelCategoriesRecyclerView" />
+
+                    <Button
+                        android:id="@+id/btn_changePieChart"
+                        android:layout_width="68dp"
+                        android:layout_height="26dp"
+                        android:layout_marginStart="6dp"
+                        android:text="切換餅圖"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:background="@drawable/shape_4dp_corners_dark_grey"
+                        app:layout_constraintBottom_toBottomOf="@+id/recentVideo"
+                        app:layout_constraintStart_toEndOf="@+id/recentVideo"
+                        app:layout_constraintTop_toTopOf="@+id/recentVideo">
+
+                    </Button>
 
                     <lecho.lib.hellocharts.view.PieChartView
                         android:id="@+id/pitChartView"
                         android:layout_width="match_parent"
                         android:layout_height="300dp"
                         android:layout_marginTop="10dp"
+                        android:background="@drawable/shape_20dp_corners_white"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/textView5">
+                        app:layout_constraintTop_toBottomOf="@+id/recentVideo">
 
                     </lecho.lib.hellocharts.view.PieChartView>
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="10dp"
+                        android:text="最“多”視頻"
+                        android:textColor="@color/darkGrey"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/pitChartView" />
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView4"
+                        android:scrollbarAlwaysDrawHorizontalTrack="false"
+                        >
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="40dp"
+                            android:orientation="horizontal"
+                            >
+
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cardMostViewVideo"
+                                android:layout_width="350dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="6dp"
+                                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                                app:cardUseCompatPadding="true"
+                                app:contentPaddingBottom="4dp"
+                                app:cardCornerRadius="10dp"
+                                app:cardBackgroundColor="@color/grey"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent">
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/most_video_card_bg"
+                                    android:padding="6dp"
+                                    >
+
+                                    <TextView
+                                        android:id="@+id/tvMostViewTag_1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="4dp"
+                                        android:layout_marginLeft="4dp"
+
+                                        android:background="@drawable/tag_bg"
+                                        android:elevation="1dp"
+                                        android:ellipsize="end"
+                                        android:paddingHorizontal="15dp"
+                                        android:paddingBottom="2dp"
+                                        android:textColor="@color/white"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="@+id/imgMostViewVideo" />
+                                    <TextView
+                                        android:id="@+id/tvMostViewTag_2"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:paddingBottom="2dp"
+                                        android:elevation="1dp"
+                                        android:ellipsize="end"
+                                        android:layout_marginStart="4dp"
+                                        android:background="@drawable/tag_bg"
+                                        android:paddingHorizontal="15dp"
+                                        android:textColor="@color/white"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintBottom_toBottomOf="@+id/tvMostViewTag_1"
+                                        app:layout_constraintStart_toEndOf="@+id/tvMostViewTag_1"
+                                        app:layout_constraintTop_toTopOf="@+id/tvMostViewTag_1"
+                                        app:layout_constraintVertical_bias="0.0" />
+                                    <TextView
+                                        android:id="@+id/tvMostViewTag_3"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:paddingBottom="2dp"
+                                        android:elevation="1dp"
+                                        android:ellipsize="end"
+                                        android:layout_marginStart="4dp"
+                                        android:background="@drawable/tag_bg"
+                                        android:paddingHorizontal="15dp"
+                                        android:textColor="@color/white"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintBottom_toBottomOf="@+id/tvMostViewTag_2"
+                                        app:layout_constraintStart_toEndOf="@+id/tvMostViewTag_2"
+                                        app:layout_constraintTop_toTopOf="@+id/tvMostViewTag_2"
+                                        app:layout_constraintVertical_bias="0.0" />
+
+                                    <ImageView
+                                        android:id="@+id/imgMostViewVideo"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:adjustViewBounds="true"
+                                        android:scaleType="centerCrop"
+                                        android:src="@drawable/video_image"
+                                        android:foreground="@drawable/most_video_card_overlay"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintHorizontal_bias="0.0"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent"
+                                        app:srcCompat="@drawable/video_image"
+
+                                        />
+
+                                    <TextView
+                                        android:id="@+id/tvMostView"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="6dp"
+                                        android:layout_marginBottom="6dp"
+                                        android:drawableTint="@color/white"
+                                        android:drawableEnd="@drawable/ic_baseline_link_24"
+                                        android:drawablePadding="2dp"
+                                        android:background="@drawable/shape_4dp_corners_dark_green"
+                                        android:paddingHorizontal="2dp"
+                                        android:elevation="1dp"
+                                        android:ellipsize="end"
+                                        android:text="@string/mostView"
+                                        android:textColor="@color/white"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintBottom_toBottomOf="@+id/imgMostViewVideo"
+                                        app:layout_constraintStart_toStartOf="@+id/imgMostViewVideo" />
+                                    <TextView
+                                        android:id="@+id/tvMostViewVideoViewValue"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="2dp"
+                                        android:text="6236473次"
+                                        android:textColor="@color/white"
+                                        android:textSize="22sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintBottom_toBottomOf="@+id/tvMostView"
+                                        app:layout_constraintStart_toEndOf="@+id/tvMostView"
+                                        app:layout_constraintTop_toTopOf="@+id/tvMostView"
+                                        app:layout_constraintVertical_bias="0.5" />
+
+                                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cardMostCommentVideo"
+                                android:layout_width="350dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="6dp"
+                                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                                app:cardUseCompatPadding="true"
+                                app:contentPaddingBottom="4dp"
+                                app:cardCornerRadius="10dp"
+                                app:cardBackgroundColor="@color/grey"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/cardMostViewVideo">
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/most_video_card_bg"
+                                    android:padding="6dp"
+                                    >
+
+                                    <TextView
+                                        android:id="@+id/tvMostCommentTag_1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="4dp"
+                                        android:layout_marginLeft="4dp"
+
+                                        android:background="@drawable/tag_bg"
+                                        android:elevation="1dp"
+                                        android:ellipsize="end"
+                                        android:paddingHorizontal="15dp"
+                                        android:paddingBottom="2dp"
+                                        android:textColor="@color/white"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="@+id/imgMostCommentVideo" />
+                                    <TextView
+                                        android:id="@+id/tvMostCommentTag_2"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:paddingBottom="2dp"
+                                        android:elevation="1dp"
+                                        android:ellipsize="end"
+                                        android:layout_marginStart="4dp"
+                                        android:background="@drawable/tag_bg"
+                                        android:paddingHorizontal="15dp"
+                                        android:textColor="@color/white"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintBottom_toBottomOf="@+id/tvMostCommentTag_1"
+                                        app:layout_constraintStart_toEndOf="@+id/tvMostCommentTag_1"
+                                        app:layout_constraintTop_toTopOf="@+id/tvMostCommentTag_1"
+                                        app:layout_constraintVertical_bias="0.0" />
+                                    <TextView
+                                        android:id="@+id/tvMostCommentTag_3"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:paddingBottom="2dp"
+                                        android:elevation="1dp"
+                                        android:ellipsize="end"
+                                        android:layout_marginStart="4dp"
+                                        android:background="@drawable/tag_bg"
+                                        android:paddingHorizontal="15dp"
+                                        android:textColor="@color/white"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintBottom_toBottomOf="@+id/tvMostCommentTag_2"
+                                        app:layout_constraintStart_toEndOf="@+id/tvMostCommentTag_2"
+                                        app:layout_constraintTop_toTopOf="@+id/tvMostCommentTag_2"
+                                        app:layout_constraintVertical_bias="0.0" />
+
+                                    <ImageView
+                                        android:id="@+id/imgMostCommentVideo"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:adjustViewBounds="true"
+                                        android:scaleType="centerCrop"
+                                        android:src="@drawable/video_image"
+                                        android:foreground="@drawable/most_video_card_overlay"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintHorizontal_bias="0.0"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent"
+                                        app:srcCompat="@drawable/video_image"
+
+                                        />
+
+                                    <TextView
+                                        android:id="@+id/tvMostComment"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="6dp"
+                                        android:layout_marginBottom="6dp"
+                                        android:drawableTint="@color/white"
+                                        android:drawableEnd="@drawable/ic_baseline_link_24"
+                                        android:drawablePadding="2dp"
+                                        android:background="@drawable/shape_4dp_corners_dark_green"
+                                        android:paddingHorizontal="2dp"
+                                        android:elevation="1dp"
+                                        android:ellipsize="end"
+                                        android:text="@string/mostComment"
+                                        android:textColor="@color/white"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintBottom_toBottomOf="@+id/imgMostCommentVideo"
+                                        app:layout_constraintStart_toStartOf="@+id/imgMostCommentVideo" />
+                                    <TextView
+                                        android:id="@+id/tvMostCommentVideoViewValue"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="2dp"
+                                        android:text="52342條"
+                                        android:textColor="@color/white"
+                                        android:textSize="22sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintBottom_toBottomOf="@+id/tvMostComment"
+                                        app:layout_constraintStart_toEndOf="@+id/tvMostComment"
+                                        app:layout_constraintTop_toTopOf="@+id/tvMostComment"
+                                        app:layout_constraintVertical_bias="0.5" />
+
+                                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cardMostLikeVideo"
+                                android:layout_width="350dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="6dp"
+                                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                                app:cardUseCompatPadding="true"
+                                app:contentPaddingBottom="4dp"
+                                app:cardCornerRadius="10dp"
+                                app:cardBackgroundColor="@color/grey"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/cardMostCommentVideo">
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/most_video_card_bg"
+                                    android:padding="6dp"
+                                    >
+
+                                    <TextView
+                                        android:id="@+id/tvMostLikeTag_1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="4dp"
+                                        android:layout_marginLeft="4dp"
+
+                                        android:background="@drawable/tag_bg"
+                                        android:elevation="1dp"
+                                        android:ellipsize="end"
+                                        android:paddingHorizontal="15dp"
+                                        android:paddingBottom="2dp"
+                                        android:textColor="@color/white"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="@+id/imgMostLikeVideo" />
+                                    <TextView
+                                        android:id="@+id/tvMostLikeTag_2"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:paddingBottom="2dp"
+                                        android:elevation="1dp"
+                                        android:ellipsize="end"
+                                        android:layout_marginStart="4dp"
+                                        android:background="@drawable/tag_bg"
+                                        android:paddingHorizontal="15dp"
+                                        android:textColor="@color/white"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintBottom_toBottomOf="@+id/tvMostLikeTag_1"
+                                        app:layout_constraintStart_toEndOf="@+id/tvMostLikeTag_1"
+                                        app:layout_constraintTop_toTopOf="@+id/tvMostLikeTag_1"
+                                        app:layout_constraintVertical_bias="0.0" />
+                                    <TextView
+                                        android:id="@+id/tvMostLikeTag_3"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:paddingBottom="2dp"
+                                        android:elevation="1dp"
+                                        android:ellipsize="end"
+                                        android:layout_marginStart="4dp"
+                                        android:background="@drawable/tag_bg"
+                                        android:paddingHorizontal="15dp"
+                                        android:textColor="@color/white"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintBottom_toBottomOf="@+id/tvMostLikeTag_2"
+                                        app:layout_constraintStart_toEndOf="@+id/tvMostLikeTag_2"
+                                        app:layout_constraintTop_toTopOf="@+id/tvMostLikeTag_2"
+                                        app:layout_constraintVertical_bias="0.0" />
+
+                                    <ImageView
+                                        android:id="@+id/imgMostLikeVideo"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:adjustViewBounds="true"
+                                        android:scaleType="centerCrop"
+                                        android:src="@drawable/video_image"
+                                        android:foreground="@drawable/most_video_card_overlay"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintHorizontal_bias="0.0"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent"
+                                        app:srcCompat="@drawable/video_image"
+
+                                        />
+
+                                    <TextView
+                                        android:id="@+id/tvMostLike"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="6dp"
+                                        android:layout_marginBottom="6dp"
+                                        android:drawableTint="@color/white"
+                                        android:drawableEnd="@drawable/ic_baseline_link_24"
+                                        android:drawablePadding="2dp"
+                                        android:background="@drawable/shape_4dp_corners_dark_green"
+                                        android:paddingHorizontal="2dp"
+                                        android:elevation="1dp"
+                                        android:ellipsize="end"
+                                        android:text="@string/mostLike"
+                                        android:textColor="@color/white"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintBottom_toBottomOf="@+id/imgMostLikeVideo"
+                                        app:layout_constraintStart_toStartOf="@+id/imgMostLikeVideo" />
+                                    <TextView
+                                        android:id="@+id/tvMostLikeValue"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="2dp"
+                                        android:text="64511次"
+                                        android:textColor="@color/white"
+                                        android:textSize="22sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintBottom_toBottomOf="@+id/tvMostLike"
+                                        app:layout_constraintStart_toEndOf="@+id/tvMostLike"
+                                        app:layout_constraintTop_toTopOf="@+id/tvMostLike"
+                                        app:layout_constraintVertical_bias="0.5" />
+
+                                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            </androidx.cardview.widget.CardView>
+
+                        </LinearLayout>
+
+                    </HorizontalScrollView>
+
+
+
+
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

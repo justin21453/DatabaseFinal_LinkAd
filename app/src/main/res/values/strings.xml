@@ -8,11 +8,17 @@
     <string name="confirmPassword">Confirm Password</string>
     <string name="region">地區</string>
     <string name="view">觀看</string>
+    <string name="comment">評論</string>
+    <string name="like">喜歡</string>
+    <string name="dislike">不喜歡</string>
     <string name="viewRate">觀看占比</string>
     <string name="videoRate">影片占比</string>
     <string name="videoAll">總影片</string>
     <string name="sub">訂閱</string>
     <string name="rank">排名</string>
+    <string name="mostView">最多觀看</string>
+    <string name="mostComment">最多評論</string>
+    <string name="mostLike">最多喜歡</string>
     <string name="category">Category</string>
     <string name="channel_name">Channel Name</string>
     <string name="judge">評價</string>
