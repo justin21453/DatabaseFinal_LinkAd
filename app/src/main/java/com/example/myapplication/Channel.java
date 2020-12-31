@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -117,6 +118,7 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
 
     private void getDataAndBindView() {
         Intent intent = getIntent();
+        //TODO: 减少从Intent接东西, 转到只用一个channelId
         String channelName = intent.getStringExtra("channelName");
         String category = intent.getStringExtra("category");
         String subscribeValue = intent.getStringExtra("subscribeValue");

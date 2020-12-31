@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/transparent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    tools:context=".Video">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardVideo"
@@ -48,7 +48,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:background="@drawable/shape_4dp_corners_dark_grey"
-                android:drawableEnd="@drawable/ic_baseline_link_24"
                 android:drawablePadding="4dp"
                 android:elevation="1dp"
                 android:ellipsize="end"
@@ -249,19 +248,15 @@
                 app:layout_constraintTop_toTopOf="@+id/videoDislike" />
 
 
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/btnChannelConstraintLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
                 android:layout_marginEnd="6dp"
-                android:layout_marginBottom="4dp"
                 android:background="@drawable/btn_bg_red"
                 android:paddingBottom="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/videoDislike">
+                app:layout_constraintBottom_toBottomOf="@+id/videoDislike"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <Button
                     android:id="@+id/btnYouTube"
@@ -280,38 +275,62 @@
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:layout_marginEnd="12dp"
-                android:background="@drawable/btn_bg_red"
-                android:paddingBottom="2dp"
-                app:layout_constraintEnd_toStartOf="@+id/btnChannelConstraintLayout"
-                app:layout_constraintTop_toBottomOf="@+id/videoDislike">
-
-                <Button
-                    android:id="@+id/btnClose"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/channel_card_bg"
-                    android:paddingHorizontal="10dp"
-                    android:text="關閉"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardChannel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="?attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/mediumRed"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="5dp"
+        app:cardUseCompatPadding="true"
+        app:contentPaddingBottom="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardVideo">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/channel_card_bg"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="10dp">
+
+            <TextView
+                android:id="@+id/videoTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_baseline_link_24"
+                android:drawableTint="@color/darkGrey"
+                android:drawablePadding="4dp"
+                android:elevation="1dp"
+                android:ellipsize="end"
+                android:maxEms="8"
+                android:paddingHorizontal="2dp"
+                android:singleLine="true"
+                android:text="前往频道页面"
+                android:textColor="@color/darkGrey"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+
+
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,20 +6,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.CategoryCard;
 import com.example.myapplication.model.CategoryId;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
@@ -81,7 +77,7 @@ public class CategoryCardAdapter extends RecyclerView.Adapter<CategoryCardAdapte
     @Override
     public CategoryCardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.from(parent.getContext()).inflate(R.layout.recycle_row_channel_category, parent, false);
+        View view = inflater.from(parent.getContext()).inflate(R.layout.recycle_channel_category, parent, false);
         return new CategoryCardViewHolder(view, onCardListener);
     }
 
@@ -113,7 +109,7 @@ public class CategoryCardAdapter extends RecyclerView.Adapter<CategoryCardAdapte
         holder.tv_category.setText(category);
         holder.tv_categoriesVideoValue.setText(videoRate + "%");
         holder.tv_categoriesViewValue.setText(viewRate + "%");
-        double judge = categoryId_tmp.getAvgRating();
+        double judge = categoryId_tmp.getAvgRating() == null? 0: categoryId_tmp.getAvgRating();
 
         holder.tv_categoriesJudge.setText(myformat.format(judge) + "%好评");
         if (judge > 97.0f) {

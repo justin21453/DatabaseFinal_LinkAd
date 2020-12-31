@@ -19,7 +19,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.myapplication.R;
-import com.example.myapplication.model.ChannelCard;
+import com.example.myapplication.model.VideoCard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,51 +27,52 @@ import java.util.List;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 // Home页面ChannelCard呈现的Adapter (结合RecyclerView使用)
-public class HomeChannelCardAdapter extends RecyclerView.Adapter<HomeChannelCardAdapter.HomeChannelCardViewHolder> {
+public class VideoCardAdapter extends RecyclerView.Adapter<VideoCardAdapter.VideoCardViewHolder> {
 
     //初始化context用于接收对应activity
     Context     context;
     //初始化自定义的参数
-    ArrayList<ChannelCard> channelCards;
+    ArrayList<VideoCard> videoCards;
     private OnCardListener onCardListener;
 
     // constructor: 初始化参数, Context接activity, 其余则是自定义的参数parameters
-    public HomeChannelCardAdapter(Context context, ArrayList<ChannelCard> channelCards, OnCardListener onCardListener) {
+    public VideoCardAdapter(Context context, ArrayList<VideoCard> videoCards, OnCardListener onCardListener) {
         this.context = context;
-        this.channelCards = channelCards;
+        this.videoCards = videoCards;
         this.onCardListener = onCardListener;
     }
 
     // 绑定View和Adapter的function
-    public class HomeChannelCardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener{
-        CardView cv_channel;
-        ImageView img_card, img_avatar;
-        TextView tv_channelName, tv_category, tv_subscribeValue, tv_viewValue;
-        TextView tags_1, tags_2, tags_3;
+    public class VideoCardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener{
+        CardView cv_video;
+        ImageView img_card;
+        TextView tags_1, tags_2, tags_3,
+                tv_videoTitle, tv_viewValue, tv_commentRate, tv_likeRate, tv_dislikeRate;
 
         OnCardListener onCardListener;
 
-        public HomeChannelCardViewHolder(@NonNull View itemView, OnCardListener onCardListener) {
+        public VideoCardViewHolder(@NonNull View itemView, OnCardListener onCardListener) {
             super(itemView);
             this.onCardListener = onCardListener;
             itemView.setOnClickListener(this);
             itemView.setOnTouchListener(this);
             //绑定Card里面的View
-            cv_channel = itemView.findViewById(R.id.cardChannel);
-            img_card = itemView.findViewById(R.id.imgChannel);
-            img_avatar = itemView.findViewById(R.id.imgChannelAvatar);
-            tv_channelName = itemView.findViewById(R.id.videoTitle);
-            tv_category = itemView.findViewById(R.id.channelCategory);
-            tv_subscribeValue = itemView.findViewById(R.id.categoriesViewValue);
-            tv_viewValue = itemView.findViewById(R.id.channelViewValue);
-            tags_1 = itemView.findViewById(R.id.tag_1);
-            tags_2 = itemView.findViewById(R.id.tag_2);
-            tags_3 = itemView.findViewById(R.id.tag_3);
+            cv_video        = itemView.findViewById(R.id.videoCard);
+            img_card        = itemView.findViewById(R.id.imgVideo);
+            tv_videoTitle   = itemView.findViewById(R.id.videoTitleValue);
+            tv_viewValue    = itemView.findViewById(R.id.tv_viewValue);
+            tv_commentRate  = itemView.findViewById(R.id.tv_commentRate);
+            tv_likeRate     = itemView.findViewById(R.id.tv_likeRate);
+            tv_dislikeRate  = itemView.findViewById(R.id.tv_dislikeRate);
+            tags_1          = itemView.findViewById(R.id.tag_1);
+            tags_2          = itemView.findViewById(R.id.tag_2);
+            tags_3          = itemView.findViewById(R.id.tag_3);
+
         }
 
         @Override
         public void onClick(View v) {
-            onCardListener.onCardClick(getAdapterPosition());
+            onCardListener.onVideoCardClick(getAdapterPosition());
         }
 
         @Override
@@ -84,29 +85,25 @@ public class HomeChannelCardAdapter extends RecyclerView.Adapter<HomeChannelCard
     //初始化ViewHolder-用于渲染RecyclerView里面的具体Row
     @NonNull
     @Override
-    public HomeChannelCardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public VideoCardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.from(parent.getContext()).inflate(R.layout.recycle_channel, parent, false);
-        return new HomeChannelCardViewHolder(view, onCardListener);
+        View view = inflater.from(parent.getContext()).inflate(R.layout.recycle_video, parent, false);
+        return new VideoCardViewHolder(view, onCardListener);
     }
 
     //数据绑定-绑定每一Row的数据
     @Override
-    public void onBindViewHolder(@NonNull HomeChannelCardViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull VideoCardViewHolder holder, int position) {
         //卡片出现动画
-        holder.cv_channel.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in));
-        //数据绑定
-        holder.tv_channelName.setText(channelCards.get(position).getChannelTitle());
-        holder.tv_channelName.setSingleLine(true);
-        String category = channelCards.get(position).getChannelCategory();
-        if(category.equals("NULL"))category = "None";   //如果Category是NULL的話
-        holder.tv_category.setText(category);
-        String subscribe = convertBigInteger(channelCards.get(position).getSubscriber());
-        if (subscribe.equals("-1")) subscribe = "未公開";
-        holder.tv_subscribeValue.setText(subscribe);
-        holder.tv_viewValue.setText(convertBigInteger(channelCards.get(position).getAllViewCount()));
+        holder.cv_video.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in));
+        //数据绑定, 将 VideoCard 中的Value, 对应设置到各个 textView 等
+        VideoCard videoCard = videoCards.get(position);
+        holder.tv_videoTitle.setText(videoCard.getTitle());
+        holder.tv_viewValue.setText(videoCard.getViewCount() + "观看");
 
-        List<String> tags = channelCards.get(position).getTag();
+        convertToRateAndSet(videoCard, holder);
+
+        List<String> tags = videoCards.get(position).getTag();
         //tags 可能为空
         if(tags != null)
             tagBinding(holder, tags);
@@ -115,7 +112,7 @@ public class HomeChannelCardAdapter extends RecyclerView.Adapter<HomeChannelCard
             holder.tags_3.setVisibility(View.INVISIBLE);
         }
 
-        String medium_photo_url = channelCards.get(position).getThumbnailsUrlHigh().replaceFirst("hq","mq");
+        String medium_photo_url = videoCards.get(position).getThumbnailsUrlHigh().replaceFirst("hq","mq");
 
         //图片加载设置
         DrawableCrossFadeFactory factory =
@@ -131,27 +128,35 @@ public class HomeChannelCardAdapter extends RecyclerView.Adapter<HomeChannelCard
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.shape_thumbnail_placeholder)
                 .into(holder.img_card);
-        Glide.with(context).load(channelCards.get(position).getAvatarUrlHigh())
-                .apply(requestOptions)
-                .transition(withCrossFade(factory))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.shape_avatar_placeholder)
-                .into(holder.img_avatar);
+    }
+
+    private void convertToRateAndSet(VideoCard videoCard, VideoCardViewHolder holder) {
+        double viewCount = Double.parseDouble(videoCard.getViewCount());
+        java.text.DecimalFormat myformat = new java.text.DecimalFormat("0.000");
+        String commentRate = myformat.format((double)Double.parseDouble(videoCard.getCommentCount()) / viewCount * 100);
+        String likeRate = myformat.format((double)Double.parseDouble(videoCard.getLikeCount()) / viewCount * 100);
+        String dislikeRate = myformat.format((double)Double.parseDouble(videoCard.getDislikeCount()) / viewCount * 100);
+        if (videoCard.getCommentCount()=="NaN") commentRate="0.000";
+        if (videoCard.getLikeCount()=="NaN") likeRate="0.000";
+        if (videoCard.getDislikeCount()=="NaN") dislikeRate="0.000";
+        holder.tv_commentRate.setText(commentRate + "%評論");
+        holder.tv_likeRate.setText(likeRate + "%喜歡");
+        holder.tv_dislikeRate.setText(dislikeRate + "%不喜歡");
     }
 
     @Override
     public int getItemCount() {
         //设置Item的数量, 这里指总共有几张卡片
-        return channelCards.size();
+        return videoCards.size();
     }
 
     public interface OnCardListener {
-        void onCardClick(int position);
+        void onVideoCardClick(int position);
         boolean onCardTouch(View v, MotionEvent event);
     }
 
     //绑定tag到3个tag_n上, 当tag不到3个或者tag的文字太长时, 进行一些处理
-    public void tagBinding(@NonNull HomeChannelCardViewHolder holder, List<String> tag) {
+    public void tagBinding(@NonNull VideoCardViewHolder holder, List<String> tag) {
         holder.tags_1.setText(tag.get(0));
         holder.tags_1.setSingleLine(true);
         holder.tags_2.setSingleLine(true);

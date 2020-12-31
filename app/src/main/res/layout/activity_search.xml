@@ -5,9 +5,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff"
     tools:context=".Home">
+<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="match_parent">-->
 
+<!--        <ImageView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/linkad_logo"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent">-->
+
+
+<!--        </ImageView>-->
+
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
     <RelativeLayout
         android:id="@+id/toolbarRelativeLayout"
         android:layout_width="match_parent"
@@ -18,13 +33,15 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="6dp"
+            >
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/toolbarConstraintLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/shape_round_corners_red"
                 android:elevation="6dp"
                 android:paddingBottom="3dp"
@@ -74,20 +91,20 @@
                 android:id="@+id/btnChannelConstraintLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="2dp"
                 android:layout_marginEnd="30dp"
-                android:background="@drawable/dialog_card_bg"
-                android:paddingBottom="2dp"
+                android:background="@drawable/btn_bg_green"
+                android:paddingBottom="4dp"
                 app:layout_constraintEnd_toEndOf="@+id/toolbarConstraintLayout"
                 app:layout_constraintTop_toBottomOf="@+id/toolbarConstraintLayout">
 
                 <Button
                     android:id="@+id/btnSearchChannel"
-                    android:layout_width="70dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
+                    android:layout_width="80dp"
+                    android:layout_height="42dp"
                     android:background="@drawable/channel_card_bg"
                     android:text="頻道"
+                    android:elevation="14dp"
                     android:textAllCaps="false"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -102,24 +119,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
-                android:background="@drawable/dialog_card_bg"
-                android:paddingBottom="2dp"
+                android:background="@drawable/btn_bg_green"
+                android:paddingBottom="4dp"
                 app:layout_constraintBottom_toBottomOf="@+id/btnChannelConstraintLayout"
                 app:layout_constraintEnd_toStartOf="@+id/btnChannelConstraintLayout"
                 app:layout_constraintTop_toTopOf="@+id/btnChannelConstraintLayout">
 
                 <Button
                     android:id="@+id/btnSearchVideo"
-                    android:layout_width="70dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
+                    android:layout_width="80dp"
+                    android:layout_height="42dp"
                     android:background="@drawable/channel_card_bg"
+                    android:elevation="14dp"
                     android:text="影片"
                     android:textAllCaps="false"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -132,7 +150,7 @@
 
 
     <com.scwang.smart.refresh.layout.SmartRefreshLayout
-        android:id="@+id/refreshLayout"
+        android:id="@+id/searchRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/homeRecyclerViewHorizontal"
@@ -142,28 +160,18 @@
             android:layout_height="wrap_content" />
         <!--    纵向RecyclerView, 用于放Channel的Card-->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/homeRecyclerView"
+            android:id="@+id/searchRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            />
         <com.scwang.smart.refresh.footer.ClassicsFooter
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.scwang.smart.refresh.layout.SmartRefreshLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Search"
-            android:textSize="50sp"
-            android:textStyle="bold"
-            android:layout_centerInParent="true"/>
-
-    </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/searchBottomNav"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_gravity="bottom"
@@ -172,7 +180,7 @@
 
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavBar"
+            android:id="@+id/searchBottomNavBar"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:background="@drawable/home_nav_bg"

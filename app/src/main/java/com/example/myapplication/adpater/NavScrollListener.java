@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView;
 // RecyclerView的滑动监听
 public class NavScrollListener extends RecyclerView.OnScrollListener {
     private HideScrollListener listener;
-    private static final int THRESHOLD = 20;    //触发Hide/Show的阈值
+    private static final int THRESHOLD = 10;    //触发Hide/Show的阈值
     private int distance = 0;                   //计算用户滑动距离
     private boolean visible = true;             //当前NavBar的可见状态, 初始为可见
 

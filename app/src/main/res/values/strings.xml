@@ -21,11 +21,14 @@
     <string name="mostLike">最多喜歡</string>
     <string name="category">Category</string>
     <string name="channel_name">Channel Name</string>
-    <string name="videoTitle">標題</string>
+    <string name="videoTitle">影片標題</string>
     <string name="videoPublishedTime">影片發佈時間</string>
     <string name="updateTime">數據更新時間</string>
     <string name="judge">評價</string>
     <string name="rate">比率</string>
+    <string name="likeRate">喜欢比例</string>
+    <string name="dislikeRate">不喜欢比例</string>
+    <string name="commentRate">评论比例</string>
 
     <string-array name="recycle_row_main_screen_title">
         <item>Card 1</item>

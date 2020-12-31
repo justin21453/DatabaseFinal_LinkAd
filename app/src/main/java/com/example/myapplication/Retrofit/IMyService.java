@@ -31,11 +31,11 @@ public interface IMyService {
                                  @Field("password") String password);
     @POST("searchC")
     @FormUrlEncoded
-    Call<ArrayList<ChannelCard>> searchChannel(@Field("text") String text);
+    Call<ArrayList<ChannelCard>> searchChannel(@Field("text") String text, @Field("skip") int skip);
 
     @POST("searchV")
     @FormUrlEncoded
-    Call<ArrayList<VideoCard>> searchVideo(@Field("text") String text);
+    Call<ArrayList<VideoCard>> searchVideo(@Field("text") String text, @Field("skip") int skip);
 
     @GET("home")
     Call<ArrayList<ChannelCard>> getAllChannelCards();
