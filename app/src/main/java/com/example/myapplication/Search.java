@@ -13,6 +13,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ import com.example.myapplication.adpater.HideScrollListener;
 import com.example.myapplication.adpater.HomeChannelCardAdapter;
 import com.example.myapplication.adpater.NavScrollListener;
 import com.example.myapplication.model.ChannelCard;
+import com.example.myapplication.model.VideoCard;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.header.ClassicsHeader;
@@ -48,6 +51,8 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
     HomeChannelCardAdapter homeChannelCardAdapter;
     // 初始化网络连接服务(呼叫后端用的 service)
     IMyService iMyService;
+    Button btnSearchVideo, btnSearchChannel;
+    EditText searchText;
     //接收server回传的json,通过converter(Gson)直接转换为Object List, 绑定到RecyclerView的卡片上
     ArrayList<ChannelCard>      channelCards = new ArrayList<>();
 
@@ -66,6 +71,10 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
         // 设置 NavBar 上的选中元素为 search (放大镜)
         bottomNavBar.setSelectedItemId(R.id.nav_search);
 
+
+        searchInit();
+
+
         navBarInit(bottomNavBar);
 
         //第一次初始化 SmartRefreshView, 此层套在RecyclerView的外层
@@ -74,7 +83,27 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
         cardAdapterInit();
     }
 
+    private void searchInit() {
+        btnSearchVideo = findViewById(R.id.btnSearchVideo);
+        btnSearchChannel = findViewById(R.id.btnSearchChannel);
+        searchText = findViewById(R.id.searchText);
+
+        btnSearchVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Call<ArrayList<VideoCard>> call = iMyService.searchVideo(searchText.getText().toString());
+            }
+        });
+        btnSearchChannel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Call<ArrayList<ChannelCard>> call = iMyService.searchChannel(searchText.getText().toString());
+            }
+        });
+    }
+
     //初始化目前存儲的channelCards, 重新抓取, 並重設adapter
+    //TODO: cardInit(@param1:点的是哪一个按钮, @param2: 搜索的是什么字串)
     private void cardInit() {
         Call<ArrayList<ChannelCard>> call = iMyService.getAllChannelCards();
         call.enqueue(new Callback<ArrayList<ChannelCard>>() {
@@ -236,6 +265,7 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
         bottomNavBar.setSelectedItemId(R.id.nav_search);
     }
     //滑动自动隐藏NavBar
+    //TODO: 自动隐藏顶部 toolbar
     @Override
     public void onHide() {
         //隐藏动画

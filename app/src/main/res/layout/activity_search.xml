@@ -11,50 +11,120 @@
     <RelativeLayout
         android:id="@+id/toolbarRelativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:elevation="1dp"
         android:gravity="center">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shape_round_corners_red"
-            android:elevation="6dp"
-            android:paddingBottom="3dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-
-            <androidx.appcompat.widget.Toolbar
-                android:layout_width="340dp"
-                android:layout_height="60dp"
-                android:background="@drawable/home_toolbar_bg"
-
-                app:itemRippleColor="@android:color/transparent"
-                app:layout_constraintBottom_toBottomOf="parent"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/toolbarConstraintLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/shape_round_corners_red"
+                android:elevation="6dp"
+                android:paddingBottom="3dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <EditText
-                    android:id="@+id/editTextTextPersonName2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:hint="Search..."
-                    android:background="@color/transparent"
-                    android:drawableEnd="@drawable/ic_baseline_search_24"
-                    android:drawableTint="@color/darkGrey"
-                    android:ems="10"
-                    android:inputType="textPersonName"
 
-                    android:textSize="20dp"
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="340dp"
+                    android:layout_height="60dp"
+
+                    android:background="@drawable/home_toolbar_bg"
+                    app:itemRippleColor="@android:color/transparent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0">
+
+                    <EditText
+                        android:id="@+id/searchText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:background="@color/transparent"
+                        android:drawableEnd="@drawable/ic_baseline_search_24"
+                        android:drawableTint="@color/darkGrey"
+                        android:ems="10"
+                        android:hint="Search..."
+                        android:inputType="textPersonName"
+
+                        android:textSize="20dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.appcompat.widget.Toolbar>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/btnChannelConstraintLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="30dp"
+                android:background="@drawable/dialog_card_bg"
+                android:paddingBottom="2dp"
+                app:layout_constraintEnd_toEndOf="@+id/toolbarConstraintLayout"
+                app:layout_constraintTop_toBottomOf="@+id/toolbarConstraintLayout">
+
+                <Button
+                    android:id="@+id/btnSearchChannel"
+                    android:layout_width="70dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/channel_card_bg"
+                    android:text="頻道"
+                    android:textAllCaps="false"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </androidx.appcompat.widget.Toolbar>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/btnVideoConstraintLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/dialog_card_bg"
+                android:paddingBottom="2dp"
+                app:layout_constraintBottom_toBottomOf="@+id/btnChannelConstraintLayout"
+                app:layout_constraintEnd_toStartOf="@+id/btnChannelConstraintLayout"
+                app:layout_constraintTop_toTopOf="@+id/btnChannelConstraintLayout">
+
+                <Button
+                    android:id="@+id/btnSearchVideo"
+                    android:layout_width="70dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/channel_card_bg"
+                    android:text="影片"
+                    android:textAllCaps="false"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

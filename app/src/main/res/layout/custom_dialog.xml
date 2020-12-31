@@ -251,7 +251,7 @@
                 />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout2"
+                android:id="@+id/btnChannelConstraintLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
@@ -288,7 +288,7 @@
                 android:layout_marginEnd="12dp"
                 android:background="@drawable/dialog_card_bg"
                 android:paddingBottom="2dp"
-                app:layout_constraintEnd_toStartOf="@+id/constraintLayout2"
+                app:layout_constraintEnd_toStartOf="@+id/btnChannelConstraintLayout"
                 app:layout_constraintTop_toBottomOf="@+id/videoDislike">
 
                 <Button

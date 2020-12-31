@@ -140,6 +140,11 @@ public class HomeChannelCardAdapter extends RecyclerView.Adapter<HomeChannelCard
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
+    }
+
+    @Override
     public int getItemCount() {
         //设置Item的数量, 这里指总共有几张卡片
         return channelCards.size();

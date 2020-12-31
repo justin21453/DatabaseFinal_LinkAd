@@ -5,6 +5,7 @@ import com.example.myapplication.model.CategoryCard;
 import com.example.myapplication.model.ChannelCard;
 import com.example.myapplication.model.ChannelMostVideo;
 import com.example.myapplication.model.ChannelRecentVideo;
+import com.example.myapplication.model.VideoCard;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -30,11 +31,11 @@ public interface IMyService {
                                  @Field("password") String password);
     @POST("searchC")
     @FormUrlEncoded
-    Observable<String> searchChannel(@Field("text") String text);
+    Call<ArrayList<ChannelCard>> searchChannel(@Field("text") String text);
 
     @POST("searchV")
     @FormUrlEncoded
-    Observable<String> searchVideo(@Field("text") String text);
+    Call<ArrayList<VideoCard>> searchVideo(@Field("text") String text);
 
     @GET("home")
     Call<ArrayList<ChannelCard>> getAllChannelCards();
