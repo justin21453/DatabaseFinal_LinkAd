@@ -6,6 +6,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -56,20 +57,13 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
     TextView tv_channelName, tv_category, tv_channelStartTime, tv_subscribeValue, tv_viewValue, tv_channelVideoCountValue;
     RecyclerView categoriesRecyclerView;
     Button btn_changePieChart;
-
     //3种Video Card
-    CardView cv_mostView;
-    ImageView img_mostView;
+    CardView cv_mostView, cv_mostComment, cv_mostLike;
+    ImageView img_mostView, img_mostComment, img_mostLike;
     TextView tv_mostViewValue;
-    TextView  tv_mostViewTag_1, tv_mostViewTag_2, tv_mostViewTag_3;
-
-    CardView cv_mostComment;
-    ImageView img_mostComment;
-    TextView tv_mostCommentValue, tv_mostCommentTag_1, tv_mostCommentTag_2, tv_mostCommentTag_3;
-
-    CardView cv_mostLike;
-    ImageView img_mostLike;
-    TextView tv_mostLikeValue, tv_mostLikeTag_1, tv_mostLikeTag_2, tv_mostLikeTag_3;
+    TextView  tv_mostViewTag_1, tv_mostViewTag_2, tv_mostViewTag_3,
+            tv_mostCommentValue, tv_mostCommentTag_1, tv_mostCommentTag_2, tv_mostCommentTag_3,
+            tv_mostLikeValue, tv_mostLikeTag_1, tv_mostLikeTag_2, tv_mostLikeTag_3;
 
     // 初始化网络连接服务(呼叫后端用的 service)
     IMyService iMyService;
@@ -87,12 +81,9 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
     private boolean hasLabels = true;
     private boolean hasLabelsOutside = false;
     private boolean hasCenterCircle = true;
-    private boolean hasCenterText1 = true;
-    private boolean hasCenterText2 = true;
-    private boolean isExploded = false;
     private boolean hasLabelForSelected = false;
-    VideoInfoEnum videoInfoEnum = VideoInfoEnum.VIEW;
 
+    VideoInfoEnum videoInfoEnum = VideoInfoEnum.VIEW;
     public enum VideoInfoEnum {
         VIEW,
         COMMENT,
@@ -139,7 +130,7 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
         //绑定 View
         cv_channel = findViewById(R.id.cardChannel);
         img_avatar = findViewById(R.id.imgChannelAvatar);
-        tv_channelName = findViewById(R.id.channelName);
+        tv_channelName = findViewById(R.id.videoTitle);
         tv_category = findViewById(R.id.channelCategory);
         tv_channelStartTime = findViewById(R.id.channelStartTime);
         tv_subscribeValue = findViewById(R.id.channelSubValue);
@@ -186,7 +177,7 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
                 .apply(requestOptions)
                 .transition(withCrossFade(factory))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.avatar_image)
+                .placeholder(R.drawable.shape_avatar_placeholder)
                 .into(img_avatar);
 
         //初始化 categories card 的 RecyclerView
@@ -236,21 +227,21 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
                 .apply(requestOptions)
                 .transition(withCrossFade(factory))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.shape_6dp_corners_placeholder_dark_grey)
+                .placeholder(R.drawable.shape_thumbnail_placeholder)
                 .into(img_mostView);
         medium_photo_url = videoMostCommentInfo.getThumbnailsUrlHigh().replaceFirst("hq","mq");
         Glide.with(this).load(medium_photo_url)
                 .apply(requestOptions)
                 .transition(withCrossFade(factory))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.shape_6dp_corners_placeholder_dark_grey)
+                .placeholder(R.drawable.shape_thumbnail_placeholder)
                 .into(img_mostComment);
         medium_photo_url = videoMostLikeInfo.getThumbnailsUrlHigh().replaceFirst("hq","mq");
         Glide.with(this).load(medium_photo_url)
                 .apply(requestOptions)
                 .transition(withCrossFade(factory))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.shape_6dp_corners_placeholder_dark_grey)
+                .placeholder(R.drawable.shape_thumbnail_placeholder)
                 .into(img_mostLike);
 
         if (videoMostViewInfo.getTag() != null && videoMostViewInfo.getTag().size() > 0) tagBinding(tv_mostViewTag_1, tv_mostViewTag_2, tv_mostViewTag_3, videoMostViewInfo.getTag());
@@ -423,6 +414,10 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
         }
 
         data = new PieChartData(values);
+        data.setCenterText1Typeface(Typeface.DEFAULT);
+        data.setCenterText2Typeface(Typeface.DEFAULT);
+        data.setCenterText1Color(R.color.white);
+        data.setCenterText1FontSize(36);
         //切换饼图显示的内容
         switch (videoInfoEnum) {
             case VIEW:
@@ -446,13 +441,7 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
         data.setHasLabelsOnlyForSelected(hasLabelForSelected);
         data.setHasLabelsOutside(hasLabelsOutside);
         data.setHasCenterCircle(hasCenterCircle);
-        data.setCenterText1Typeface(Typeface.DEFAULT);
-        data.setCenterText2Typeface(Typeface.DEFAULT);
-        data.setCenterText1FontSize(32);
-        data.setCenterText1Color(R.color.black);
-        data.setCenterText2FontSize(16);
-        data.setCenterText2Color(R.color.black);
-        data.setCenterText2("點擊查看更多");
+
 
         //初始化可視化Charts
         chart.setPieChartData(data);
@@ -465,20 +454,29 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
             //当饼图确实存在至少1块,产生提示,show出完整视频信息
             if (channelRecentVideos.size() != 0) {
                 ChannelRecentVideo channelRecentVideo = channelRecentVideos.get(arcIndex);
+                DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(channelRecentVideo.getVideoUrl())));
+                    }
+                };
 
                 String str = "数据更新于" + channelRecentVideo.getDatatime() +
-                        "\n发布日期:" + channelRecentVideo.getPublishedAt() +
+                        "\n影片发布日期:" + channelRecentVideo.getPublishedAt().substring(0, 10) +
                         "\n標題:" + channelRecentVideo.getTitle() +
-                        "\n分類:" + channelRecentVideo.getCategoryId() +
+                        "\n類型:" + channelRecentVideo.getCategoryId() +
                         "\n觀看:" + channelRecentVideo.getViewCount() +
                         "\n評論:" + channelRecentVideo.getCommentCount() +
                         "\n喜歡:" + channelRecentVideo.getLikeCount() +
                         "\n不喜歡:" + channelRecentVideo.getDislikeCount();
-                new AlertDialog.Builder(Channel.this)
-                        .setTitle("視頻詳情")
-                        .setMessage(str)
-                        .setPositiveButton("關閉", null)
-                        .show();
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(Channel.this);
+                        builder.setTitle("視頻詳情");
+                        builder.setMessage(str);
+                        builder.setPositiveButton("前往YouTube", onClickListener);
+                        builder.setNegativeButton("關閉", null);
+                        builder.show();
 
             } else Toast.makeText(Channel.this, "近一個月無任何投稿", Toast.LENGTH_SHORT).show();
         }
@@ -518,8 +516,6 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
                     v.animate().scaleX(1f).setDuration(130).start();
                     v.animate().scaleY(1f).setDuration(130).start();
                 }
-
-
 
                 return true;
             }

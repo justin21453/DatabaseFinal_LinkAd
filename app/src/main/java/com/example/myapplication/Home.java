@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.example.myapplication.Retrofit.IMyService;
 import com.example.myapplication.Retrofit.RetrofitClientGson;
 import com.example.myapplication.adpater.HideScrollListener;
-import com.example.myapplication.adpater.ChannelCardAdapter;
+import com.example.myapplication.adpater.HomeChannelCardAdapter;
 import com.example.myapplication.adpater.HomeCategoryAdapter;
 import com.example.myapplication.adpater.NavScrollListener;
 import com.example.myapplication.model.ChannelCard;
@@ -40,7 +40,7 @@ import static com.example.myapplication.WaitTime.TIME_EXIT;
 import static java.lang.Thread.sleep;
 
 // HideScrollListener 检测用户滑动的监听器, 用于自动隐藏NavBar
-public class Home extends AppCompatActivity implements HideScrollListener, ChannelCardAdapter.OnCardListener {
+public class Home extends AppCompatActivity implements HideScrollListener, HomeChannelCardAdapter.OnCardListener {
 
     private static final String TAG = "成功";
 
@@ -50,7 +50,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, Chann
     RelativeLayout              bottomNav;
     //recyclerView 用于主页Card(Channel)的显示, recyclerViewHorizontal用于主页顶部的Category Button的显示
     RecyclerView                recyclerView, recyclerViewHorizontal;
-    ChannelCardAdapter          channelCardAdapter;
+    HomeChannelCardAdapter homeChannelCardAdapter;
     // 初始化网络连接服务(呼叫后端用的 service)
     IMyService                  iMyService;
     String                      category[];
@@ -197,8 +197,8 @@ public class Home extends AppCompatActivity implements HideScrollListener, Chann
     public void cardAdapterInit() {
         Log.d(TAG, "initCardAdapter: 成功初始化Adapter, 当前拥有卡片:" + channelCards.size() + "张");
         //重设 Adapter
-        channelCardAdapter = new ChannelCardAdapter(this, channelCards, this);
-        recyclerView.setAdapter(channelCardAdapter);
+        homeChannelCardAdapter = new HomeChannelCardAdapter(this, channelCards, this);
+        recyclerView.setAdapter(homeChannelCardAdapter);
     }
 
     private void navBarInit(BottomNavigationView bottomNavBar) {

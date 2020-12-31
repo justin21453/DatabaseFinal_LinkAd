@@ -95,7 +95,7 @@
                 app:srcCompat="@drawable/avatar_image"
                 />
             <TextView
-                android:id="@+id/channelName"
+                android:id="@+id/videoTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -122,7 +122,7 @@
                 android:textSize="22sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/imgChannelAvatar"
-                app:layout_constraintStart_toStartOf="@+id/channelName" />
+                app:layout_constraintStart_toStartOf="@+id/videoTitle" />
 
             <ImageView
                 android:id="@+id/imgChannel"
