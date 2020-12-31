@@ -9,6 +9,77 @@
     tools:context=".Home">
 
     <RelativeLayout
+        android:id="@+id/toolbarRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom"
+        android:elevation="1dp"
+        android:gravity="center">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_round_corners_red"
+            android:elevation="6dp"
+            android:paddingBottom="3dp">
+
+
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="340dp"
+                android:layout_height="60dp"
+                android:background="@drawable/home_toolbar_bg"
+
+                app:itemRippleColor="@android:color/transparent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <EditText
+                    android:id="@+id/editTextTextPersonName2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:hint="Search..."
+                    android:background="@color/transparent"
+                    android:drawableEnd="@drawable/ic_baseline_search_24"
+                    android:drawableTint="@color/darkGrey"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+
+                    android:textSize="20dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.appcompat.widget.Toolbar>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </RelativeLayout>
+
+
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/homeRecyclerViewHorizontal"
+        >
+        <com.scwang.smart.refresh.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <!--    纵向RecyclerView, 用于放Channel的Card-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/homeRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <com.scwang.smart.refresh.footer.ClassicsFooter
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -34,14 +105,15 @@
             android:id="@+id/bottomNavBar"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:elevation="2dp"
             android:background="@drawable/home_nav_bg"
-            app:menu="@menu/main_screen_menu_items"
-            app:labelVisibilityMode="unlabeled"
+            android:elevation="2dp"
             app:itemIconSize="30dp"
+            app:itemIconTint="@drawable/nav_item_selector"
             app:itemRippleColor="@android:color/transparent"
-            app:itemIconTint="@drawable/nav_item_selector"/>
+            app:labelVisibilityMode="unlabeled"
+            app:menu="@menu/main_screen_menu_items" />
     </RelativeLayout>
+
 
 
 

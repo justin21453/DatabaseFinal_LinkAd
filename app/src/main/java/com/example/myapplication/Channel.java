@@ -483,8 +483,6 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
 
         @Override
         public void onValueDeselected() {
-            // TODO Auto-generated method stub
-
         }
     }
 

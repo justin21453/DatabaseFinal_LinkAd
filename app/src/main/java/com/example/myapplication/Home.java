@@ -37,7 +37,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.example.myapplication.WaitTime.TIME_EXIT;
-import static java.lang.Thread.sleep;
 
 // HideScrollListener 检测用户滑动的监听器, 用于自动隐藏NavBar
 public class Home extends AppCompatActivity implements HideScrollListener, HomeChannelCardAdapter.OnCardListener {
