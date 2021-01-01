@@ -139,19 +139,22 @@
                 app:layout_constraintTop_toBottomOf="@+id/imageConstraintLayout" />
 
             <TextView
-                android:id="@+id/tv_commentRate"
+                android:id="@+id/tv_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
-                android:background="@drawable/shape_4dp_corners_dark_orange"
+                android:background="@drawable/shape_4dp_corners_dark_grey"
                 android:paddingHorizontal="2dp"
-                android:text="@string/commentRate"
+                android:text="@string/category"
                 android:textColor="@color/white"
                 android:textSize="16sp"
+
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_viewValue"
                 app:layout_constraintStart_toEndOf="@+id/tv_viewValue"
                 app:layout_constraintTop_toTopOf="@+id/tv_viewValue" />
+
+
 
             <TextView
                 android:id="@+id/tv_likeRate"
@@ -181,6 +184,21 @@
                 app:layout_constraintBottom_toBottomOf="@+id/tv_likeRate"
                 app:layout_constraintStart_toEndOf="@+id/tv_likeRate"
                 app:layout_constraintTop_toTopOf="@+id/tv_likeRate" />
+
+            <TextView
+                android:id="@+id/tv_commentRate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/shape_4dp_corners_dark_orange"
+                android:paddingHorizontal="2dp"
+                android:text="@string/commentRate"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_dislikeRate"
+                app:layout_constraintStart_toEndOf="@+id/tv_dislikeRate"
+                app:layout_constraintTop_toTopOf="@+id/tv_dislikeRate" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

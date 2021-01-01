@@ -101,6 +101,7 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
     }
 
 
+    //初始化搜索相关控件
     @SuppressLint("ClickableViewAccessibility")
     private void searchInit() {
         btnSearchVideo.setOnTouchListener(new View.OnTouchListener() {
@@ -121,8 +122,7 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                     if (TextUtils.isEmpty(text)) {
                         Toast.makeText(Search.this, "搜索栏不能为空", Toast.LENGTH_SHORT).show();
                     } else {
-                        Call<ArrayList<VideoCard>> call = iMyService.searchVideo(text, videoCards.size());
-                        videoCardInit(call);
+                        videoCardInit(3);
                     }
                 }
 
@@ -147,8 +147,7 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                     if (TextUtils.isEmpty(text)) {
                         Toast.makeText(Search.this, "搜索栏不能为空", Toast.LENGTH_SHORT).show();
                     } else {
-                        Call<ArrayList<ChannelCard>> call = iMyService.searchChannel(text, channelCards.size());
-                        channelCardInit(call);
+                        channelCardInit(3);
                     }
                 }
 
@@ -159,16 +158,17 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
     }
 
     //初始化目前存儲的channelCards, 重新抓取, 並重設adapter
-    private void channelCardInit(Call<ArrayList<ChannelCard>> call) {
+    private void channelCardInit(int limit) {
+        Call<ArrayList<ChannelCard>> call = iMyService.searchChannel(text, 0, limit);
         call.enqueue(new Callback<ArrayList<ChannelCard>>() {
-            //onResponse 只有成功接收到response才会执行, 同时,由于是多线程进行, call之后的语句不会等到Call执行完才执行
             @Override
             public void onResponse(Call<ArrayList<ChannelCard>> call, Response<ArrayList<ChannelCard>> response) {
                 if (response.isSuccessful() && response.body() != null){
-                    //用返还的ArrayList覆盖现有的 channelCards 中的data(相当于初始化)
                     videoCards.clear();            //清空另一种的 ArrayList
                     channelCards = response.body();
                     channelCardAdapterInit();      //重置 Adapter, 刷新数据
+                    //TODO: 加載更多
+                    channelCardLoadMore();          //加載更多Card
                     btnChannelConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_green));
                     toggleToolbar();
                 }
@@ -176,32 +176,47 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
             @Override
             public void onFailure(Call<ArrayList<ChannelCard>> call, Throwable t) {
                 Toast.makeText(Search.this,"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
+                videoCardInit(limit);
             }
         });
     }
-    private void videoCardInit(Call<ArrayList<VideoCard>> call) {
+    //初始化目前存儲的videoCards, 重新抓取, 並重設adapter
+    private void videoCardInit(int limit) {
+        Call<ArrayList<VideoCard>> call = iMyService.searchVideo(text, 0, limit);
         call.enqueue(new Callback<ArrayList<VideoCard>>() {
             @Override
             public void onResponse(Call<ArrayList<VideoCard>> call, Response<ArrayList<VideoCard>> response) {
                 if (response.isSuccessful() && response.body() != null){
-                    //用返还的ArrayList覆盖现有的 channelCards 中的data(相当于初始化)
                     channelCards.clear();            //清空另一种的 ArrayList
                     videoCards = response.body();
                     videoCardAdapterInit();      //重置 Adapter, 刷新数据
+                    //TODO: 加載更多
+                    loadMoreChannelState = 0;
+                    videoCardLoadMore();          //加載更多Card
+
                     btnVideoConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_green));
                     toggleToolbar();
-
                 }
             }
             @Override
             public void onFailure(Call<ArrayList<VideoCard>> call, Throwable t) {
                 Toast.makeText(Search.this,"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
+                videoCardInit(limit);
             }
         });
     }
 
+
+
+    //多段式加载 Channel 卡片
+    private int loadMoreChannelState = 0;
     private void channelCardLoadMore() {
-        Call<ArrayList<ChannelCard>> call = iMyService.searchChannel(text, channelCards.size());
+        if (loadMoreChannelState == 0) channelCardLoad(3);
+        else if (loadMoreChannelState == 1) channelCardLoad(5);
+        else if (loadMoreChannelState == 2) channelCardLoad(7);
+    }
+    private void channelCardLoad(int limit) {
+        Call<ArrayList<ChannelCard>> call = iMyService.searchChannel(text, channelCards.size(), limit);
         call.enqueue(new Callback<ArrayList<ChannelCard>>() {
             @Override
             public void onResponse(Call<ArrayList<ChannelCard>> call, Response<ArrayList<ChannelCard>> response) {
@@ -210,18 +225,32 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                     channelCards.addAll(response.body());
                     homeChannelCardAdapter.notifyItemRangeChanged(0,channelCards.size());
 
+                    if (loadMoreChannelState <= 2) {
+                        loadMoreChannelState ++;
+                        channelCardLoadMore();
+                    }
                     Log.d(TAG, "onResponse: 成功加载更多channel卡片,现有共" + channelCards.size() + "张");
                 }
             }
             @Override
             public void onFailure(Call<ArrayList<ChannelCard>> call, Throwable t) {
                 Toast.makeText(Search.this,"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
+                channelCardLoad(limit);
             }
 
         });
     }
+
+    //多段式加载 Video 卡片
+    private int loadMoreVideoState = 0;
     private void videoCardLoadMore() {
-        Call<ArrayList<VideoCard>> call = iMyService.searchVideo(text, videoCards.size());
+        if (loadMoreVideoState == 0) videoCardLoad(3);
+        else if (loadMoreVideoState == 1) videoCardLoad(5);
+        else if (loadMoreVideoState == 2) videoCardLoad(7);
+
+    }
+    private void videoCardLoad(int limit) {
+        Call<ArrayList<VideoCard>> call = iMyService.searchVideo(text, videoCards.size(), limit);
         call.enqueue(new Callback<ArrayList<VideoCard>>() {
             @Override
             public void onResponse(Call<ArrayList<VideoCard>> call, Response<ArrayList<VideoCard>> response) {
@@ -229,17 +258,28 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                     //用返还的ArrayList覆盖现有的 channelCards 中的data(相当于初始化)
                     videoCards.addAll(response.body());
                     videoCardAdapter.notifyItemRangeChanged(0,videoCards.size());
+
+                    if (loadMoreVideoState <= 2) {
+                        loadMoreVideoState ++;
+                        videoCardLoadMore();
+                    }
+
                     Log.d(TAG, "onResponse: 成功加载更多video卡片,现有共" + videoCards.size() + "张");
                 }
             }
             @Override
             public void onFailure(Call<ArrayList<VideoCard>> call, Throwable t) {
                 Toast.makeText(Search.this,"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
+                videoCardLoad(limit);
             }
         });
-
     }
 
+
+
+
+
+    //Both 两者的 卡片触碰事件
     @Override
     public boolean onCardTouch(View v, MotionEvent event) {
         int action = event.getAction();
@@ -256,11 +296,14 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
         return true;  //this should be true to get further event's
     }
 
-    //TODO: 卡片点击事件
+
+
+
+    //Channel 卡片点击事件
     @Override
-    public void onCardClick(int position) {
+    public void onChannelCardClick(int position) {
         //卡片点击事件: 获取对应卡片Data, 传到新开启的Channel Activity
-        Log.d(TAG, "onCardClick: 成功点击卡片:" + position);
+        Log.d(TAG, "onCardClick: 成功点击Channel卡片:" + position);
         ChannelCard channelCard = channelCards.get(position);
 
         Intent intent = new Intent(Search.this, Channel.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -275,12 +318,32 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
         //开启新的Activity
         startActivity(intent);
     }
-
-    //TODO: VideoCard 点击事件
+    //Video 卡片点击事件
     @Override
     public void onVideoCardClick(int position) {
+        //卡片点击事件: 获取对应卡片Data, 传到新开启的 Video Activity
+        Log.d(TAG, "onCardClick: 成功点击Video卡片:" + position);
+        VideoCard videoCard = videoCards.get(position);
 
+        Intent intent = new Intent(Search.this, Video.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.putExtra("channelId", videoCard.getChannelId());
+        intent.putExtra("channelName", videoCard.getChannelTitle());
+        intent.putExtra("thumbnail", videoCard.getThumbnailsUrlHigh());
+        intent.putExtra("videoTitle", videoCard.getTitle());
+        intent.putExtra("updateTime", videoCard.getDatatime());
+        intent.putExtra("publishedTime", videoCard.getPublishedAt());
+        intent.putExtra("viewValue", videoCard.getViewCount());
+        intent.putExtra("category", videoCard.getCategoryId());
+        intent.putExtra("likeValue", videoCard.getLikeCount());
+        intent.putExtra("dislikeValue", videoCard.getDislikeCount());
+        intent.putExtra("commentValue", videoCard.getCommentCount());
+        intent.putExtra("videoUrl", videoCard.getVideoUrl());
+
+        //开启新的Activity
+        startActivity(intent);
     }
+
+
 
     //Smart Refresh 智能刷新, 下拉刷新, 上滑加载
     //https://github.com/scwang90/SmartRefreshLayout/blob/master/art/md_property.md
@@ -289,7 +352,7 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
         RefreshLayout refreshLayout = findViewById(R.id.searchRefreshLayout);
 
         refreshLayout.setEnableAutoLoadMore(false); //取消自动加载更多, 需要手动拉
-//        refreshLayout.setRefreshHeader(new ClassicsHeader(this));
+        //refreshLayout.setRefreshHeader(new ClassicsHeader(this)); //搜索页面不需要下拉刷新
 
         refreshLayout.setEnableRefresh(false);
         ClassicsFooter classicsFooter =new ClassicsFooter(this);
@@ -301,9 +364,9 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshlayout) {
-                //下拉刷新
-//                channelCardInit();
-//                refreshlayout.finishRefresh(2000);//传入false表示加载失败
+                //搜索页面不需要下拉刷新
+                //channelCardInit();
+                //refreshlayout.finishRefresh(2000);//传入false表示加载失败
             }
         });
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -312,9 +375,11 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                 //上滑加载更多, 需要添加Card到指定的ArrayList才能实现
                 Log.d(TAG, "onLoadMore: 现在channel和video卡片数量分别是" + channelCards.size() + ", " + videoCards.size());
                 if (channelCards.size() == 0) {
-                    videoCardLoadMore();
+                    loadMoreVideoState = 0;
+                    videoCardLoadMore();          //加載更多Card
                 }
                 else if (videoCards.size() == 0) {
+                    loadMoreChannelState = 0;
                     channelCardLoadMore();
                 }
 
@@ -335,6 +400,8 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
         videoCardAdapter = new VideoCardAdapter(this, videoCards, this);
         recyclerView.setAdapter(videoCardAdapter);
     }
+
+
 
     private void navBarInit(BottomNavigationView bottomNavBar) {
         // 跳转到新页面，并 reorder 到前面,重新排序 activity (参考下面 Link)
@@ -360,6 +427,10 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
             }
         });
     }
+
+
+
+
 
     private long mBackPressed;
     // 若再次返回会退出应用, 则User需要快速返回两次, 才能退出(目的是为了防误触)

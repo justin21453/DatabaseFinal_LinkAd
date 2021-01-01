@@ -47,7 +47,7 @@ public class VideoCardAdapter extends RecyclerView.Adapter<VideoCardAdapter.Vide
         CardView cv_video;
         ImageView img_card;
         TextView tags_1, tags_2, tags_3,
-                tv_videoTitle, tv_viewValue, tv_commentRate, tv_likeRate, tv_dislikeRate;
+                tv_videoTitle, tv_viewValue, tv_category, tv_commentRate, tv_likeRate, tv_dislikeRate;
 
         OnCardListener onCardListener;
 
@@ -60,6 +60,7 @@ public class VideoCardAdapter extends RecyclerView.Adapter<VideoCardAdapter.Vide
             cv_video        = itemView.findViewById(R.id.videoCard);
             img_card        = itemView.findViewById(R.id.imgVideo);
             tv_videoTitle   = itemView.findViewById(R.id.videoTitleValue);
+            tv_category     = itemView.findViewById(R.id.tv_category);
             tv_viewValue    = itemView.findViewById(R.id.tv_viewValue);
             tv_commentRate  = itemView.findViewById(R.id.tv_commentRate);
             tv_likeRate     = itemView.findViewById(R.id.tv_likeRate);
@@ -100,6 +101,7 @@ public class VideoCardAdapter extends RecyclerView.Adapter<VideoCardAdapter.Vide
         VideoCard videoCard = videoCards.get(position);
         holder.tv_videoTitle.setText(videoCard.getTitle());
         holder.tv_viewValue.setText(videoCard.getViewCount() + "观看");
+        holder.tv_category.setText(videoCard.getCategoryId());
 
         convertToRateAndSet(videoCard, holder);
 

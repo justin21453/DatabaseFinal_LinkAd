@@ -71,7 +71,7 @@ public class HomeChannelCardAdapter extends RecyclerView.Adapter<HomeChannelCard
 
         @Override
         public void onClick(View v) {
-            onCardListener.onCardClick(getAdapterPosition());
+            onCardListener.onChannelCardClick(getAdapterPosition());
         }
 
         @Override
@@ -146,7 +146,7 @@ public class HomeChannelCardAdapter extends RecyclerView.Adapter<HomeChannelCard
     }
 
     public interface OnCardListener {
-        void onCardClick(int position);
+        void onChannelCardClick(int position);
         boolean onCardTouch(View v, MotionEvent event);
     }
 

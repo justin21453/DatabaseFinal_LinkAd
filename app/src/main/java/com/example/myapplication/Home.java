@@ -48,8 +48,10 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
     BottomNavigationView        bottomNavBar;
     RelativeLayout              bottomNav;
     //recyclerView 用于主页Card(Channel)的显示, recyclerViewHorizontal用于主页顶部的Category Button的显示
+    RefreshLayout refreshLayout;
     RecyclerView                recyclerView, recyclerViewHorizontal;
     HomeChannelCardAdapter homeChannelCardAdapter;
+    boolean loadMoreState = false;
     // 初始化网络连接服务(呼叫后端用的 service)
     IMyService                  iMyService;
     String                      category[];
@@ -87,7 +89,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
 
     //初始化目前存儲的channelCards, 重新抓取, 並重設adapter
     private void cardInit() {
-        Call<ArrayList<ChannelCard>> call = iMyService.getAllChannelCards();
+        Call<ArrayList<ChannelCard>> call = iMyService.getAllChannelCards(2);
         call.enqueue(new Callback<ArrayList<ChannelCard>>() {
             //onResponse 只有成功接收到response才会执行, 同时,由于是多线程进行, call之后的语句不会等到Call执行完才执行
             @Override
@@ -96,17 +98,20 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
                     //用返还的ArrayList覆盖现有的 channelCards 中的data(相当于初始化)
                     channelCards = response.body();
                     cardAdapterInit();      //重置 Adapter, 刷新数据
+//                    cardLoadMore(7);
+                    loadMore(refreshLayout);
                 }
             }
             @Override
             public void onFailure(Call<ArrayList<ChannelCard>> call, Throwable t) {
                 Toast.makeText(Home.this,"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
+                cardInit();
             }
         });
     }
 
-    private void cardLoadMore() {
-        Call<ArrayList<ChannelCard>> call = iMyService.getAllChannelCards();
+    private void cardLoadMore(int limit) {
+        Call<ArrayList<ChannelCard>> call = iMyService.getAllChannelCards(limit);
         call.enqueue(new Callback<ArrayList<ChannelCard>>() {
             @Override
             public void onResponse(Call<ArrayList<ChannelCard>> call, Response<ArrayList<ChannelCard>> response) {
@@ -118,7 +123,11 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
             }
             @Override
             public void onFailure(Call<ArrayList<ChannelCard>> call, Throwable t) {
-                Toast.makeText(Home.this,"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
+                if (!loadMoreState) {
+                    Toast.makeText(Home.this,"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
+                    loadMoreState = true;
+                }
+                cardLoadMore(limit);
             }
 
         });
@@ -141,12 +150,12 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
     }
 
     @Override
-    public void onCardClick(int position) {
+    public void onChannelCardClick(int position) {
         //卡片点击事件: 获取对应卡片Data, 传到新开启的Channel Activity
         Log.d(TAG, "onCardClick: 成功点击卡片:" + position);
         ChannelCard channelCard = channelCards.get(position);
 
-        Intent intent = new Intent(Home.this, Channel.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        Intent intent = new Intent(Home.this, Channel.class);
         intent.putExtra("channelId", channelCard.getChannelId());
         intent.putExtra("channelName", channelCard.getChannelTitle());
         intent.putExtra("category", channelCard.getChannelCategory());
@@ -164,7 +173,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
     //https://github.com/scwang90/SmartRefreshLayout/blob/master/art/md_property.md
     private void smartRefreshInit() {
         Log.d(TAG, "smartRefreshInit: 成功初始化 SmartRefresh");
-        RefreshLayout refreshLayout = findViewById(R.id.refreshLayout);
+        refreshLayout = findViewById(R.id.refreshLayout);
 
         refreshLayout.setEnableAutoLoadMore(false); //取消自动加载更多, 需要手动拉
         refreshLayout.setRefreshHeader(new ClassicsHeader(this));
@@ -180,17 +189,27 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
             public void onRefresh(@NonNull RefreshLayout refreshlayout) {
                 //下拉刷新
                 cardInit();
-                refreshlayout.finishRefresh(2000);//传入false表示加载失败
+                refreshlayout.finishRefresh(1500);//传入false表示加载失败
             }
         });
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshlayout) {
                 //上滑加载更多, 需要添加Card到指定的ArrayList才能实现
-                cardLoadMore();
-                refreshlayout.finishLoadMore(2000);//传入false表示加载失败
+                loadMore(refreshlayout);    //多段式加载
             }
         });
+    }
+
+    private void loadMore(@NonNull RefreshLayout refreshlayout) {
+        loadMoreState = false;
+        cardLoadMore(2);
+        cardLoadMore(3);
+        cardLoadMore(5);
+        cardLoadMore(5);
+        cardLoadMore(5);
+        cardLoadMore(5);
+        refreshlayout.finishLoadMore(2000);//传入false表示加载失败
     }
 
     public void cardAdapterInit() {

@@ -24,15 +24,52 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/channel_card_bg"
+
             android:paddingHorizontal="8dp"
             android:paddingVertical="8dp"
             >
+
+            <TextView
+                android:id="@+id/videoCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/shape_4dp_corners_dark_grey"
+                android:elevation="1dp"
+                android:paddingHorizontal="2dp"
+                android:text="@string/category"
+
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/imgVideo" />
+
+            <TextView
+                android:id="@+id/videoPageVideoTitleValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="4dp"
+                android:elevation="1dp"
+                android:maxEms="16"
+                android:paddingHorizontal="2dp"
+                android:singleLine="true"
+                android:text="@string/videoTitle"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/imgVideoPageVideo"
+                app:layout_constraintStart_toStartOf="parent" />
+
             <ImageView
-                android:id="@+id/imgVideo"
+                android:id="@+id/imgVideoPageVideo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
+                android:foreground="@drawable/most_video_card_overlay"
                 android:src="@drawable/video_image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -58,8 +95,8 @@
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/imgVideo"
-                app:layout_constraintTop_toBottomOf="@+id/imgVideo" />
+                app:layout_constraintStart_toStartOf="@+id/imgVideoPageVideo"
+                app:layout_constraintTop_toBottomOf="@+id/imgVideoPageVideo" />
 
             <TextView
                 android:id="@+id/videoUpdateTimeValue"
@@ -282,8 +319,8 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardChannel"
-        android:layout_width="match_parent"
+        android:id="@+id/goToChannelCard"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:foreground="?attr/selectableItemBackground"
         app:cardBackgroundColor="@color/mediumRed"
@@ -296,32 +333,65 @@
         app:layout_constraintTop_toBottomOf="@+id/cardVideo">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/channel_card_bg"
-            android:paddingHorizontal="4dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="12dp"
             android:paddingVertical="10dp">
 
+            <ImageView
+                android:id="@+id/goToChannelAvatar"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:adjustViewBounds="true"
+                android:elevation="1dp"
+                android:src="@drawable/avatar_image"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/avatar_image" />
+
+
             <TextView
-                android:id="@+id/videoTitle"
+                android:id="@+id/goToChannelName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/ic_baseline_link_24"
-                android:drawableTint="@color/darkGrey"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/shape_4dp_corners_dark_grey"
                 android:drawablePadding="4dp"
                 android:elevation="1dp"
                 android:ellipsize="end"
-                android:maxEms="8"
+                android:maxEms="12"
                 android:paddingHorizontal="2dp"
                 android:singleLine="true"
-                android:text="前往频道页面"
-                android:textColor="@color/darkGrey"
-                android:textSize="24sp"
+                android:text="@string/channel_name"
+                android:textColor="@color/white"
+                android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toEndOf="@+id/goToChannelAvatar"
+                app:layout_constraintTop_toTopOf="@+id/goToChannelAvatar" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="2dp"
+                android:drawableEnd="@drawable/ic_baseline_link_24"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/darkGrey"
+                android:elevation="1dp"
+                android:paddingHorizontal="2dp"
+                android:singleLine="true"
+                android:text="點擊前往频道页面"
+                android:textColor="@color/darkGrey"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/goToChannelAvatar"
+                app:layout_constraintStart_toEndOf="@+id/goToChannelAvatar" />
 
 
 

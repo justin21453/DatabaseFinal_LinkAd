@@ -31,14 +31,14 @@ public interface IMyService {
                                  @Field("password") String password);
     @POST("searchC")
     @FormUrlEncoded
-    Call<ArrayList<ChannelCard>> searchChannel(@Field("text") String text, @Field("skip") int skip);
+    Call<ArrayList<ChannelCard>> searchChannel(@Field("text") String text, @Field("skip") int skip, @Field("limit") int limit);
 
     @POST("searchV")
     @FormUrlEncoded
-    Call<ArrayList<VideoCard>> searchVideo(@Field("text") String text, @Field("skip") int skip);
+    Call<ArrayList<VideoCard>> searchVideo(@Field("text") String text, @Field("skip") int skip, @Field("limit") int limit);
 
     @GET("home")
-    Call<ArrayList<ChannelCard>> getAllChannelCards();
+    Call<ArrayList<ChannelCard>> getAllChannelCards(@Header("limit") int limit);
 
     @GET("channelInfo")
     Call<CategoryCard> getChannelInfo(@Header("channelId") String channelId );

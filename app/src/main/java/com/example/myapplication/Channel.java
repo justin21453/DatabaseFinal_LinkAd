@@ -52,6 +52,7 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 public class Channel extends AppCompatActivity implements CategoryCardAdapter.OnCardListener {
 
     private static final String TAG = "成功";
+    boolean activityState = true;
 
     CardView cv_channel;
     ImageView img_avatar;
@@ -78,6 +79,8 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
 
     private PieChartView chart;
     private PieChartData data;
+    private String medium_photo_url;
+
 
     private boolean hasLabels = true;
     private boolean hasLabelsOutside = false;
@@ -175,6 +178,7 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
         requestOptions.circleCropTransform();
         requestOptions.transform( new RoundedCorners(30));  //设置圆角Corner大小
         //load()可以放图片URL ("https://")
+        if (activityState)
         Glide.with(this).load(avatar_url)
                 .apply(requestOptions)
                 .transition(withCrossFade(factory))
@@ -214,7 +218,6 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
         tv_mostCommentValue.setText(videoMostCommentInfo.getCommentCount());
         tv_mostLikeValue.setText(videoMostLikeInfo.getLikeCount());
 
-        String medium_photo_url;
 
         //图片加载设置
         DrawableCrossFadeFactory factory =
@@ -225,26 +228,28 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
         requestOptions.transform( new RoundedCorners(30));  //设置圆角Corner大小
         //load()可以放图片URL ("https://")
         medium_photo_url = videoMostViewInfo.getThumbnailsUrlHigh().replaceFirst("hq","mq");
-        Glide.with(this).load(medium_photo_url)
-                .apply(requestOptions)
-                .transition(withCrossFade(factory))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.shape_thumbnail_placeholder)
-                .into(img_mostView);
-        medium_photo_url = videoMostCommentInfo.getThumbnailsUrlHigh().replaceFirst("hq","mq");
-        Glide.with(this).load(medium_photo_url)
-                .apply(requestOptions)
-                .transition(withCrossFade(factory))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.shape_thumbnail_placeholder)
-                .into(img_mostComment);
-        medium_photo_url = videoMostLikeInfo.getThumbnailsUrlHigh().replaceFirst("hq","mq");
-        Glide.with(this).load(medium_photo_url)
-                .apply(requestOptions)
-                .transition(withCrossFade(factory))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.shape_thumbnail_placeholder)
-                .into(img_mostLike);
+        if (activityState) {
+            Glide.with(img_mostView).load(medium_photo_url)
+                    .apply(requestOptions)
+                    .transition(withCrossFade(factory))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.shape_thumbnail_placeholder)
+                    .into(img_mostView);
+            medium_photo_url = videoMostCommentInfo.getThumbnailsUrlHigh().replaceFirst("hq","mq");
+            Glide.with(img_mostView).load(medium_photo_url)
+                    .apply(requestOptions)
+                    .transition(withCrossFade(factory))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.shape_thumbnail_placeholder)
+                    .into(img_mostComment);
+            medium_photo_url = videoMostLikeInfo.getThumbnailsUrlHigh().replaceFirst("hq","mq");
+            Glide.with(img_mostView).load(medium_photo_url)
+                    .apply(requestOptions)
+                    .transition(withCrossFade(factory))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.shape_thumbnail_placeholder)
+                    .into(img_mostLike);
+        }
 
         if (videoMostViewInfo.getTag() != null && videoMostViewInfo.getTag().size() > 0) tagBinding(tv_mostViewTag_1, tv_mostViewTag_2, tv_mostViewTag_3, videoMostViewInfo.getTag());
         else {
@@ -540,6 +545,13 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
         super.onStart();
         overridePendingTransition(R.anim.enter_channel_page_animation, R.anim.hold_animation);
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        activityState = false;      //防止 Glide 报错, 在快速退出界面时, 阻断Glide读取图片
+    }
+
     @Override
     public void finish() {
         super.finish();
