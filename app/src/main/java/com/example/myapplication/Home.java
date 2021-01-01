@@ -30,7 +30,11 @@ import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeoutException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -54,6 +58,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
     boolean loadMoreState = false;
     // 初始化网络连接服务(呼叫后端用的 service)
     IMyService                  iMyService;
+    Call<ArrayList<ChannelCard>> callInit, callLoad;
     String                      category[];
     //接收server回传的json,通过converter(Gson)直接转换为Object List, 绑定到RecyclerView的卡片上
     ArrayList<ChannelCard>      channelCards = new ArrayList<>();
@@ -65,7 +70,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
         setContentView(R.layout.activity_home);
 
         recyclerView = findViewById(R.id.homeRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         recyclerView.addOnScrollListener(new NavScrollListener(this));  //绑定滑动监听器
         recyclerViewHorizontal = findViewById(R.id.homeRecyclerViewHorizontal);
         bottomNav = findViewById(R.id.bottomNav);
@@ -89,8 +94,8 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
 
     //初始化目前存儲的channelCards, 重新抓取, 並重設adapter
     private void cardInit() {
-        Call<ArrayList<ChannelCard>> call = iMyService.getAllChannelCards(2);
-        call.enqueue(new Callback<ArrayList<ChannelCard>>() {
+        callInit = iMyService.getAllChannelCards(2);
+        callInit.enqueue(new Callback<ArrayList<ChannelCard>>() {
             //onResponse 只有成功接收到response才会执行, 同时,由于是多线程进行, call之后的语句不会等到Call执行完才执行
             @Override
             public void onResponse(Call<ArrayList<ChannelCard>> call, Response<ArrayList<ChannelCard>> response) {
@@ -98,21 +103,34 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
                     //用返还的ArrayList覆盖现有的 channelCards 中的data(相当于初始化)
                     channelCards = response.body();
                     cardAdapterInit();      //重置 Adapter, 刷新数据
-//                    cardLoadMore(7);
+
                     loadMore(refreshLayout);
                 }
             }
             @Override
             public void onFailure(Call<ArrayList<ChannelCard>> call, Throwable t) {
-                Toast.makeText(Home.this,"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
+                if (!loadMoreState) {
+                    loadMoreState = true;
+                    if (t != null && (t instanceof IOException || t instanceof SocketTimeoutException || t instanceof ConnectException)) {
+                        if (t instanceof SocketTimeoutException || t instanceof TimeoutException) {
+                            Toast.makeText(getApplicationContext(),"出了點意外", Toast.LENGTH_SHORT).show();
+                            //avsInterface.onError(call, new AvsException("Oops something went wrong, please try again later..."));
+                        } else {
+                            Toast.makeText(getApplicationContext(),"請檢查你的網絡", Toast.LENGTH_SHORT).show();
+                            //avsInterface.onError(call, new AvsException("Please check your internet connection..."));
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(),"出了點意外", Toast.LENGTH_SHORT).show();
+                    }
+                }
                 cardInit();
             }
         });
     }
 
     private void cardLoadMore(int limit) {
-        Call<ArrayList<ChannelCard>> call = iMyService.getAllChannelCards(limit);
-        call.enqueue(new Callback<ArrayList<ChannelCard>>() {
+        callLoad = iMyService.getAllChannelCards(limit);
+        callLoad.enqueue(new Callback<ArrayList<ChannelCard>>() {
             @Override
             public void onResponse(Call<ArrayList<ChannelCard>> call, Response<ArrayList<ChannelCard>> response) {
                 if (response.isSuccessful() && response.body() != null){
@@ -124,8 +142,18 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
             @Override
             public void onFailure(Call<ArrayList<ChannelCard>> call, Throwable t) {
                 if (!loadMoreState) {
-                    Toast.makeText(Home.this,"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
                     loadMoreState = true;
+                    if (t != null && (t instanceof IOException || t instanceof SocketTimeoutException || t instanceof ConnectException)) {
+                        if (t instanceof SocketTimeoutException || t instanceof TimeoutException) {
+                            Toast.makeText(getApplicationContext(),"出了點意外", Toast.LENGTH_SHORT).show();
+                            //avsInterface.onError(call, new AvsException("Oops something went wrong, please try again later..."));
+                        } else {
+                            Toast.makeText(getApplicationContext(),"請檢查你的網絡", Toast.LENGTH_SHORT).show();
+                            //avsInterface.onError(call, new AvsException("Please check your internet connection..."));
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(),"出了點意外", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 cardLoadMore(limit);
             }
@@ -155,7 +183,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
         Log.d(TAG, "onCardClick: 成功点击卡片:" + position);
         ChannelCard channelCard = channelCards.get(position);
 
-        Intent intent = new Intent(Home.this, Channel.class);
+        Intent intent = new Intent(getApplicationContext(), Channel.class);
         intent.putExtra("channelId", channelCard.getChannelId());
         intent.putExtra("channelName", channelCard.getChannelTitle());
         intent.putExtra("category", channelCard.getChannelCategory());
@@ -176,9 +204,9 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
         refreshLayout = findViewById(R.id.refreshLayout);
 
         refreshLayout.setEnableAutoLoadMore(false); //取消自动加载更多, 需要手动拉
-        refreshLayout.setRefreshHeader(new ClassicsHeader(this));
+        refreshLayout.setRefreshHeader(new ClassicsHeader(getApplicationContext()));
 
-        ClassicsFooter classicsFooter =new ClassicsFooter(this);
+        ClassicsFooter classicsFooter =new ClassicsFooter(getApplicationContext());
         refreshLayout.setRefreshFooter(classicsFooter);
         refreshLayout.setFooterHeight(115);
         refreshLayout.setFooterMaxDragRate(5);
@@ -188,6 +216,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshlayout) {
                 //下拉刷新
+                loadMoreState = false;
                 cardInit();
                 refreshlayout.finishRefresh(1500);//传入false表示加载失败
             }
@@ -215,7 +244,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
     public void cardAdapterInit() {
         Log.d(TAG, "initCardAdapter: 成功初始化Adapter, 当前拥有卡片:" + channelCards.size() + "张");
         //重设 Adapter
-        homeChannelCardAdapter = new HomeChannelCardAdapter(this, channelCards, this);
+        homeChannelCardAdapter = new HomeChannelCardAdapter(getApplicationContext(), channelCards, this);
         recyclerView.setAdapter(homeChannelCardAdapter);
     }
 
@@ -247,11 +276,11 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
         //横向Category的文本内容
         category = getResources().getStringArray(R.array.recycle_row_home_category);
         ////初始化 HomeCategoryAdapter 并赋予data
-        HomeCategoryAdapter homeCategoryAdapter = new HomeCategoryAdapter(this, category);
+        HomeCategoryAdapter homeCategoryAdapter = new HomeCategoryAdapter(getApplicationContext(), category);
         //绑定Adapter 和 RecyclerView
         recyclerViewHorizontal.setAdapter(homeCategoryAdapter);
         //用LinearLayoutManager将RecyclerView显示方式转为Horizontal
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerViewHorizontal.setLayoutManager(linearLayoutManager);
     }
     // 若再次返回会退出应用, 则User需要快速返回两次, 才能退出(目的是为了防误触)
@@ -261,7 +290,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
             if(mBackPressed+TIME_EXIT>System.currentTimeMillis()) {
                 super.onBackPressed();
             } else {
-                Toast.makeText(this,"再次返回以退出",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"再次返回以退出",Toast.LENGTH_SHORT).show();
                 mBackPressed=System.currentTimeMillis();
             }
         } else {
@@ -276,6 +305,14 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
 //        overridePendingTransition(0, 0);    //取消界面切换动画
         // 当从其他 activity 返回到该 activity 时, 恢复(解除暂停), 重设 NavBar的选中元素
         bottomNavBar.setSelectedItemId(R.id.nav_home);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        loadMoreState = true;
+        if (callLoad != null) callLoad.cancel();
+        if (callInit != null) callInit.cancel();
     }
 
     //滑动自动隐藏NavBar

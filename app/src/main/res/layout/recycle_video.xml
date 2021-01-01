@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
     >
 
     <androidx.cardview.widget.CardView
@@ -12,8 +13,9 @@
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:layout_marginHorizontal="6dp"
+        android:layout_marginTop="1dp"
         android:foreground="?attr/selectableItemBackground"
-        app:cardCornerRadius="10dp"
+        app:cardCornerRadius="8dp"
         app:cardElevation="2dp"
         app:cardUseCompatPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -153,7 +155,6 @@
                 app:layout_constraintBottom_toBottomOf="@+id/tv_viewValue"
                 app:layout_constraintStart_toEndOf="@+id/tv_viewValue"
                 app:layout_constraintTop_toTopOf="@+id/tv_viewValue" />
-
 
 
             <TextView

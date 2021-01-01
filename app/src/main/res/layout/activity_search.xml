@@ -93,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:layout_marginEnd="30dp"
-                android:background="@drawable/btn_bg_green"
+                android:background="@drawable/btn_bg_14dp_green"
                 android:paddingBottom="4dp"
                 app:layout_constraintEnd_toEndOf="@+id/toolbarConstraintLayout"
                 app:layout_constraintTop_toBottomOf="@+id/toolbarConstraintLayout">
@@ -119,7 +119,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
-                android:background="@drawable/btn_bg_green"
+                android:background="@drawable/btn_bg_14dp_green"
                 android:paddingBottom="4dp"
                 app:layout_constraintBottom_toBottomOf="@+id/btnChannelConstraintLayout"
                 app:layout_constraintEnd_toStartOf="@+id/btnChannelConstraintLayout"

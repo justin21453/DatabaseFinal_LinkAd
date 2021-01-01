@@ -7,6 +7,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -35,8 +36,12 @@ import com.example.myapplication.model.VideoMostCommentInfo;
 import com.example.myapplication.model.VideoMostLikeInfo;
 import com.example.myapplication.model.VideoMostViewInfo;
 
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import lecho.lib.hellocharts.listener.PieChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.PieChartData;
@@ -52,13 +57,14 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 public class Channel extends AppCompatActivity implements CategoryCardAdapter.OnCardListener {
 
     private static final String TAG = "成功";
-    boolean activityState = true;
 
     CardView cv_channel;
     ImageView img_avatar;
     TextView tv_channelName, tv_category, tv_channelStartTime, tv_subscribeValue, tv_viewValue, tv_channelVideoCountValue;
     RecyclerView categoriesRecyclerView;
     Button btn_changePieChart;
+    ConstraintLayout channelCategoriesRecyclerView;
+
     //3种Video Card
     CardView cv_mostView, cv_mostComment, cv_mostLike;
     ImageView img_mostView, img_mostComment, img_mostLike;
@@ -69,6 +75,9 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
 
     // 初始化网络连接服务(呼叫后端用的 service)
     IMyService iMyService;
+    Call<ChannelMostVideo> callMostVideo;
+    Call<ArrayList<ChannelRecentVideo>> callRecentVideo;
+    Call<CategoryCard> callCategoriesCard;
 
     CategoryCard categoryCards;
     CategoryCardAdapter categoriesCardAdapter;
@@ -81,6 +90,7 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
     private PieChartData data;
     private String medium_photo_url;
 
+    boolean loadMoreState = false;
 
     private boolean hasLabels = true;
     private boolean hasLabelsOutside = false;
@@ -148,6 +158,7 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
         tv_viewValue.setText(viewValue);
 
         btn_changePieChart = findViewById(R.id.btn_changePieChart);
+        channelCategoriesRecyclerView = findViewById(R.id.btn_changePieChartConstraintLayout);
 
         cv_mostView = findViewById(R.id.cardMostViewVideo);
         cv_mostComment = findViewById(R.id.cardMostCommentVideo);
@@ -178,8 +189,7 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
         requestOptions.circleCropTransform();
         requestOptions.transform( new RoundedCorners(30));  //设置圆角Corner大小
         //load()可以放图片URL ("https://")
-        if (activityState)
-        Glide.with(this).load(avatar_url)
+        Glide.with(getApplicationContext()).load(avatar_url)
                 .apply(requestOptions)
                 .transition(withCrossFade(factory))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -193,8 +203,8 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
     //向Server请求ChannelVideo的信息, 并渲染饼图
     private void getChannelMostVideo(String channelId) {
         Log.d(TAG, "getChannelMostVideo: 初始化Most系列视频");
-        Call<ChannelMostVideo> call = iMyService.getChannelMostVideo(channelId);
-        call.enqueue(new Callback<ChannelMostVideo>() {
+        callMostVideo = iMyService.getChannelMostVideo(channelId);
+        callMostVideo.enqueue(new Callback<ChannelMostVideo>() {
             @Override
             public void onResponse(Call<ChannelMostVideo> call, Response<ChannelMostVideo> response) {
                 if (response.body() != null) {
@@ -205,7 +215,22 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
             }
             @Override
             public void onFailure(Call<ChannelMostVideo> call, Throwable t) {
-                Toast.makeText(Channel.this,"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
+                if (!loadMoreState) {
+                    loadMoreState = true;
+                    if (t != null && (t instanceof IOException || t instanceof SocketTimeoutException || t instanceof ConnectException)) {
+                        if (t instanceof SocketTimeoutException || t instanceof TimeoutException) {
+                            Toast.makeText(getApplicationContext(),"出了點意外", Toast.LENGTH_SHORT).show();
+                            //avsInterface.onError(call, new AvsException("Oops something went wrong, please try again later..."));
+                        } else {
+                            Toast.makeText(getApplicationContext(),"請檢查你的網絡", Toast.LENGTH_SHORT).show();
+                            //avsInterface.onError(call, new AvsException("Please check your internet connection..."));
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(),"出了點意外", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                getChannelMostVideo(channelId);
+
             }
         });
     }
@@ -228,28 +253,26 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
         requestOptions.transform( new RoundedCorners(30));  //设置圆角Corner大小
         //load()可以放图片URL ("https://")
         medium_photo_url = videoMostViewInfo.getThumbnailsUrlHigh().replaceFirst("hq","mq");
-        if (activityState) {
-            Glide.with(img_mostView).load(medium_photo_url)
-                    .apply(requestOptions)
-                    .transition(withCrossFade(factory))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.shape_thumbnail_placeholder)
-                    .into(img_mostView);
-            medium_photo_url = videoMostCommentInfo.getThumbnailsUrlHigh().replaceFirst("hq","mq");
-            Glide.with(img_mostView).load(medium_photo_url)
-                    .apply(requestOptions)
-                    .transition(withCrossFade(factory))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.shape_thumbnail_placeholder)
-                    .into(img_mostComment);
-            medium_photo_url = videoMostLikeInfo.getThumbnailsUrlHigh().replaceFirst("hq","mq");
-            Glide.with(img_mostView).load(medium_photo_url)
-                    .apply(requestOptions)
-                    .transition(withCrossFade(factory))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.shape_thumbnail_placeholder)
-                    .into(img_mostLike);
-        }
+        Glide.with(getApplicationContext()).load(medium_photo_url)
+                .apply(requestOptions)
+                .transition(withCrossFade(factory))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.shape_thumbnail_placeholder)
+                .into(img_mostView);
+        medium_photo_url = videoMostCommentInfo.getThumbnailsUrlHigh().replaceFirst("hq","mq");
+        Glide.with(getApplicationContext()).load(medium_photo_url)
+                .apply(requestOptions)
+                .transition(withCrossFade(factory))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.shape_thumbnail_placeholder)
+                .into(img_mostComment);
+        medium_photo_url = videoMostLikeInfo.getThumbnailsUrlHigh().replaceFirst("hq","mq");
+        Glide.with(getApplicationContext()).load(medium_photo_url)
+                .apply(requestOptions)
+                .transition(withCrossFade(factory))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.shape_thumbnail_placeholder)
+                .into(img_mostLike);
 
         if (videoMostViewInfo.getTag() != null && videoMostViewInfo.getTag().size() > 0) tagBinding(tv_mostViewTag_1, tv_mostViewTag_2, tv_mostViewTag_3, videoMostViewInfo.getTag());
         else {
@@ -318,8 +341,8 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
         //横向Category Card 的内容
         Log.d(TAG, "categoriesCardRecyclerViewInit: 初始化卡片");
 
-        Call<CategoryCard> call = iMyService.getChannelInfo(channelId);
-        call.enqueue(new Callback<CategoryCard>() {
+        callCategoriesCard = iMyService.getChannelInfo(channelId);
+        callCategoriesCard.enqueue(new Callback<CategoryCard>() {
             @Override
             public void onResponse(Call<CategoryCard> call, Response<CategoryCard> response) {
                 if (response.body() != null) {
@@ -336,8 +359,21 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
 
             @Override
             public void onFailure(Call<CategoryCard> call, Throwable t) {
-                Log.d(TAG, "onResponse: 无法连接到server");
-
+                if (!loadMoreState) {
+                    loadMoreState = true;
+                    if (t != null && (t instanceof IOException || t instanceof SocketTimeoutException || t instanceof ConnectException)) {
+                        if (t instanceof SocketTimeoutException || t instanceof TimeoutException) {
+                            Toast.makeText(getApplicationContext(),"出了點意外", Toast.LENGTH_SHORT).show();
+                            //avsInterface.onError(call, new AvsException("Oops something went wrong, please try again later..."));
+                        } else {
+                            Toast.makeText(getApplicationContext(),"請檢查你的網絡", Toast.LENGTH_SHORT).show();
+                            //avsInterface.onError(call, new AvsException("Please check your internet connection..."));
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(),"出了點意外", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                categoriesCardRecyclerViewInit(channelId);
             }
         });
 
@@ -373,8 +409,8 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
     //向Server请求ChannelVideo的信息, 并渲染饼图
     private void channelVideoChart(String channelId) {
         Log.d(TAG, "channelVideoChart: 初始化饼图");
-        Call<ArrayList<ChannelRecentVideo>> call = iMyService.getChannelRecentVideo(channelId);
-        call.enqueue(new Callback<ArrayList<ChannelRecentVideo>>() {
+        callRecentVideo = iMyService.getChannelRecentVideo(channelId);
+        callRecentVideo.enqueue(new Callback<ArrayList<ChannelRecentVideo>>() {
             @Override
             public void onResponse(Call<ArrayList<ChannelRecentVideo>> call, Response<ArrayList<ChannelRecentVideo>> response) {
                 if (response.body() != null) {
@@ -385,7 +421,21 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
             }
             @Override
             public void onFailure(Call<ArrayList<ChannelRecentVideo>> call, Throwable t) {
-                Toast.makeText(Channel.this,"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
+                if (!loadMoreState) {
+                    loadMoreState = true;
+                    if (t != null && (t instanceof IOException || t instanceof SocketTimeoutException || t instanceof ConnectException)) {
+                        if (t instanceof SocketTimeoutException || t instanceof TimeoutException) {
+                            Toast.makeText(getApplicationContext(),"出了點意外", Toast.LENGTH_SHORT).show();
+                            //avsInterface.onError(call, new AvsException("Oops something went wrong, please try again later..."));
+                        } else {
+                            Toast.makeText(getApplicationContext(),"請檢查你的網絡", Toast.LENGTH_SHORT).show();
+                            //avsInterface.onError(call, new AvsException("Please check your internet connection..."));
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(),"出了點意外", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                channelVideoChart(channelId);
             }
         });
 
@@ -395,7 +445,7 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
 
         int numValues = channelRecentVideos.size();
         if (numValues == 0) {
-            Toast.makeText(Channel.this,"近一個月無任何投稿", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"近一個月無任何投稿", Toast.LENGTH_SHORT).show();
             return;
         }
         List<SliceValue> values = new ArrayList<SliceValue>();
@@ -459,7 +509,9 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
         @Override
         public void onValueSelected(int arcIndex, SliceValue value) {
             //当饼图确实存在至少1块,产生提示,show出完整视频信息
-            if (channelRecentVideos.size() != 0) {
+            if (channelRecentVideos == null) {
+                Toast.makeText(getApplicationContext(),"請檢查你的網絡", Toast.LENGTH_SHORT).show();
+            } else if (channelRecentVideos.size() != 0) {
                 ChannelRecentVideo channelRecentVideo = channelRecentVideos.get(arcIndex);
                 DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
                     @Override
@@ -477,7 +529,6 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
                         "\n喜歡:" + channelRecentVideo.getLikeCount() +
                         "\n不喜歡:" + channelRecentVideo.getDislikeCount();
 
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(Channel.this);
                         builder.setTitle("視頻詳情");
                         builder.setMessage(str);
@@ -485,7 +536,7 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
                         builder.setNegativeButton("關閉", null);
                         builder.show();
 
-            } else Toast.makeText(Channel.this, "近一個月無任何投稿", Toast.LENGTH_SHORT).show();
+            } else Toast.makeText(getApplicationContext(), "近一個月無任何投稿", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -495,6 +546,7 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
 
 
     //Categories 顶部频道卡片, 以及 most videos 卡片的触摸效果
+    @SuppressLint("ClickableViewAccessibility")
     private void setChannelCardTouch() {
         View.OnTouchListener onTouchListener = new View.OnTouchListener() {
             @Override
@@ -508,14 +560,17 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
                     v.animate().cancel();
                     v.animate().scaleX(1f).setDuration(130).start();
                     v.animate().scaleY(1f).setDuration(130).start();
-                    if (v == cv_mostView)
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(channelMostVideo.getVideoMostViewInfo().getVideoUrl())));
-                    else if (v == cv_mostComment)
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(channelMostVideo.getVideoMostCommentInfo().getVideoUrl())));
-                    else if (v == cv_mostLike)
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(channelMostVideo.getVideoMostLikeInfo().getVideoUrl())));
-                    else if (v == cv_channel)
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(categoryCards.getChannelUrl())));
+                    if (channelMostVideo != null) {
+                        if (v == cv_mostView)
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(channelMostVideo.getVideoMostViewInfo().getVideoUrl())));
+                        else if (v == cv_mostComment)
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(channelMostVideo.getVideoMostCommentInfo().getVideoUrl())));
+                        else if (v == cv_mostLike)
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(channelMostVideo.getVideoMostLikeInfo().getVideoUrl())));
+                        else if (v == cv_channel)
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(categoryCards.getChannelUrl())));
+                    } else Toast.makeText(getApplicationContext(),"請檢查你的網絡", Toast.LENGTH_SHORT).show();
+
                 } else {
                     v.animate().cancel();
                     v.animate().scaleX(1f).setDuration(130).start();
@@ -530,13 +585,39 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
         cv_mostComment.setOnTouchListener(onTouchListener);
         cv_mostLike.setOnTouchListener(onTouchListener);
 
-        btn_changePieChart.setOnClickListener(new View.OnClickListener() {
+        btn_changePieChart.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                generateData(channelRecentVideos);
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                if (action == MotionEvent.ACTION_DOWN) {
+                    channelCategoriesRecyclerView.animate().translationY(8f).setDuration(0).start();
+                    channelCategoriesRecyclerView.setBackground(getDrawable(R.color.transparent));
+
+                } else {
+                    v.animate().cancel();
+                    channelCategoriesRecyclerView.animate().translationY(0).setDuration(0).start();
+                    channelCategoriesRecyclerView.setBackground(getDrawable(R.drawable.btn_bg_8dp_green));
+                    if (channelMostVideo != null) {
+                        generateData(channelRecentVideos);
+                    } else Toast.makeText(getApplicationContext(),"請檢查你的網絡", Toast.LENGTH_SHORT).show();
+
+                }
+
+                return true;
             }
         });
 
+    }
+
+    //解决内存泄露
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        loadMoreState = true;
+        if (callMostVideo != null) callMostVideo.cancel();
+        if (callRecentVideo != null) callRecentVideo.cancel();
+        if (callCategoriesCard != null) callCategoriesCard.cancel();
     }
 
     //改变进出场动画效果
@@ -544,12 +625,6 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
     protected void onStart() {
         super.onStart();
         overridePendingTransition(R.anim.enter_channel_page_animation, R.anim.hold_animation);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        activityState = false;      //防止 Glide 报错, 在快速退出界面时, 阻断Glide读取图片
     }
 
     @Override

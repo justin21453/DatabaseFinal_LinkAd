@@ -13,7 +13,7 @@
         app:cardElevation="5dp"
         android:foreground="?attr/selectableItemBackground"
         app:cardBackgroundColor="@color/mediumRed"
-        app:cardCornerRadius="16dp"
+        app:cardCornerRadius="14dp"
         app:cardUseCompatPadding="true"
         app:contentPaddingBottom="4dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,13 +38,13 @@
                 android:background="@drawable/shape_4dp_corners_dark_grey"
                 android:elevation="1dp"
                 android:paddingHorizontal="2dp"
-                android:text="@string/category"
 
+                android:text="@string/category"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/imgVideo" />
+                app:layout_constraintTop_toTopOf="@+id/imgVideoPageVideo" />
 
             <TextView
                 android:id="@+id/videoPageVideoTitleValue"
@@ -144,33 +144,6 @@
                 app:layout_constraintStart_toEndOf="@+id/videoPublishedTime"
                 app:layout_constraintTop_toTopOf="@+id/videoPublishedTime" />
 
-            <TextView
-                android:id="@+id/tv_videoTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/shape_4dp_corners_dark_grey"
-                android:elevation="1dp"
-                android:paddingHorizontal="2dp"
-                android:text="@string/videoTitle"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/videoPublishedTime"
-                app:layout_constraintTop_toBottomOf="@+id/videoPublishedTime" />
-            <TextView
-                android:id="@+id/tv_videoTitleValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:elevation="1dp"
-                android:paddingHorizontal="2dp"
-                android:text="@string/videoTitle"
-                android:textColor="@color/darkGrey"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_videoTitle"
-                app:layout_constraintStart_toEndOf="@+id/tv_videoTitle"
-                app:layout_constraintTop_toTopOf="@+id/tv_videoTitle" />
 
             <TextView
                 android:id="@+id/videoView"
@@ -185,7 +158,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/tv_videoTitle"
-                app:layout_constraintTop_toBottomOf="@+id/tv_videoTitleValue" />
+                app:layout_constraintTop_toBottomOf="@+id/videoPublishedTime" />
             <TextView
                 android:id="@+id/videoViewValue"
                 android:layout_width="wrap_content"
@@ -286,11 +259,11 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/btnChannelConstraintLayout"
+                android:id="@+id/btnYouTubeConstraintLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
-                android:background="@drawable/btn_bg_red"
+                android:background="@drawable/btn_bg_14dp_green"
                 android:paddingBottom="2dp"
                 app:layout_constraintBottom_toBottomOf="@+id/videoDislike"
                 app:layout_constraintEnd_toEndOf="parent">

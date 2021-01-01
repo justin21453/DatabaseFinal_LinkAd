@@ -2,15 +2,19 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -20,6 +24,11 @@ import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.example.myapplication.Retrofit.IMyService;
 import com.example.myapplication.Retrofit.RetrofitClientGson;
 import com.example.myapplication.model.CategoryCard;
+
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.util.concurrent.TimeoutException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,8 +40,6 @@ public class Video extends AppCompatActivity {
 
     private static final String TAG = "成功";
 
-    boolean activityState = true;
-
     private String channelId;
     private String channelName;
     private String medium_photo_url;
@@ -43,6 +50,7 @@ public class Video extends AppCompatActivity {
     TextView tv_category, tv_videoUpdateTimeValue, tv_videoPublishedTimeValue,
                 tv_videoTitleValue, tv_videoViewValue, tv_videoCommentValue, tv_videoLikeValue,tv_videoDislikeValue;
     Button btn_youtube;
+    ConstraintLayout btnYouTubeConstraintLayout;
 
     //前往 Channel 卡片
     CardView cv_goToChannelCard;
@@ -50,8 +58,12 @@ public class Video extends AppCompatActivity {
     TextView tv_goToChannelName;
 
     IMyService iMyService;
+    Call<CategoryCard> callGoToChannelCard;
+    boolean loadMoreState = false;
 
     CategoryCard channelCard;
+    String videoUrl, channelUrl, avatarUrl;
+
 
     //图片加载设置
     DrawableCrossFadeFactory factory =
@@ -65,24 +77,41 @@ public class Video extends AppCompatActivity {
         iMyService = RetrofitClientGson.getInstance().create(IMyService.class);
 
         getDataAndBindView();
+        setGoToChannelCard();
+        setButtonClick();
+        goToChannelCardInit();
 
     }
 
     private void setGoToChannelCard() {
-        Call<CategoryCard> call = iMyService.getChannelInfo(channelId);
-        call.enqueue(new Callback<CategoryCard>() {
+        callGoToChannelCard = iMyService.getChannelInfo(channelId);
+        callGoToChannelCard.enqueue(new Callback<CategoryCard>() {
             @Override
             public void onResponse(Call<CategoryCard> call, Response<CategoryCard> response) {
                 if (response.body() != null) {
                     Log.d(TAG, "onResponse: 成功连接server,取得Categories");
                     channelCard = response.body();
+                    channelUrl = channelCard.getChannelUrl();
+                    avatarUrl = channelCard.getAvatarUrlHigh();
                     goToChannelCardInit();
-                } else {
-                    Log.d(TAG, "onResponse: 成功连接server, 但无回传值");
                 }
             }
             @Override
             public void onFailure(Call<CategoryCard> call, Throwable t) {
+                if (!loadMoreState) {
+                    loadMoreState = true;
+                    if (t != null && (t instanceof IOException || t instanceof SocketTimeoutException || t instanceof ConnectException)) {
+                        if (t instanceof SocketTimeoutException || t instanceof TimeoutException) {
+                            Toast.makeText(getApplicationContext(),"出了點意外", Toast.LENGTH_SHORT).show();
+                            //avsInterface.onError(call, new AvsException("Oops something went wrong, please try again later..."));
+                        } else {
+                            Toast.makeText(getApplicationContext(),"請檢查你的網絡", Toast.LENGTH_SHORT).show();
+                            //avsInterface.onError(call, new AvsException("Please check your internet connection..."));
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(),"出了點意外", Toast.LENGTH_SHORT).show();
+                    }
+                }
                 setGoToChannelCard();
             }
         });
@@ -90,34 +119,34 @@ public class Video extends AppCompatActivity {
 
     //TODO: 初始化 前往頻道 Card
     private void goToChannelCardInit() {
-        String avatarUrl = channelCard.getAvatarUrlHigh();
-        Glide.with(Video.this).load(avatarUrl)
+        Glide.with(getApplicationContext()).load(avatarUrl)
                 .apply(requestOptions)
                 .transition(withCrossFade(factory))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.shape_avatar_placeholder)
                 .into(img_goToChannelAvatar);
 
-        //TODO 前往頻道的 小卡片
         cv_goToChannelCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //卡片点击事件: 获取对应卡片Data, 传到新开启的Channel Activity
+                if (channelCard == null) {
+                    Toast.makeText(getApplicationContext(),"請檢查你的網絡", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), Channel.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("channelId", channelId);
+                    intent.putExtra("channelName", channelName);
+                    intent.putExtra("category", channelCard.getCategoryIds().get(0).getId());
+                    intent.putExtra("subscribeValue", channelCard.getSubscriber());
+                    intent.putExtra("viewValue", channelCard.getAllviewCount());
+                    intent.putExtra("avatar", avatarUrl);
 
-                Intent intent = new Intent(Video.this, Channel.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("channelId", channelId);
-                intent.putExtra("channelName", channelName);
-                intent.putExtra("category", channelCard.getCategoryIds().get(0).getId());
-                intent.putExtra("subscribeValue", channelCard.getSubscriber());
-                intent.putExtra("viewValue", channelCard.getAllviewCount());
-                intent.putExtra("avatar", avatarUrl);
-
-                //开启新的Activity
-                startActivity(intent);
+                    //开启新的Activity
+                    startActivity(intent);
+                }
             }
         });
     }
-
     private void getDataAndBindView() {
         tv_goToChannelName = findViewById(R.id.goToChannelName);
         img_goToChannelAvatar = findViewById(R.id.goToChannelAvatar);
@@ -132,6 +161,9 @@ public class Video extends AppCompatActivity {
         tv_videoLikeValue = findViewById(R.id.videoLikeValue);
         tv_videoDislikeValue = findViewById(R.id.videoDislikeValue);
         btn_youtube = findViewById(R.id.btnYouTube);
+        btnYouTubeConstraintLayout = findViewById(R.id.btnYouTubeConstraintLayout);
+
+
 
         cv_goToChannelCard = findViewById(R.id.goToChannelCard);
 
@@ -149,14 +181,9 @@ public class Video extends AppCompatActivity {
         String likeValue = intent.getStringExtra("likeValue");
         String dislikeValue = intent.getStringExtra("dislikeValue");
         String commentValue = intent.getStringExtra("commentValue");
-        String videoUrl = intent.getStringExtra("videoUrl");
+        videoUrl = intent.getStringExtra("videoUrl");
 
-        btn_youtube.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl)));
-            }
-        });
+
 
         tv_videoUpdateTimeValue.setText(updateTime);
         tv_videoPublishedTimeValue.setText(publishedTime);
@@ -172,16 +199,37 @@ public class Video extends AppCompatActivity {
         requestOptions.transform( new RoundedCorners(30));  //设置圆角Corner大小
         medium_photo_url = thumbnail.replaceFirst("hq","mq");
         //load()放图片URL ("https://")
-        if (activityState)
-        Glide.with(Video.this).load(medium_photo_url)
+        Glide.with(getApplicationContext()).load(medium_photo_url)
                 .apply(requestOptions)
                 .transition(withCrossFade(factory))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.shape_avatar_placeholder)
                 .into(img_video);
 
-        setGoToChannelCard();
 
+
+    }
+    @SuppressLint("ClickableViewAccessibility")
+    private void setButtonClick() {
+        btn_youtube.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                if (action == MotionEvent.ACTION_DOWN) {
+                    btnYouTubeConstraintLayout.animate().translationY(2f).setDuration(0).start();
+                    btnYouTubeConstraintLayout.setBackground(getDrawable(R.color.transparent));
+
+                } else {
+                    v.animate().cancel();
+                    btnYouTubeConstraintLayout.animate().translationY(0).setDuration(0).start();
+                    btnYouTubeConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl)));
+
+                }
+
+                return true;
+            }
+        });
     }
 
     //改变进出场动画效果
@@ -194,13 +242,15 @@ public class Video extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
 
-    }
     @Override
-    protected void onStop() {
-        super.onStop();
-        activityState = false;      //防止 Glide 报错, 在快速退出界面时, 阻断Glide读取图片
+    protected void onDestroy() {
+        super.onDestroy();
+        loadMoreState = true;
+        if (callGoToChannelCard != null)callGoToChannelCard.cancel();
     }
+
     @Override
     public void finish() {
         super.finish();

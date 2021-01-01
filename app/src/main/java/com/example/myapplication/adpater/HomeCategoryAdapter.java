@@ -22,8 +22,8 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
     String      data1[];
 
     // constructor: 初始化Adapter, Context接activity, 其余则是自定义的para
-    public HomeCategoryAdapter(Context ct, String category[]) {
-        context = ct;
+    public HomeCategoryAdapter(Context context, String category[]) {
+        this.context = context;
         data1 = category;
     }
 

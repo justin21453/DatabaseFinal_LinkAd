@@ -255,20 +255,46 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/channelCategoriesRecyclerView" />
 
-                    <Button
-                        android:id="@+id/btn_changePieChart"
-                        android:layout_width="68dp"
-                        android:layout_height="30dp"
-                        android:layout_marginEnd="28dp"
-                        android:background="@drawable/shape_4dp_corners_dark_grey"
-                        android:text="切換餅圖"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/btn_changePieChartConstraintLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="30dp"
+                        android:background="@drawable/btn_bg_8dp_green"
+                        android:paddingBottom="3dp"
                         app:layout_constraintBottom_toBottomOf="@+id/recentVideo"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/recentVideo">
 
-                    </Button>
+                        <Button
+                            android:id="@+id/btn_changePieChart"
+                            android:layout_width="wrap_content"
+                            android:layout_height="38dp"
+                            android:background="@drawable/btn_8dp"
+                            android:paddingHorizontal="10dp"
+                            android:text="切換餅圖"
+                            android:textAllCaps="false"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+<!--                    <Button-->
+<!--                        android:id="@+id/btn_changePieChart"-->
+<!--                        android:layout_width="68dp"-->
+<!--                        android:layout_height="30dp"-->
+<!--                        android:layout_marginEnd="28dp"-->
+<!--                        android:background="@drawable/shape_4dp_corners_dark_grey"-->
+<!--                        android:text="切換餅圖"-->
+<!--                        android:textColor="@color/white"-->
+<!--                        android:textStyle="bold"-->
+<!--                        app:layout_constraintBottom_toBottomOf="@+id/recentVideo"-->
+<!--                        app:layout_constraintEnd_toEndOf="parent"-->
+<!--                        app:layout_constraintTop_toTopOf="@+id/recentVideo">-->
+
+<!--                    </Button>-->
 
                     <lecho.lib.hellocharts.view.PieChartView
                         android:id="@+id/pitChartView"
