@@ -135,7 +135,7 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                         Toast.makeText(getApplicationContext(), "搜索栏不能为空", Toast.LENGTH_SHORT).show();
                     } else {
 
-                        videoCardInit(7);
+                        videoCardInit(15);
                     }
                 }
 
@@ -286,9 +286,8 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
     private void videoCardLoadMore() {
         //多线程
         videoCardLoad(videoCards.size(), 5);
-        videoCardLoad(videoCards.size() + 5, 5);
-        videoCardLoad(videoCards.size() + 10, 10);
-        videoCardLoad(videoCards.size() + 20, 10);
+        videoCardLoad(videoCards.size() + 5, 10);
+        videoCardLoad(videoCards.size() + 15, 10);
 
     }
     private void videoCardLoad(int size ,int limit) {
@@ -450,12 +449,6 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                         return true;
                     case R.id.nav_home:
                         startActivity(new Intent(getApplicationContext(), Home.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-                        return true;
-                    case R.id.nav_favorite:
-                        startActivity(new Intent(getApplicationContext(), Favorite.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-                        return true;
-                    case R.id.nav_account:
-                        startActivity(new Intent(getApplicationContext(), UserAccount.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
                         return true;
                 }
                 return false;

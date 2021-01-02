@@ -23,7 +23,7 @@ public class UserAccount extends AppCompatActivity {
 
         bottomNavBar = findViewById(R.id.bottomNavBar);
         // 设置 NavBar 上的选中元素为 account (头像)
-        bottomNavBar.setSelectedItemId(R.id.nav_account);
+//        bottomNavBar.setSelectedItemId(R.id.nav_account);
 
         navBarInit(bottomNavBar);
     }
@@ -42,11 +42,11 @@ public class UserAccount extends AppCompatActivity {
                     case R.id.nav_search:
                         startActivity(new Intent(getApplicationContext(), Search.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
                         return true;
-                    case R.id.nav_favorite:
-                        startActivity(new Intent(getApplicationContext(), Favorite.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-                        return true;
-                    case R.id.nav_account:
-                        return true;
+//                    case R.id.nav_favorite:
+//                        startActivity(new Intent(getApplicationContext(), Favorite.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
+//                        return true;
+//                    case R.id.nav_account:
+//                        return true;
                 }
                 return false;
             }
@@ -73,6 +73,6 @@ public class UserAccount extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // 当从其他 activity 返回到该 activity 时, 恢复(解除暂停), 重设 NavBar的选中元素
-        bottomNavBar.setSelectedItemId(R.id.nav_account);
+//        bottomNavBar.setSelectedItemId(R.id.nav_account);
     }
 }

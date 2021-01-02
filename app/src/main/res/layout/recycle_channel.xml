@@ -9,7 +9,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardChannel"
         android:layout_width="match_parent"
-        android:layout_height="310dp"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="6dp"
         android:foreground="?android:attr/selectableItemBackgroundBorderless"
         app:cardUseCompatPadding="true"
@@ -23,7 +23,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@drawable/home_card_bg"
             android:padding="12dp"
             >

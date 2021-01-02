@@ -53,13 +53,12 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
     RelativeLayout              bottomNav;
     //recyclerView 用于主页Card(Channel)的显示, recyclerViewHorizontal用于主页顶部的Category Button的显示
     RefreshLayout refreshLayout;
-    RecyclerView                recyclerView, recyclerViewHorizontal;
+    RecyclerView                recyclerView;
     HomeChannelCardAdapter homeChannelCardAdapter;
     boolean loadMoreState = false;
     // 初始化网络连接服务(呼叫后端用的 service)
     IMyService                  iMyService;
     Call<ArrayList<ChannelCard>> callInit, callLoad;
-    String                      category[];
     //接收server回传的json,通过converter(Gson)直接转换为Object List, 绑定到RecyclerView的卡片上
     ArrayList<ChannelCard>      channelCards = new ArrayList<>();
 
@@ -72,7 +71,6 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
         recyclerView = findViewById(R.id.homeRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         recyclerView.addOnScrollListener(new NavScrollListener(this));  //绑定滑动监听器
-        recyclerViewHorizontal = findViewById(R.id.homeRecyclerViewHorizontal);
         bottomNav = findViewById(R.id.bottomNav);
         bottomNavBar = findViewById(R.id.bottomNavBar);
         bottomNavBar.setSelectedItemId(R.id.nav_home);        // 设置 NavBar 上的选中元素为 home (房子)
@@ -80,7 +78,6 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
         //底部导航栏Navigation bar 的初始化
         navBarInit(bottomNavBar);
         //TODO: 绑定顶部的 Category 数据, 完善 RecyclerViewHorizontal
-        horizontalRecyclerViewInit();
 
         //第一次初始化 SmartRefreshView, 此层套在RecyclerView的外层
         smartRefreshInit();
@@ -128,7 +125,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
         });
     }
 
-    private void cardLoadMore(int limit) {
+    private void cardLoadMore(int limit, int size) {
         callLoad = iMyService.getAllChannelCards(limit);
         callLoad.enqueue(new Callback<ArrayList<ChannelCard>>() {
             @Override
@@ -136,6 +133,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
                 if (response.isSuccessful() && response.body() != null){
                     //添加更多Card
                     channelCards.addAll(response.body());
+                    homeChannelCardAdapter.notifyItemRangeInserted(size, limit);
                     Log.d(TAG, "onResponse: 成功加载更多卡片,现有共" + channelCards.size() + "张");
                 }
             }
@@ -155,7 +153,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
                         Toast.makeText(getApplicationContext(),"出了點意外", Toast.LENGTH_SHORT).show();
                     }
                 }
-                cardLoadMore(limit);
+                cardLoadMore(limit,channelCards.size());
             }
 
         });
@@ -226,18 +224,19 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
             public void onLoadMore(@NonNull RefreshLayout refreshlayout) {
                 //上滑加载更多, 需要添加Card到指定的ArrayList才能实现
                 loadMore(refreshlayout);    //多段式加载
+
             }
         });
     }
 
     private void loadMore(@NonNull RefreshLayout refreshlayout) {
         loadMoreState = false;
-        cardLoadMore(2);
-        cardLoadMore(3);
-        cardLoadMore(5);
-        cardLoadMore(5);
-        cardLoadMore(5);
-        cardLoadMore(5);
+        cardLoadMore(2, channelCards.size());
+        cardLoadMore(3, channelCards.size() + 2);
+        cardLoadMore(5, channelCards.size() + 5);
+        cardLoadMore(5, channelCards.size() + 10);
+        cardLoadMore(5, channelCards.size() + 15);
+        cardLoadMore(5, channelCards.size() + 20);
         refreshlayout.finishLoadMore(2000);//传入false表示加载失败
     }
 
@@ -260,29 +259,13 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
                     case R.id.nav_search:
                         startActivity(new Intent(getApplicationContext(), Search.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
                         return true;
-                    case R.id.nav_favorite:
-                        startActivity(new Intent(getApplicationContext(), Favorite.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-                        return true;
-                    case R.id.nav_account:
-                        startActivity(new Intent(getApplicationContext(), UserAccount.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-                        return true;
+
                 }
                 return false;
             }
         });
     }
 
-    private void horizontalRecyclerViewInit() {
-        //横向Category的文本内容
-        category = getResources().getStringArray(R.array.recycle_row_home_category);
-        ////初始化 HomeCategoryAdapter 并赋予data
-        HomeCategoryAdapter homeCategoryAdapter = new HomeCategoryAdapter(getApplicationContext(), category);
-        //绑定Adapter 和 RecyclerView
-        recyclerViewHorizontal.setAdapter(homeCategoryAdapter);
-        //用LinearLayoutManager将RecyclerView显示方式转为Horizontal
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerViewHorizontal.setLayoutManager(linearLayoutManager);
-    }
     // 若再次返回会退出应用, 则User需要快速返回两次, 才能退出(目的是为了防误触)
     @Override
     public void onBackPressed(){
