@@ -46,6 +46,11 @@ import static com.example.myapplication.WaitTime.TIME_EXIT;
 public class Search extends AppCompatActivity implements HideScrollListener, HomeChannelCardAdapter.OnCardListener, VideoCardAdapter.OnCardListener {
 
     private static final String TAG = "成功";
+    private long mBackPressed;                  //连续返回2次——退出
+    boolean toolbarState = false;               //判断 Toolbar 的显示状态
+    boolean loadMoreState = false;              //判断 加载状态 （避免联网自动加载, 不停跳toast提示
+    boolean searchVideoState = false;           //判断 是否在搜寻影片, 会取消之前的搜索频道操作
+    boolean searchChannelState = false;         //判断 是否在搜寻频道, 会取消之前的搜索影片操作
 
     BottomNavigationView bottomNavBar;
     RelativeLayout bottomNav, toolbarRelativeLayout;
@@ -59,18 +64,15 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
     IMyService iMyService;
     Call<ArrayList<ChannelCard>> callChannelInit, callChannelLoad;
     Call<ArrayList<VideoCard>> callVideoCardInit, callVideoCardLoad;
+    //接收server回传的json,通过converter(Gson)直接转换为Object List, 绑定到RecyclerView的卡片上
+    ArrayList<ChannelCard>      channelCards = new ArrayList<>();
+    ArrayList<VideoCard>      videoCards = new ArrayList<>();
 
     ConstraintLayout btnVideoConstraintLayout, btnChannelConstraintLayout;
     Button btnSearchVideo, btnSearchChannel;
     EditText searchText;
-    boolean toolbarState = false;
-    boolean loadMoreState = false;
-    boolean searchVideoState = false;
-    boolean searchChannelState = false;
     String text;
-    //接收server回传的json,通过converter(Gson)直接转换为Object List, 绑定到RecyclerView的卡片上
-    ArrayList<ChannelCard>      channelCards = new ArrayList<>();
-    ArrayList<VideoCard>      videoCards = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -317,7 +319,7 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
 
 
 
-    //Both 两者的 卡片触碰事件
+    //Video 和 Channel 两种 Card 的卡片触碰事件
     @Override
     public boolean onCardTouch(View v, MotionEvent event) {
         int action = event.getAction();
@@ -333,10 +335,6 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
 
         return true;  //this should be true to get further event's
     }
-
-
-
-
     //Channel 卡片点击事件
     @Override
     public void onChannelCardClick(int position) {
@@ -389,9 +387,9 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
         Log.d(TAG, "smartRefreshInit: 成功初始化 SmartRefresh");
         RefreshLayout refreshLayout = findViewById(R.id.searchRefreshLayout);
 
-        refreshLayout.setEnableAutoLoadMore(false); //取消自动加载更多, 需要手动拉
-        //refreshLayout.setRefreshHeader(new ClassicsHeader(this)); //搜索页面不需要下拉刷新
-        refreshLayout.setEnableLoadMoreWhenContentNotFull(false);   //不满一页, 不允许刷新
+        refreshLayout.setEnableAutoLoadMore(false);                     //取消自动加载更多, 需要手动拉
+        //refreshLayout.setRefreshHeader(new ClassicsHeader(this));     //搜索页面不需要下拉刷新
+        refreshLayout.setEnableLoadMoreWhenContentNotFull(false);       //不满一页, 不允许上滑加载更多
         refreshLayout.setEnableRefresh(false);
         ClassicsFooter classicsFooter =new ClassicsFooter(getApplicationContext());
         refreshLayout.setRefreshFooter(classicsFooter);
@@ -427,13 +425,13 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
 
     //重设 Adapter 为 Channel Card
     public void channelCardAdapterInit() {
-        Log.d(TAG, "initCardAdapter: 成功初始化Adapter, 当前拥有卡片:" + channelCards.size() + "张");
+        Log.d(TAG, "initCardAdapter: 成功初始化Adapter, 当前拥有频道卡片:" + channelCards.size() + "张");
         homeChannelCardAdapter = new HomeChannelCardAdapter(getApplicationContext(), channelCards, this);
         recyclerView.setAdapter(homeChannelCardAdapter);
     }
     //重设 Adapter 为 Video Card
     public void videoCardAdapterInit() {
-        Log.d(TAG, "videoCardAdapterInit: 成功初始化Adapter, 当前拥有卡片:" + videoCards.size() + "张");
+        Log.d(TAG, "videoCardAdapterInit: 成功初始化Adapter, 当前拥有影片卡片:" + videoCards.size() + "张");
         videoCardAdapter = new VideoCardAdapter(getApplicationContext(), videoCards, this);
         recyclerView.setAdapter(videoCardAdapter);
     }
@@ -448,7 +446,7 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_search:
-                        toggleToolbar();
+                        toggleToolbar();                //隐藏or显示 Toolbar
                         return true;
                     case R.id.nav_home:
                         startActivity(new Intent(getApplicationContext(), Home.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
@@ -468,7 +466,6 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
 
 
 
-    private long mBackPressed;
     // 若再次返回会退出应用, 则User需要快速返回两次, 才能退出(目的是为了防误触)
     @Override
     public void onBackPressed(){
