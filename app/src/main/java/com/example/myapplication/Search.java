@@ -187,7 +187,8 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                         videoCards.clear();                 //清空另一种的 ArrayList
                         channelCards = response.body();
                         channelCardAdapterInit();      //重置 Adapter, 刷新数据
-                        channelCardLoadMore();          //加載更多Card
+                        loadMoreTime = 0;
+                        channelCardLoadMore(channelCards.size());          //加載更多Card
                         toggleToolbar();
                     }
                     btnChannelConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
@@ -247,23 +248,25 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
 
 
     //多段式加载 Channel 卡片
-    private void channelCardLoadMore() {
+    private int loadMoreTime = 0;
+    private void channelCardLoadMore(int size) {
         //多线程
-        channelCardLoad(channelCards.size(), 5);
-        channelCardLoad(channelCards.size() + 5, 5);
-        channelCardLoad(channelCards.size() + 10, 10);
-        channelCardLoad(channelCards.size() + 20, 10);
+        if (loadMoreTime == 0) channelCardLoad(size, 5);
+        else if (loadMoreTime == 1) channelCardLoad(size, 10);
+        else if (loadMoreTime == 2) channelCardLoad(size, 10);
 
     }
-    private void channelCardLoad(int size, int limit) {
-        callChannelLoad = iMyService.searchChannel(text, size, limit);
+    private void channelCardLoad(int skip, int limit) {
+        callChannelLoad = iMyService.searchChannel(text, skip, limit);
         callChannelLoad.enqueue(new Callback<ArrayList<ChannelCard>>() {
             @Override
             public void onResponse(Call<ArrayList<ChannelCard>> call, Response<ArrayList<ChannelCard>> response) {
                 if (response.isSuccessful() && response.body() != null){
                     //添加更多Card
                     channelCards.addAll(response.body());
-                    homeChannelCardAdapter.notifyItemRangeInserted(size, limit);
+                    homeChannelCardAdapter.notifyItemRangeInserted(skip, limit);
+                    loadMoreTime++;
+                    channelCardLoadMore(channelCards.size());
 
                     Log.d(TAG, "onResponse: 成功加载更多channel卡片,现有共" + channelCards.size() + "张");
                 } else if(response.body() == null) {
@@ -414,7 +417,8 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                     videoCardLoadMore();          //加載更多Card
                 }
                 else if (videoCards.size() == 0) {
-                    channelCardLoadMore();
+                    loadMoreTime = 0;
+                    channelCardLoadMore(channelCards.size());
                 }
 
                 refreshlayout.finishLoadMore(2000);//传入false表示加载失败
