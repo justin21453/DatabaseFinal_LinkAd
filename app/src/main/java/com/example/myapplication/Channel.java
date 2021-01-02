@@ -60,7 +60,7 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
 
     CardView cv_channel;
     ImageView img_avatar;
-    TextView tv_channelName, tv_category, tv_channelStartTime, tv_subscribeValue, tv_viewValue, tv_channelVideoCountValue;
+    TextView tv_channelName, tv_category, tv_channelStartTime, tv_subscribeValue, tv_viewValue, tv_channelVideoCountValue, tv_rankValue;
     RecyclerView categoriesRecyclerView;
     Button btn_changePieChart;
     ConstraintLayout channelCategoriesRecyclerView;
@@ -131,7 +131,6 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
 
     private void getDataAndBindView() {
         Intent intent = getIntent();
-        //TODO: 减少从Intent接东西, 转到只用一个channelId
         String channelName = intent.getStringExtra("channelName");
         String category = intent.getStringExtra("category");
         String subscribeValue = intent.getStringExtra("subscribeValue");
@@ -150,6 +149,7 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
         tv_channelStartTime = findViewById(R.id.channelStartTime);
         tv_subscribeValue = findViewById(R.id.channelSubValue);
         tv_viewValue = findViewById(R.id.channelViewValue);
+        tv_rankValue = findViewById(R.id.channelRankValue);
         tv_channelVideoCountValue = findViewById(R.id.channelVideoCountValue);
         tv_channelName.setText(channelName);
         category = category.equals("NULL")? "未分類":category;
@@ -350,6 +350,8 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
                     categoryCards = response.body();
                     tv_channelVideoCountValue.setText(categoryCards.getAllvideoCount());                       //获得总视频数量
                     tv_channelStartTime.setText("創建於 " + categoryCards.getPublishedAt().substring(0, 10));  //获得频道创建日期
+                    if (categoryCards.getRank() != null && categoryCards.getRank() != -1 ) tv_rankValue.setText(categoryCards.getRank() + "/" + categoryCards.getRankTotal());
+                    else tv_rankValue.setText("未公開");
                     categoriesCardAdapterInit();
                 }
                 else {
@@ -593,14 +595,17 @@ public class Channel extends AppCompatActivity implements CategoryCardAdapter.On
                     channelCategoriesRecyclerView.animate().translationY(8f).setDuration(0).start();
                     channelCategoriesRecyclerView.setBackground(getDrawable(R.color.transparent));
 
-                } else {
+                } else if (action == MotionEvent.ACTION_UP){
                     v.animate().cancel();
                     channelCategoriesRecyclerView.animate().translationY(0).setDuration(0).start();
                     channelCategoriesRecyclerView.setBackground(getDrawable(R.drawable.btn_bg_8dp_green));
                     if (channelMostVideo != null) {
                         generateData(channelRecentVideos);
                     } else Toast.makeText(getApplicationContext(),"請檢查你的網絡", Toast.LENGTH_SHORT).show();
-
+                } else {
+                    v.animate().cancel();
+                    channelCategoriesRecyclerView.animate().translationY(0).setDuration(0).start();
+                    channelCategoriesRecyclerView.setBackground(getDrawable(R.drawable.btn_bg_8dp_green));
                 }
 
                 return true;

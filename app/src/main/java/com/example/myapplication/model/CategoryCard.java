@@ -1,4 +1,3 @@
-
 package com.example.myapplication.model;
 
 import java.util.List;
@@ -46,6 +45,12 @@ public class CategoryCard {
     @SerializedName("categoryIds")
     @Expose
     private List<CategoryId> categoryIds = null;
+    @SerializedName("rank")
+    @Expose
+    private Integer rank;
+    @SerializedName("rankTotal")
+    @Expose
+    private Integer rankTotal;
 
     public String getId() {
         return id;
@@ -149,6 +154,22 @@ public class CategoryCard {
 
     public void setCategoryIds(List<CategoryId> categoryIds) {
         this.categoryIds = categoryIds;
+    }
+
+    public Integer getRank() {
+        return rank;
+    }
+
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
+
+    public Integer getRankTotal() {
+        return rankTotal;
+    }
+
+    public void setRankTotal(Integer rankTotal) {
+        this.rankTotal = rankTotal;
     }
 
 }

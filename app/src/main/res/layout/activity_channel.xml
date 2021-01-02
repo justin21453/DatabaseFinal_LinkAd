@@ -133,18 +133,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
-                            android:id="@+id/channelSubValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:text="100K"
-                            android:textColor="@color/darkGrey"
-                            android:textSize="24sp"
-                            android:textStyle="bold"
-                            app:layout_constraintBottom_toBottomOf="@+id/channelSub"
-                            app:layout_constraintStart_toEndOf="@+id/channelSub"
-                            app:layout_constraintTop_toTopOf="@+id/channelSub" />
+
 
                         <TextView
                             android:id="@+id/channelViewValue"
@@ -176,10 +165,65 @@
                             android:id="@+id/channelSub"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="6dp"
                             android:background="@drawable/shape_4dp_corners_dark_grey"
                             android:paddingHorizontal="2dp"
                             android:text="@string/sub"
+                            android:textColor="@color/white"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="@+id/channelView"
+                            app:layout_constraintTop_toBottomOf="@+id/channelView" />
+
+                        <TextView
+                            android:id="@+id/channelSubValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:text="100K"
+                            android:textColor="@color/darkGrey"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="@+id/channelSub"
+                            app:layout_constraintStart_toEndOf="@+id/channelSub"
+                            app:layout_constraintTop_toTopOf="@+id/channelSub" />
+
+                        <TextView
+                            android:id="@+id/channelRank"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:background="@drawable/shape_4dp_corners_dark_grey"
+                            android:paddingHorizontal="2dp"
+                            android:text="@string/rank"
+                            android:textColor="@color/white"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="@+id/channelSub"
+                            app:layout_constraintStart_toStartOf="@+id/channelVideoCount"
+                            app:layout_constraintTop_toBottomOf="@+id/channelVideoCount" />
+
+                        <TextView
+                            android:id="@+id/channelRankValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:paddingHorizontal="2dp"
+                            android:text="2/203"
+                            android:textColor="@color/darkGrey"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="@+id/channelRank"
+                            app:layout_constraintStart_toEndOf="@+id/channelRank"
+                            app:layout_constraintTop_toTopOf="@+id/channelRank" />
+                        <TextView
+                            android:id="@+id/channelView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:background="@drawable/shape_4dp_corners_dark_grey"
+                            android:paddingHorizontal="2dp"
+                            android:text="@string/view"
                             android:textColor="@color/white"
                             android:textSize="24sp"
                             android:textStyle="bold"
@@ -187,33 +231,19 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
-                            android:id="@+id/channelView"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:background="@drawable/shape_4dp_corners_dark_grey"
-                            android:paddingHorizontal="2dp"
-                            android:text="@string/view"
-                            android:textColor="@color/white"
-                            android:textSize="24sp"
-                            android:textStyle="bold"
-                            app:layout_constraintStart_toStartOf="@+id/channelSub"
-                            app:layout_constraintTop_toBottomOf="@+id/channelSub" />
-
-                        <TextView
                             android:id="@+id/channelVideoCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="170dp"
+                            android:layout_marginStart="10dp"
                             android:background="@drawable/shape_4dp_corners_dark_grey"
                             android:paddingHorizontal="2dp"
                             android:text="@string/videoAll"
                             android:textColor="@color/white"
                             android:textSize="24sp"
                             android:textStyle="bold"
-                            app:layout_constraintBottom_toBottomOf="@+id/channelSub"
-                            app:layout_constraintStart_toStartOf="@+id/channelSub"
-                            app:layout_constraintTop_toTopOf="@+id/channelSub" />
+                            app:layout_constraintBottom_toBottomOf="@+id/channelView"
+                            app:layout_constraintStart_toEndOf="@+id/channelViewValue"
+                            app:layout_constraintTop_toTopOf="@+id/channelView" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <TextView
@@ -248,7 +278,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
                         android:layout_marginTop="10dp"
-                        android:text="近期視頻"
+                        android:text="近期影片數據"
                         android:textSize="24sp"
                         android:textStyle="bold"
                         android:textColor="@color/darkGrey"

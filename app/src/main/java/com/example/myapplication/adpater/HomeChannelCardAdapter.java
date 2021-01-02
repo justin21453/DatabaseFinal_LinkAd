@@ -46,7 +46,7 @@ public class HomeChannelCardAdapter extends RecyclerView.Adapter<HomeChannelCard
     public class HomeChannelCardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener{
         CardView cv_channel;
         ImageView img_card, img_avatar;
-        TextView tv_channelName, tv_category, tv_subscribeValue, tv_viewValue;
+        TextView tv_channelName, tv_category, tv_subscribeValue, tv_viewValue, tv_rankValue;
         TextView tags_1, tags_2, tags_3;
 
         OnCardListener onCardListener;
@@ -64,6 +64,7 @@ public class HomeChannelCardAdapter extends RecyclerView.Adapter<HomeChannelCard
             tv_category = itemView.findViewById(R.id.channelCategory);
             tv_subscribeValue = itemView.findViewById(R.id.categoriesViewValue);
             tv_viewValue = itemView.findViewById(R.id.channelViewValue);
+            tv_rankValue = itemView.findViewById(R.id.rankValue);
             tags_1 = itemView.findViewById(R.id.tag_1);
             tags_2 = itemView.findViewById(R.id.tag_2);
             tags_3 = itemView.findViewById(R.id.tag_3);
@@ -99,12 +100,15 @@ public class HomeChannelCardAdapter extends RecyclerView.Adapter<HomeChannelCard
         holder.tv_channelName.setText(channelCards.get(position).getChannelTitle());
         holder.tv_channelName.setSingleLine(true);
         String category = channelCards.get(position).getChannelCategory();
-        if(category.equals("NULL"))category = "None";   //如果Category是NULL的話
+        if(category.equals("NULL"))category = "無分類";   //如果Category是NULL的話
         holder.tv_category.setText(category);
         String subscribe = convertBigInteger(channelCards.get(position).getSubscriber());
         if (subscribe.equals("-1")) subscribe = "未公開";
         holder.tv_subscribeValue.setText(subscribe);
         holder.tv_viewValue.setText(convertBigInteger(channelCards.get(position).getAllViewCount()));
+        //TODO: 加排名
+        if (channelCards.get(position).getRank() != null && channelCards.get(position).getRank() != -1) holder.tv_rankValue.setText(channelCards.get(position).getRank() + "/" + channelCards.get(position).getRankTotal());
+        else holder.tv_rankValue.setText("未公開");
 
         List<String> tags = channelCards.get(position).getTag();
         //tags 可能为空

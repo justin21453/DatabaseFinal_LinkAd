@@ -105,7 +105,7 @@ public class CategoryCardAdapter extends RecyclerView.Adapter<CategoryCardAdapte
             holder.tv_categoriesLikeRate.setBackgroundResource(R.drawable.shape_4dp_corners_dark_red);
         }
 
-        String category = categoryId_tmp.getId().equals("NULL") ? "未分類": categoryId_tmp.getId();
+        String category = categoryId_tmp.getId().equals("NULL") ? "無分類": categoryId_tmp.getId();
         holder.tv_category.setText(category);
         holder.tv_categoriesVideoValue.setText(videoRate + "%");
         holder.tv_categoriesViewValue.setText(viewRate + "%");

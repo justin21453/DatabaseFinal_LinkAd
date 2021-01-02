@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class ChannelCard {
+
     @SerializedName("channelId")
     @Expose
     private String channelId;
@@ -29,6 +30,12 @@ public class ChannelCard {
     @SerializedName("thumbnails_url_high")
     @Expose
     private String thumbnailsUrlHigh;
+    @SerializedName("rank")
+    @Expose
+    private Integer rank;
+    @SerializedName("rankTotal")
+    @Expose
+    private Integer rankTotal;
 
     public String getChannelId() {
         return channelId;
@@ -94,5 +101,20 @@ public class ChannelCard {
         this.thumbnailsUrlHigh = thumbnailsUrlHigh;
     }
 
+    public Integer getRank() {
+        return rank;
+    }
+
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
+
+    public Integer getRankTotal() {
+        return rankTotal;
+    }
+
+    public void setRankTotal(Integer rankTotal) {
+        this.rankTotal = rankTotal;
+    }
 
 }
