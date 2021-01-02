@@ -15,7 +15,7 @@
         app:cardUseCompatPadding="true"
         app:contentPaddingBottom="4dp"
         app:cardCornerRadius="10dp"
-        app:cardBackgroundColor="@color/grey"
+        app:cardBackgroundColor="@color/mediumRed"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

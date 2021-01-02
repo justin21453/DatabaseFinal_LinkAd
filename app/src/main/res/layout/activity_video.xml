@@ -338,7 +338,7 @@
                 android:drawablePadding="4dp"
                 android:elevation="1dp"
                 android:ellipsize="end"
-                android:maxEms="12"
+                android:maxEms="9"
                 android:paddingHorizontal="2dp"
                 android:singleLine="true"
                 android:text="@string/channel_name"

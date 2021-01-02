@@ -216,7 +216,7 @@ public class Video extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 int action = event.getAction();
                 if (action == MotionEvent.ACTION_DOWN) {
-                    btnYouTubeConstraintLayout.animate().translationY(2f).setDuration(0).start();
+                    btnYouTubeConstraintLayout.animate().translationY(6f).setDuration(0).start();
                     btnYouTubeConstraintLayout.setBackground(getDrawable(R.color.transparent));
 
                 } else {

@@ -65,6 +65,8 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
     EditText searchText;
     boolean toolbarState = false;
     boolean loadMoreState = false;
+    boolean searchVideoState = false;
+    boolean searchChannelState = false;
     String text;
     //接收server回传的json,通过converter(Gson)直接转换为Object List, 绑定到RecyclerView的卡片上
     ArrayList<ChannelCard>      channelCards = new ArrayList<>();
@@ -94,14 +96,13 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
         btnChannelConstraintLayout = findViewById(R.id.btnChannelConstraintLayout);
         searchText = findViewById(R.id.searchText);
 
+        //第一次初始化 SmartRefreshView, 此层套在RecyclerView的外层
+        smartRefreshInit();
+
         searchInit();
 
         navBarInit(bottomNavBar);
 
-        //第一次初始化 SmartRefreshView, 此层套在RecyclerView的外层
-        smartRefreshInit();
-        //初始化CardAdapter, 避免cardInit()时,因网络问题导致adapter未绑定而无法刷新，重新联网也无法重新加载的情况
-//        channelCardAdapterInit();
     }
 
 
@@ -115,11 +116,16 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                 if (action == MotionEvent.ACTION_DOWN) {
                     btnVideoConstraintLayout.animate().translationY(10f).setDuration(0).start();
                     btnVideoConstraintLayout.setBackground(getDrawable(R.color.transparent));
-
                 } else {
                     v.animate().cancel();
                     btnVideoConstraintLayout.animate().translationY(0).setDuration(0).start();
                     btnVideoConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_orange));
+
+                    loadMoreState = false;
+                    searchVideoState = true;
+                    searchChannelState = false;
+                    if (callChannelInit != null) callChannelInit.cancel();
+                    btnChannelConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
 
                     Log.d(TAG, "onClick: 点击了影片按钮");
                     text = searchText.getText().toString();
@@ -141,11 +147,16 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                 if (action == MotionEvent.ACTION_DOWN) {
                     btnChannelConstraintLayout.animate().translationY(10f).setDuration(0).start();
                     btnChannelConstraintLayout.setBackground(getDrawable(R.color.transparent));
-
                 } else {
                     v.animate().cancel();
                     btnChannelConstraintLayout.animate().translationY(0).setDuration(0).start();
                     btnChannelConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_orange));
+
+                    loadMoreState = false;
+                    searchChannelState = true;
+                    searchVideoState = false;
+                    if (callVideoCardInit != null) callVideoCardInit.cancel();
+                    btnVideoConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
 
                     Log.d(TAG, "onClick: 点击了频道按钮");
                     text = searchText.getText().toString();
@@ -169,22 +180,29 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
             @Override
             public void onResponse(Call<ArrayList<ChannelCard>> call, Response<ArrayList<ChannelCard>> response) {
                 if (response.isSuccessful() && response.body() != null){
-                    videoCards.clear();                 //清空另一种的 ArrayList
-                    channelCards = response.body();
-                    channelCardAdapterInit();      //重置 Adapter, 刷新数据
-                    //TODO: 加載更多
-                    channelCardLoadMore();          //加載更多Card
+
+                    if (searchChannelState) {
+                        videoCards.clear();                 //清空另一种的 ArrayList
+                        channelCards = response.body();
+                        channelCardAdapterInit();      //重置 Adapter, 刷新数据
+                        channelCardLoadMore();          //加載更多Card
+                        toggleToolbar();
+                    }
                     btnChannelConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
-                    toggleToolbar();
+                    btnVideoConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
                 }
             }
             @Override
             public void onFailure(Call<ArrayList<ChannelCard>> call, Throwable t) {
-                if (!loadMoreState) {
+                if (!loadMoreState && searchChannelState) {
                     Toast.makeText(getApplicationContext(),"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
                     loadMoreState = true;
                 }
-                channelCardInit(limit);
+                if (searchChannelState) {
+                    btnChannelConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_red));
+                    btnVideoConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
+                    channelCardInit(limit);
+                }
             }
         });
     }
@@ -195,24 +213,31 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
             @Override
             public void onResponse(Call<ArrayList<VideoCard>> call, Response<ArrayList<VideoCard>> response) {
                 if (response.isSuccessful() && response.body() != null){
-                    channelCards.clear();            //清空另一种的 ArrayList
 
-                    videoCards = response.body();
-                    videoCardAdapterInit();      //重置 Adapter, 刷新数据
-                    //TODO: 加載更多
-                    videoCardLoadMore();          //加載更多Card
-
+                    if (searchVideoState) {
+                        videoCards = response.body();
+                        channelCards.clear();            //清空另一种的 ArrayList
+                        videoCardAdapterInit();      //重置 Adapter, 刷新数据
+                        videoCardLoadMore();          //加載更多Card
+                        toggleToolbar();
+                    }
                     btnVideoConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
-                    toggleToolbar();
+                    btnChannelConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
+
                 }
             }
             @Override
             public void onFailure(Call<ArrayList<VideoCard>> call, Throwable t) {
-                if (!loadMoreState) {
+
+                if (!loadMoreState && searchVideoState) {
                     Toast.makeText(getApplicationContext(),"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
                     loadMoreState = true;
                 }
-                videoCardInit(limit);
+                if (searchVideoState) {
+                    btnVideoConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_red));
+                    btnChannelConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
+                    videoCardInit(limit);
+                }
             }
         });
     }
@@ -239,11 +264,13 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                     homeChannelCardAdapter.notifyItemRangeInserted(size, limit);
 
                     Log.d(TAG, "onResponse: 成功加载更多channel卡片,现有共" + channelCards.size() + "张");
+                } else if(response.body() == null) {
+                    //已经无更多数据
                 }
             }
             @Override
             public void onFailure(Call<ArrayList<ChannelCard>> call, Throwable t) {
-                if (!loadMoreState) {
+                if (!loadMoreState && searchChannelState == true) {
                     Toast.makeText(getApplicationContext(),"加載失敗,可能是網絡問題", Toast.LENGTH_SHORT).show();
                     loadMoreState = true;
                 }
@@ -364,7 +391,7 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
 
         refreshLayout.setEnableAutoLoadMore(false); //取消自动加载更多, 需要手动拉
         //refreshLayout.setRefreshHeader(new ClassicsHeader(this)); //搜索页面不需要下拉刷新
-
+        refreshLayout.setEnableLoadMoreWhenContentNotFull(false);   //不满一页, 不允许刷新
         refreshLayout.setEnableRefresh(false);
         ClassicsFooter classicsFooter =new ClassicsFooter(getApplicationContext());
         refreshLayout.setRefreshFooter(classicsFooter);

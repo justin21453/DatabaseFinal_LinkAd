@@ -92,11 +92,11 @@ public class CategoryCardAdapter extends RecyclerView.Adapter<CategoryCardAdapte
         double allVideoCount = Double.parseDouble(this.categoryCards.getAllvideoCount());
         double allVideoView = Double.parseDouble(this.categoryCards.getAllviewCount());
 
-        java.text.DecimalFormat myformat = new java.text.DecimalFormat("0.00");
-        String videoRate = myformat.format(categoryId_tmp.getVideoCount() / allVideoCount * 100);
-        String viewRate = myformat.format(categoryId_tmp.getVideoViews() / allVideoView * 100);
+        java.text.DecimalFormat myFormat = new java.text.DecimalFormat("0.00");
+        String videoRate = myFormat.format(categoryId_tmp.getVideoCount() / allVideoCount * 100);
+        String viewRate = myFormat.format(categoryId_tmp.getVideoViews() / allVideoView * 100);
         double likeRate = ((double)categoryId_tmp.getTotalLike() / (double)categoryId_tmp.getVideoViews()) * 100.0;
-        holder.tv_categoriesLikeRate.setText(myformat.format(likeRate) + "%觀眾讚了");
+        holder.tv_categoriesLikeRate.setText(myFormat.format(likeRate) + "%觀眾讚了");
         if (likeRate > 1.5f) {
             holder.tv_categoriesLikeRate.setBackgroundResource(R.drawable.shape_4dp_corners_dark_green);
         } else if (likeRate > 0.7f) {
@@ -111,7 +111,7 @@ public class CategoryCardAdapter extends RecyclerView.Adapter<CategoryCardAdapte
         holder.tv_categoriesViewValue.setText(viewRate + "%");
         double judge = categoryId_tmp.getAvgRating() == null? 0: categoryId_tmp.getAvgRating();
 
-        holder.tv_categoriesJudge.setText(myformat.format(judge) + "%好评");
+        holder.tv_categoriesJudge.setText(myFormat.format(judge) + "%好评");
         if (judge > 97.0f) {
             holder.tv_categoriesJudge.setBackgroundResource(R.drawable.shape_4dp_corners_dark_green);
         } else if (judge > 90.0f) {

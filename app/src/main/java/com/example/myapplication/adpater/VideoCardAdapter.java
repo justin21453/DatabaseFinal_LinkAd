@@ -100,7 +100,7 @@ public class VideoCardAdapter extends RecyclerView.Adapter<VideoCardAdapter.Vide
         //数据绑定, 将 VideoCard 中的Value, 对应设置到各个 textView 等
         VideoCard videoCard = videoCards.get(position);
         holder.tv_videoTitle.setText(videoCard.getTitle());
-        holder.tv_viewValue.setText(videoCard.getViewCount() + "观看");
+        holder.tv_viewValue.setText(videoCard.getViewCount() + "觀看");
         holder.tv_category.setText(videoCard.getCategoryId());
 
         convertToRateAndSet(videoCard, holder);
@@ -134,13 +134,17 @@ public class VideoCardAdapter extends RecyclerView.Adapter<VideoCardAdapter.Vide
 
     private void convertToRateAndSet(VideoCard videoCard, VideoCardViewHolder holder) {
         double viewCount = Double.parseDouble(videoCard.getViewCount());
-        java.text.DecimalFormat myformat = new java.text.DecimalFormat("0.000");
-        String commentRate = myformat.format((double)Double.parseDouble(videoCard.getCommentCount()) / viewCount * 100);
-        String likeRate = myformat.format((double)Double.parseDouble(videoCard.getLikeCount()) / viewCount * 100);
-        String dislikeRate = myformat.format((double)Double.parseDouble(videoCard.getDislikeCount()) / viewCount * 100);
-        if (videoCard.getCommentCount()=="NaN") commentRate="0.000";
-        if (videoCard.getLikeCount()=="NaN") likeRate="0.000";
-        if (videoCard.getDislikeCount()=="NaN") dislikeRate="0.000";
+        java.text.DecimalFormat myFormat = new java.text.DecimalFormat("0.000");
+        String commentRate, likeRate, dislikeRate;
+        if (viewCount != 0){
+           commentRate = myFormat.format((double)Double.parseDouble(videoCard.getCommentCount()) / viewCount * 100);
+           likeRate = myFormat.format((double)Double.parseDouble(videoCard.getLikeCount()) / viewCount * 100);
+           dislikeRate = myFormat.format((double)Double.parseDouble(videoCard.getDislikeCount()) / viewCount * 100);
+        } else {
+            commentRate="0.000";
+            likeRate="0.000";
+            dislikeRate="0.000";
+        }
         holder.tv_commentRate.setText(commentRate + "%評論");
         holder.tv_likeRate.setText(likeRate + "%喜歡");
         holder.tv_dislikeRate.setText(dislikeRate + "%不喜歡");
