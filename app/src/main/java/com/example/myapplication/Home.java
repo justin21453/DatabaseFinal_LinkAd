@@ -43,18 +43,28 @@ import retrofit2.Response;
 import static com.example.myapplication.WaitTime.TIME_EXIT;
 
 // HideScrollListener 检测用户滑动的监听器, 用于自动隐藏NavBar
-public class Home extends AppCompatActivity implements HideScrollListener, HomeChannelCardAdapter.OnCardListener {
+public class Home extends AppCompatActivity implements HideScrollListener, HomeChannelCardAdapter.OnCardListener, HomeCategoryAdapter.OnCardListener {
 
     private static final String TAG = "成功";
 
     private long                mBackPressed;
+
     //初始化layout中的View等
     BottomNavigationView        bottomNavBar;
-    RelativeLayout              bottomNav;
+    RelativeLayout              bottomNav, homeCategoryRelativeLayout;
     //recyclerView 用于主页Card(Channel)的显示, recyclerViewHorizontal用于主页顶部的Category Button的显示
     RefreshLayout refreshLayout;
-    RecyclerView                recyclerView;
+    RecyclerView                recyclerView, recyclerViewHorizontal;
     HomeChannelCardAdapter homeChannelCardAdapter;
+    HomeCategoryAdapter homeCategoryAdapter;
+    String categories[] = {"ALL", "Film & Animation", "Autos & Vehicles", "Music", "Pets & Animals", "Sports", "Short Movies", "Travel & Events", "Gaming",
+            "Videoblogging", "People & Blogs", "Comedy", "Entertainment", "News & Politics",
+            "Howto & Style", "Education", "Science & Technology", "Nonprofits & Activism", "Movies",
+            "Anime/Animation", "Action/Adventure", "Classics", "Comedy", "Documentary",
+            "Drama", "Family", "Foreign", "Horror", "Sci-Fi/Fantasy",
+            "Thriller", "Shorts", "Shows", "Trailers"};
+    String categoty = "ALL";
+
     boolean loadMoreState = false;
     // 初始化网络连接服务(呼叫后端用的 service)
     IMyService                  iMyService;
@@ -71,13 +81,17 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
         recyclerView = findViewById(R.id.homeRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         recyclerView.addOnScrollListener(new NavScrollListener(this));  //绑定滑动监听器
+        recyclerViewHorizontal = findViewById(R.id.homeRecyclerViewHorizontal);
+        //TODO: 绑定顶部的 Category 数据, 完善 RecyclerViewHorizontal
+        homeCategoryRelativeLayout = findViewById(R.id.homeCategoryRelativeLayout);
+        horizontalRecyclerViewInit();
         bottomNav = findViewById(R.id.bottomNav);
         bottomNavBar = findViewById(R.id.bottomNavBar);
         bottomNavBar.setSelectedItemId(R.id.nav_home);        // 设置 NavBar 上的选中元素为 home (房子)
 
         //底部导航栏Navigation bar 的初始化
         navBarInit(bottomNavBar);
-        //TODO: 绑定顶部的 Category 数据, 完善 RecyclerViewHorizontal
+
 
         //第一次初始化 SmartRefreshView, 此层套在RecyclerView的外层
         smartRefreshInit();
@@ -91,7 +105,9 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
 
     //初始化目前存儲的channelCards, 重新抓取, 並重設adapter
     private void cardInit() {
-        callInit = iMyService.getAllChannelCards(2);
+        if (categoty.equals("ALL")) callInit = iMyService.getAllChannelCards(2);
+        else callInit = iMyService.searchChannel(categoty, 0, 2);
+
         callInit.enqueue(new Callback<ArrayList<ChannelCard>>() {
             //onResponse 只有成功接收到response才会执行, 同时,由于是多线程进行, call之后的语句不会等到Call执行完才执行
             @Override
@@ -100,8 +116,8 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
                     //用返还的ArrayList覆盖现有的 channelCards 中的data(相当于初始化)
                     channelCards = response.body();
                     cardAdapterInit();      //重置 Adapter, 刷新数据
-
-                    loadMore(refreshLayout);
+                    loadMoreTime = 0;
+                    loadMore();
                 }
             }
             @Override
@@ -126,7 +142,8 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
     }
 
     private void cardLoadMore(int limit, int size) {
-        callLoad = iMyService.getAllChannelCards(limit);
+        if (categoty.equals("ALL")) callLoad = iMyService.getAllChannelCards(limit);
+        else callLoad = iMyService.searchChannel(categoty, size, limit);
         callLoad.enqueue(new Callback<ArrayList<ChannelCard>>() {
             @Override
             public void onResponse(Call<ArrayList<ChannelCard>> call, Response<ArrayList<ChannelCard>> response) {
@@ -134,6 +151,8 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
                     //添加更多Card
                     channelCards.addAll(response.body());
                     homeChannelCardAdapter.notifyItemRangeInserted(size, limit);
+                    loadMoreTime++;
+                    loadMore();
                     Log.d(TAG, "onResponse: 成功加载更多卡片,现有共" + channelCards.size() + "张");
                 }
             }
@@ -158,6 +177,42 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
 
         });
     }
+
+    @Override
+    public void onCategoryCardClick(int position) {
+        categoty = categories[position];
+        Log.d(TAG, "onCategoryCardClick: 点击了["+ categoty + "]button, 开始加载");
+        cardInit();
+    }
+
+
+    @Override
+    public boolean onCategoryCardTouch(View v, MotionEvent event) {
+        int action = event.getAction();
+//        if (action == MotionEvent.ACTION_DOWN) {
+//            v.setBackground();
+//            v.animate().scaleX(0.96f).setDuration(130).start();
+//            v.animate().scaleY(0.96f).setDuration(130).start();
+//
+//        } else {
+//            v.animate().cancel();
+//            v.animate().scaleX(1f).setDuration(150).start();
+//            v.animate().scaleY(1f).setDuration(150).start();
+//        }
+        if (action == MotionEvent.ACTION_DOWN) {
+            v.animate().translationY(6f).setDuration(0).start();
+            v.setBackground(getDrawable(R.color.transparent));
+
+        } else {
+            v.animate().cancel();
+            v.animate().translationY(0).setDuration(0).start();
+            v.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
+
+        }
+
+        return true;  //this should be true to get further event's
+    }
+
 
     @Override
     public boolean onCardTouch(View v, MotionEvent event) {
@@ -195,6 +250,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
 
     }
 
+
     //Smart Refresh 智能刷新, 下拉刷新, 上滑加载
     //https://github.com/scwang90/SmartRefreshLayout/blob/master/art/md_property.md
     private void smartRefreshInit() {
@@ -203,6 +259,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
 
         refreshLayout.setEnableAutoLoadMore(false); //取消自动加载更多, 需要手动拉
         refreshLayout.setRefreshHeader(new ClassicsHeader(getApplicationContext()));
+        refreshLayout.setEnableLoadMoreWhenContentNotFull(false);       //不满一页, 不允许上滑加载更多
 
         ClassicsFooter classicsFooter =new ClassicsFooter(getApplicationContext());
         refreshLayout.setRefreshFooter(classicsFooter);
@@ -223,21 +280,23 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshlayout) {
                 //上滑加载更多, 需要添加Card到指定的ArrayList才能实现
-                loadMore(refreshlayout);    //多段式加载
+                loadMoreTime = 0;
+                loadMore();    //多段式加载
+                refreshlayout.finishLoadMore(2000);//传入false表示加载失败
 
             }
         });
     }
 
-    private void loadMore(@NonNull RefreshLayout refreshlayout) {
+    private int loadMoreTime = 0;
+    private void loadMore() {
         loadMoreState = false;
-        cardLoadMore(2, channelCards.size());
-        cardLoadMore(3, channelCards.size() + 2);
-        cardLoadMore(5, channelCards.size() + 5);
-        cardLoadMore(5, channelCards.size() + 10);
-        cardLoadMore(5, channelCards.size() + 15);
-        cardLoadMore(5, channelCards.size() + 20);
-        refreshlayout.finishLoadMore(2000);//传入false表示加载失败
+        if (loadMoreTime == 0)cardLoadMore(2, channelCards.size());
+        else if (loadMoreTime == 1)cardLoadMore(3, channelCards.size());
+        else if (loadMoreTime == 2)cardLoadMore(5, channelCards.size());
+        else if (loadMoreTime == 3)cardLoadMore(5, channelCards.size());
+        else if (loadMoreTime == 4)cardLoadMore(5, channelCards.size());
+        else if (loadMoreTime == 5)cardLoadMore(5, channelCards.size());
     }
 
     public void cardAdapterInit() {
@@ -246,7 +305,15 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
         homeChannelCardAdapter = new HomeChannelCardAdapter(getApplicationContext(), channelCards, this);
         recyclerView.setAdapter(homeChannelCardAdapter);
     }
-
+    private void horizontalRecyclerViewInit() {
+        ////初始化 HomeCategoryAdapter 并赋予data
+        homeCategoryAdapter = new HomeCategoryAdapter(getApplicationContext(), categories, this);
+        //用LinearLayoutManager将RecyclerView显示方式转为Horizontal
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerViewHorizontal.setLayoutManager(linearLayoutManager);
+        //绑定Adapter 和 RecyclerView
+        recyclerViewHorizontal.setAdapter(homeCategoryAdapter);
+    }
     private void navBarInit(BottomNavigationView bottomNavBar) {
         // 跳转到新页面，并 reorder 到前面,重新排序 activity (参考下面 Link)
         // https://www.jianshu.com/p/537aa221eec4/
@@ -265,6 +332,8 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
             }
         });
     }
+
+
 
     // 若再次返回会退出应用, 则User需要快速返回两次, 才能退出(目的是为了防误触)
     @Override
@@ -302,6 +371,8 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
     @Override
     public void onHide() {
         //隐藏动画
+        RelativeLayout.LayoutParams layoutParams2 = (RelativeLayout.LayoutParams) homeCategoryRelativeLayout.getLayoutParams();
+        homeCategoryRelativeLayout.animate().translationY(layoutParams2.bottomMargin - homeCategoryRelativeLayout.getHeight()).setInterpolator(new AccelerateInterpolator(2));
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) bottomNav.getLayoutParams();
         bottomNav.animate().translationY(bottomNav.getHeight() + layoutParams.bottomMargin).setInterpolator(new AccelerateInterpolator(3));
     }
@@ -309,5 +380,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
     public void onShow() {
         //显示动画
         bottomNav.animate().translationY(0).setInterpolator(new DecelerateInterpolator(3));
+        homeCategoryRelativeLayout.animate().translationY(0).setInterpolator(new DecelerateInterpolator(3));
+
     }
 }
