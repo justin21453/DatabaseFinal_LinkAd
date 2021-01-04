@@ -49,6 +49,7 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
     private long mBackPressed;                  //连续返回2次——退出
     boolean toolbarState = false;               //判断 Toolbar 的显示状态
     boolean loadMoreState = false;              //判断 加载状态 （避免联网自动加载, 不停跳toast提示
+    boolean searching = false;                  //判断 是否在搜寻(不能重复连点)
     boolean searchVideoState = false;           //判断 是否在搜寻影片, 会取消之前的搜索频道操作
     boolean searchChannelState = false;         //判断 是否在搜寻频道, 会取消之前的搜索影片操作
 
@@ -118,6 +119,8 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                 if (action == MotionEvent.ACTION_DOWN) {
                     btnVideoConstraintLayout.animate().translationY(10f).setDuration(0).start();
                     btnVideoConstraintLayout.setBackground(getDrawable(R.color.transparent));
+                    if (searchChannelState) searching = false;
+
                 } else {
                     v.animate().cancel();
                     btnVideoConstraintLayout.animate().translationY(0).setDuration(0).start();
@@ -133,8 +136,8 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                     text = searchText.getText().toString();
                     if (TextUtils.isEmpty(text)) {
                         Toast.makeText(getApplicationContext(), "搜索栏不能为空", Toast.LENGTH_SHORT).show();
-                    } else {
-
+                    } else if (searching == false) {
+                        searching = true;
                         videoCardInit(15);
                     }
                 }
@@ -149,6 +152,7 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                 if (action == MotionEvent.ACTION_DOWN) {
                     btnChannelConstraintLayout.animate().translationY(10f).setDuration(0).start();
                     btnChannelConstraintLayout.setBackground(getDrawable(R.color.transparent));
+                    if (searchVideoState) searching = false;
                 } else {
                     v.animate().cancel();
                     btnChannelConstraintLayout.animate().translationY(0).setDuration(0).start();
@@ -164,7 +168,8 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                     text = searchText.getText().toString();
                     if (TextUtils.isEmpty(text)) {
                         Toast.makeText(getApplicationContext(), "搜索栏不能为空", Toast.LENGTH_SHORT).show();
-                    } else {
+                    } else if (searching == false) {
+                        searching = true;
                         channelCardInit(6);
                     }
                 }
@@ -191,6 +196,7 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                         channelCardLoadMore(channelCards.size());          //加載更多Card
                         toggleToolbar();
                     }
+                    searching = false;
                     btnChannelConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
                     btnVideoConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
                 }
@@ -206,6 +212,7 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                     btnVideoConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
                     channelCardInit(limit);
                 }
+                searching = false;
             }
         });
     }
@@ -224,6 +231,7 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                         videoCardLoadMore();          //加載更多Card
                         toggleToolbar();
                     }
+                    searching = false;
                     btnVideoConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
                     btnChannelConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
 
@@ -241,7 +249,9 @@ public class Search extends AppCompatActivity implements HideScrollListener, Hom
                     btnChannelConstraintLayout.setBackground(getDrawable(R.drawable.btn_bg_14dp_green));
                     videoCardInit(limit);
                 }
+                searching = false;
             }
+
         });
     }
 
