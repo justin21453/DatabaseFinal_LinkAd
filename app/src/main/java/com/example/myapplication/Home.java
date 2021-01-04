@@ -57,15 +57,14 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
     RecyclerView                recyclerView, recyclerViewHorizontal;
     HomeChannelCardAdapter homeChannelCardAdapter;
     HomeCategoryAdapter homeCategoryAdapter;
-    String categories[] = {"ALL", "Film & Animation", "Autos & Vehicles", "Music", "Pets & Animals", "Sports", "Short Movies", "Travel & Events", "Gaming",
-            "Videoblogging", "People & Blogs", "Comedy", "Entertainment", "News & Politics",
-            "Howto & Style", "Education", "Science & Technology", "Nonprofits & Activism", "Movies",
-            "Anime/Animation", "Action/Adventure", "Classics", "Comedy", "Documentary",
-            "Drama", "Family", "Foreign", "Horror", "Sci-Fi/Fantasy",
-            "Thriller", "Shorts", "Shows", "Trailers"};
-    String categoty = "ALL";
+    String categories[] = {"ALL", "Film & Animation", "People & Blogs", "Gaming", "Music", "Sports", "Travel & Events",
+             "Comedy", "Entertainment", "News & Politics",
+            "Howto & Style", "Education", "Science & Technology",
+            "Comedy", "Autos & Vehicles", "Pets & Animals"};
+    String category = "ALL";
 
     boolean loadMoreState = false;
+    boolean searchState = true;
     // 初始化网络连接服务(呼叫后端用的 service)
     IMyService                  iMyService;
     Call<ArrayList<ChannelCard>> callInit, callLoad;
@@ -105,8 +104,9 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
 
     //初始化目前存儲的channelCards, 重新抓取, 並重設adapter
     private void cardInit() {
-        if (categoty.equals("ALL")) callInit = iMyService.getAllChannelCards(2);
-        else callInit = iMyService.searchChannel(categoty, 0, 2);
+        if (callLoad != null)callLoad.cancel();
+        if (category.equals("ALL")) callInit = iMyService.getAllChannelCards(3);
+        else callInit = iMyService.searchChannel(category, 0, 3);
 
         callInit.enqueue(new Callback<ArrayList<ChannelCard>>() {
             //onResponse 只有成功接收到response才会执行, 同时,由于是多线程进行, call之后的语句不会等到Call执行完才执行
@@ -114,8 +114,12 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
             public void onResponse(Call<ArrayList<ChannelCard>> call, Response<ArrayList<ChannelCard>> response) {
                 if (response.isSuccessful() && response.body() != null){
                     //用返还的ArrayList覆盖现有的 channelCards 中的data(相当于初始化)
+                    channelCards.clear();
+                    homeChannelCardAdapter.notifyDataSetChanged();
+                    homeCategoryAdapter.notifyDataSetChanged();
                     channelCards = response.body();
                     cardAdapterInit();      //重置 Adapter, 刷新数据
+                    searchState = true;
                     loadMoreTime = 0;
                     loadMore();
                 }
@@ -142,8 +146,8 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
     }
 
     private void cardLoadMore(int limit, int size) {
-        if (categoty.equals("ALL")) callLoad = iMyService.getAllChannelCards(limit);
-        else callLoad = iMyService.searchChannel(categoty, size, limit);
+        if (category.equals("ALL")) callLoad = iMyService.getAllChannelCards(limit);
+        else callLoad = iMyService.searchChannel(category, size, limit);
         callLoad.enqueue(new Callback<ArrayList<ChannelCard>>() {
             @Override
             public void onResponse(Call<ArrayList<ChannelCard>> call, Response<ArrayList<ChannelCard>> response) {
@@ -152,7 +156,8 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
                     channelCards.addAll(response.body());
                     homeChannelCardAdapter.notifyItemRangeInserted(size, limit);
                     loadMoreTime++;
-                    loadMore();
+                    if (loadMoreTime < 7) loadMore();
+                    else searchState = true;
                     Log.d(TAG, "onResponse: 成功加载更多卡片,现有共" + channelCards.size() + "张");
                 }
             }
@@ -180,9 +185,16 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
 
     @Override
     public void onCategoryCardClick(int position) {
-        categoty = categories[position];
-        Log.d(TAG, "onCategoryCardClick: 点击了["+ categoty + "]button, 开始加载");
-        cardInit();
+        if (position < 0 || position >= categories.length ) return;
+        if (searchState && category != categories[position]) {
+            searchState = false;
+            loadMoreTime = 7;
+
+            category = categories[position];
+            Log.d(TAG, "onCategoryCardClick: 点击了["+ category + "]button, 开始加载");
+            loadMoreState = true;
+            cardInit();
+        }
     }
 
 
@@ -297,6 +309,8 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
         else if (loadMoreTime == 3)cardLoadMore(5, channelCards.size());
         else if (loadMoreTime == 4)cardLoadMore(5, channelCards.size());
         else if (loadMoreTime == 5)cardLoadMore(5, channelCards.size());
+//        else if (loadMoreTime == 6) searchState = true;
+
     }
 
     public void cardAdapterInit() {
@@ -353,7 +367,7 @@ public class Home extends AppCompatActivity implements HideScrollListener, HomeC
     @Override
     protected void onResume() {
         super.onResume();
-
+        searchState = true;
 //        overridePendingTransition(0, 0);    //取消界面切换动画
         // 当从其他 activity 返回到该 activity 时, 恢复(解除暂停), 重设 NavBar的选中元素
         bottomNavBar.setSelectedItemId(R.id.nav_home);
